@@ -44,6 +44,8 @@ endif
 
 CC = $(TOOLPREFIX)gcc
 AS = $(TOOLPREFIX)gas
+AR = $(TOOLPREFIX)ar
+RANLIB = $(TOOLPREFIX)ranlib
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
