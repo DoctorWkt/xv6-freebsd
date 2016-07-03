@@ -31,23 +31,18 @@ OBJS = \
 	vectors.o\
 	vm.o\
 
-xv6.img: bootblock kernel fs.img
+xv6.img: boot/bootblock kernel fs.img
 	dd if=/dev/zero of=xv6.img count=10000
-	dd if=bootblock of=xv6.img conv=notrunc
+	dd if=boot/bootblock of=xv6.img conv=notrunc
 	dd if=kernel of=xv6.img seek=1 conv=notrunc
 
-xv6memfs.img: bootblock kernelmemfs
+xv6memfs.img: boot/bootblock kernelmemfs
 	dd if=/dev/zero of=xv6memfs.img count=10000
-	dd if=bootblock of=xv6memfs.img conv=notrunc
+	dd if=boot/bootblock of=xv6memfs.img conv=notrunc
 	dd if=kernelmemfs of=xv6memfs.img seek=1 conv=notrunc
 
-bootblock: bootasm.S bootmain.c
-	$(CC) $(CFLAGS) -fno-pic -O -c bootmain.c
-	$(CC) $(CFLAGS) -fno-pic -c bootasm.S
-	$(LD) $(LDFLAGS) -N -e start -Ttext 0x7C00 -o bootblock.o bootasm.o bootmain.o
-	$(OBJDUMP) -S bootblock.o > bootblock.asm
-	$(OBJCOPY) -S -O binary -j .text bootblock.o bootblock
-	./sign.pl bootblock
+boot/bootblock:
+	$(MAKE) -C boot bootblock
 
 entryother: entryother.S
 	$(CC) $(CFLAGS) -fno-pic -c entryother.S
@@ -130,10 +125,11 @@ fs.img: mkfs README $(UPROGS)
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	*.o *.d *.asm *.sym vectors.S bootblock entryother \
+	*.o *.d *.asm *.sym vectors.S entryother \
 	initcode initcode.out kernel xv6.img fs.img kernelmemfs mkfs \
 	.gdbinit \
 	$(UPROGS)
+	$(MAKE) -C boot clean
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)
