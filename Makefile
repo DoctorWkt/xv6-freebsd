@@ -14,8 +14,8 @@ xv6memfs.img: boot/bootblock kern/kernelmemfs
 boot/bootblock:
 	$(MAKE) -C boot bootblock
 
-mkfs: mkfs.c include/xv6/fs.h
-	gcc -Werror -Wall -o mkfs mkfs.c
+tools/mkfs:
+	$(MAKE) -C tools mkfs
 
 cmd/_cat:
 	$(MAKE) -C cmd all
@@ -23,8 +23,8 @@ cmd/_cat:
 kern/kernel:
 	$(MAKE) -C kern kernal
 
-fs.img: mkfs README cmd/_cat
-	./mkfs fs.img README _*
+fs.img: tools/mkfs README cmd/_cat
+	tools/mkfs fs.img README _*
 
 -include *.d
 
@@ -33,7 +33,8 @@ clean:
 	$(MAKE) -C lib clean
 	$(MAKE) -C cmd clean
 	$(MAKE) -C kern clean
-	rm -f _* mkfs *.img
+	$(MAKE) -C tools clean
+	rm -f _* *.img
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)
