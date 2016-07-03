@@ -3,7 +3,7 @@ include $(TOP_SRCDIR)/Makefile.common
 
 .PHONY: all clean
 
-all: bootblock entryother
+all: bootblock
 
 bootblock: bootasm.S bootmain.c
 	$(CC) $(CFLAGS) -fno-pic -O -c bootmain.c
@@ -13,11 +13,5 @@ bootblock: bootasm.S bootmain.c
 	$(OBJCOPY) -S -O binary -j .text bootblock.o bootblock
 	./sign.pl bootblock
 
-entryother: entryother.S
-	$(CC) $(CFLAGS) -fno-pic -c entryother.S
-	$(LD) $(LDFLAGS) -N -e start -Ttext 0x7000 -o bootblockother.o entryother.o
-	$(OBJCOPY) -S -O binary -j .text bootblockother.o entryother
-	$(OBJDUMP) -S bootblockother.o > entryother.asm
-
 clean:
-	rm -f *.o *.asm bootblock entryother
+	rm -f *.o *.asm bootblock
