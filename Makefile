@@ -113,7 +113,7 @@ print: xv6.pdf
 # run in emulators
 
 bochs : fs.img xv6.img
-	if [ ! -e .bochsrc ]; then ln -s dot-bochsrc .bochsrc; fi
+	if [ ! -e .bochsrc ]; then ln -s misc/dot-bochsrc .bochsrc; fi
 	bochs -q
 
 # try to generate a unique GDB port
@@ -157,7 +157,7 @@ EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
 	printf.c umalloc.c\
-	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
+	README misc/dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
 dist:
