@@ -21,7 +21,7 @@ cmd/_cat:
 	$(MAKE) -C cmd all
 
 kern/kernel:
-	$(MAKE) -C kern kernal
+	$(MAKE) -C kern kernel
 
 fs.img: tools/mkfs README cmd/_cat
 	tools/mkfs fs.img README _*
