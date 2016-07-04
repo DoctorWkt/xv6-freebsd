@@ -7,11 +7,11 @@
 //    for (i = 0; i < 40000; i++)
 //      asm volatile("");
 
-#include "types.h"
-#include "stat.h"
-#include "user.h"
-#include "fs.h"
-#include "fcntl.h"
+#include "xv6/types.h"
+#include "xv6/stat.h"
+#include "xv6/user.h"
+#include "xv6/fs.h"
+#include "xv6/fcntl.h"
 
 int
 main(int argc, char *argv[])
