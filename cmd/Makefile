@@ -11,7 +11,6 @@ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 &
 
 UPROGS=\
 	_cat\
-	_newcat\
 	_echo\
 	_forktest\
 	_grep\

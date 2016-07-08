@@ -440,3 +440,48 @@ sys_pipe(void)
   fd[1] = fd1;
   return 0;
 }
+
+// lseek derived from https://github.com/hxp/xv6, written by Joel Heikkila
+
+int sys_lseek(void) {
+	int fd;
+	int offset;
+	int base;
+	int newoff;
+	int zerosize, i;
+	char *zeroed, *z;
+
+	struct file *f;
+
+	argfd(0, &fd, &f);
+	argint(1, &offset);
+	argint(2, &base);
+
+	if( base == SEEK_SET) {
+		newoff = offset;
+	}
+
+	if (base == SEEK_CUR)
+		newoff = f->off + offset;
+
+	if (base == SEEK_END)
+		newoff = f->ip->size + offset;
+	if (newoff < f->ip->size)
+		return -1;
+
+	if (newoff > f->ip->size){
+		zerosize = newoff - f->ip->size;
+		zeroed = kalloc();
+		z = zeroed;
+		for (i = 0; i < 4096; i++)
+			*z++ = 0;
+		while (zerosize > 0){
+			filewrite(f, zeroed, zerosize);
+			zerosize -= 4096;
+		}
+		kfree(zeroed);
+	}
+
+	f->off = newoff;
+	return 0;
+}
