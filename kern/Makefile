@@ -67,4 +67,4 @@ vectors.S: vectors.pl
 	perl vectors.pl > vectors.S
 
 clean:
-	rm -f *.o *.d *.sym entryother vectors.S
+	rm -f *.o *.d *.sym entryother vectors.S kernel *.asm initcode initcode.out

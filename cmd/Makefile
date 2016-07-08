@@ -12,6 +12,7 @@ INCLDIR=$(TOP_SRCDIR)/include
 
 UPROGS=\
 	_cat\
+	_newcat\
 	_echo\
 	_forktest\
 	_grep\

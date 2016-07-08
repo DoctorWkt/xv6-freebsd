@@ -21,6 +21,9 @@
 #define USHRT_MAX     0xFFFF	/* maximum value of unsigned short */
 
 /* _EM_WSIZE is a compiler-generated symbol giving the word size in bytes. */
+// wkt: Not any more!
+#define _EM_WSIZE 4
+
 #if _EM_WSIZE == 2
 #define INT_MIN   (-32767-1)	/* minimum value of a 16-bit int */
 #define INT_MAX        32767	/* maximum value of a 16-bit int */
