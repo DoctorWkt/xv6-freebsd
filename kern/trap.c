@@ -1,12 +1,12 @@
-#include "types.h"
-#include "defs.h"
-#include "param.h"
-#include "memlayout.h"
-#include "mmu.h"
-#include "proc.h"
-#include "x86.h"
-#include "traps.h"
-#include "spinlock.h"
+#include <xv6/types.h>
+#include <xv6/defs.h>
+#include <xv6/param.h>
+#include <xv6/memlayout.h>
+#include <xv6/mmu.h>
+#include <xv6/proc.h>
+#include <xv6/x86.h>
+#include <xv6/traps.h>
+#include <xv6/spinlock.h>
 
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];

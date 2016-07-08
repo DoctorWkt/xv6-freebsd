@@ -1,6 +1,6 @@
-#include "types.h"
-#include "stat.h"
-#include "user.h"
+#include <xv6/types.h>
+#include <xv6/stat.h>
+#include <xv6/user.h>
 
 static void
 putc(int fd, char c)

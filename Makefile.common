@@ -1,5 +1,5 @@
 # Header include directory
-INCLDIR=$(TOP_SRCDIR)/include/xv6
+INCLDIR=$(TOP_SRCDIR)/include
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf
