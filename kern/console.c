@@ -2,17 +2,17 @@
 // Input is from the keyboard or serial port.
 // Output is written to the screen and serial port.
 
-#include "types.h"
-#include "defs.h"
-#include "param.h"
-#include "traps.h"
-#include "spinlock.h"
-#include "fs.h"
-#include "file.h"
-#include "memlayout.h"
-#include "mmu.h"
-#include "proc.h"
-#include "x86.h"
+#include <xv6/types.h>
+#include <xv6/defs.h>
+#include <xv6/param.h>
+#include <xv6/traps.h>
+#include <xv6/spinlock.h>
+#include <xv6/fs.h>
+#include <xv6/file.h>
+#include <xv6/memlayout.h>
+#include <xv6/mmu.h>
+#include <xv6/proc.h>
+#include <xv6/x86.h>
 
 static void consputc(int);
 

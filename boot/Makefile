@@ -14,4 +14,4 @@ bootblock: bootasm.S bootmain.c
 	./sign.pl bootblock
 
 clean:
-	rm -f *.o *.asm bootblock
+	rm -f *.o *.d *.asm bootblock

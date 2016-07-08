@@ -2,12 +2,12 @@
 // File descriptors
 //
 
-#include "types.h"
-#include "defs.h"
-#include "param.h"
-#include "fs.h"
-#include "file.h"
-#include "spinlock.h"
+#include <xv6/types.h>
+#include <xv6/defs.h>
+#include <xv6/param.h>
+#include <xv6/fs.h>
+#include <xv6/file.h>
+#include <xv6/spinlock.h>
 
 struct devsw devsw[NDEV];
 struct {
