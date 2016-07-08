@@ -13,6 +13,8 @@
 #include <xv6/mmu.h>
 #include <xv6/proc.h>
 #include <xv6/x86.h>
+#include <xv6/termios.h>
+#include <xv6/ioctl.h>
 
 static void consputc(int);
 
@@ -21,6 +23,7 @@ static int panicked = 0;
 static struct {
   struct spinlock lock;
   int locking;
+  struct termios termios;
 } cons;
 
 static void
@@ -126,6 +129,8 @@ panic(char *s)
 #define CRTPORT 0x3d4
 static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
 
+#define C(x)  ((x)-'@')  // Control-x
+
 static void
 cgaputc(int c)
 {
@@ -176,6 +181,13 @@ consputc(int c)
   cgaputc(c);
 }
 
+void
+consechoc(int c)
+{
+  if(c != C('D') && cons.termios.c_lflag & ECHO)
+    consputc(c);
+}
+
 #define INPUT_BUF 128
 struct {
   char buf[INPUT_BUF];
@@ -184,8 +196,6 @@ struct {
   uint e;  // Edit index
 } input;
 
-#define C(x)  ((x)-'@')  // Control-x
-
 void
 consoleintr(int (*getc)(void))
 {
@@ -193,6 +203,7 @@ consoleintr(int (*getc)(void))
 
   acquire(&cons.lock);
   while((c = getc()) >= 0){
+   if(cons.termios.c_lflag & ICANON){
     switch(c){
     case C('P'):  // Process listing.
       doprocdump = 1;   // procdump() locks cons.lock indirectly; invoke later
@@ -201,27 +212,28 @@ consoleintr(int (*getc)(void))
       while(input.e != input.w &&
             input.buf[(input.e-1) % INPUT_BUF] != '\n'){
         input.e--;
-        consputc(BACKSPACE);
+	consechoc(BACKSPACE);
       }
       break;
     case C('H'): case '\x7f':  // Backspace
       if(input.e != input.w){
         input.e--;
-        consputc(BACKSPACE);
+	consechoc(BACKSPACE);
       }
       break;
     default:
       if(c != 0 && input.e-input.r < INPUT_BUF){
         c = (c == '\r') ? '\n' : c;
         input.buf[input.e++ % INPUT_BUF] = c;
-        consputc(c);
-        if(c == '\n' || c == C('D') || input.e == input.r+INPUT_BUF){
+	consechoc(c);
+	if(c == '\n' || c == C('D') || input.e == input.r+INPUT_BUF || (cons.termios.c_lflag & ICANON) == 0){
           input.w = input.e;
           wakeup(&input.r);
         }
       }
       break;
     }
+   }
   }
   release(&cons.lock);
   if(doprocdump) {
@@ -248,7 +260,7 @@ consoleread(struct inode *ip, char *dst, int n)
       sleep(&input.r, &cons.lock);
     }
     c = input.buf[input.r++ % INPUT_BUF];
-    if(c == C('D')){  // EOF
+    if(c == C('D') && cons.termios.c_lflag & ICANON){  // EOF
       if(n < target){
         // Save ^D for next time, to make sure
         // caller gets a 0-byte result.
@@ -258,7 +270,7 @@ consoleread(struct inode *ip, char *dst, int n)
     }
     *dst++ = c;
     --n;
-    if(c == '\n')
+    if(c == '\n' && cons.termios.c_lflag & ICANON)
       break;
   }
   release(&cons.lock);
@@ -282,6 +294,21 @@ consolewrite(struct inode *ip, char *buf, int n)
   return n;
 }
 
+int
+consoleioctl(struct inode *ip, int req)
+{
+  struct termios *termios_p;
+  if(req != TCGETA && req != TCSETA)
+    return -1;
+  if(argptr(2, (void*)&termios_p, sizeof(*termios_p)) < 0)
+    return -1;
+  if(req == TCGETA)
+    *termios_p = cons.termios;
+  else
+    cons.termios = *termios_p;
+  return(0);
+}
+
 void
 consoleinit(void)
 {
@@ -289,6 +316,7 @@ consoleinit(void)
 
   devsw[CONSOLE].write = consolewrite;
   devsw[CONSOLE].read = consoleread;
+  cons.termios.c_lflag = ECHO | ICANON;
   cons.locking = 1;
 
   picenable(IRQ_KBD);
