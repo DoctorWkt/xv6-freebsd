@@ -7,7 +7,7 @@ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 &
 
 all: abort.o abs.o asctime.o assert.o atexit.o atof.o atoi.o atol.o \
 	bsearch.o calloc.o chartab.o clock.o ctime.o difftime.o div.o \
-	errlist.o exit.o getenv.o gmtime.o isalnum.o isalpha.o \
+	errlist.o getenv.o gmtime.o isalnum.o isalpha.o \
 	isascii.o iscntrl.o isdigit.o isgraph.o islower.o isprint.o \
 	ispunct.o isspace.o isupper.o isxdigit.o labs.o ldiv.o localeconv.o \
 	localtime.o malloc.o mblen.o mbstowcs.o mbtowc.o memchr.o memcmp.o \

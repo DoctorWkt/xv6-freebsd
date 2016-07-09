@@ -11,6 +11,7 @@ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 &
 
 UPROGS=\
 	_cat\
+	_newcat\
 	_echo\
 	_forktest\
 	_grep\
@@ -31,6 +32,13 @@ all: ../lib/ulib.a $(UPROGS)
 
 ../lib/ulib.a:
 	$(MAKE) -C ../lib ulib.a
+
+../lib/libc.a:
+	$(MAKE) -C ../lib libc.a
+
+newcat: newcat.o ../lib/libc.a
+	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
+
 
 _%: %.o ../lib/ulib.a
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
