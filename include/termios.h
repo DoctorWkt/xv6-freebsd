@@ -10,6 +10,10 @@ typedef unsigned int speed_t;
 #define NCCS		20	/* size of cc_c array, some extra space
 				 * for extensions. */
 
+/* 0x54 is just a magic number to make these relatively unique ('T') */
+#define TCGETA          0x5405
+#define TCSETA          0x5406
+
 /* Primary terminal control structure. POSIX Table 7-1. */
 struct termios {
   tcflag_t c_iflag;		/* input modes */

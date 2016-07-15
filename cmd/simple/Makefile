@@ -4,7 +4,8 @@ CFLAGS = -fno-builtin -Wall -m32 -Werror -nostdinc -I$(INCLDIR)
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 UPROGS= _basename _cal _cksum _cmp _comm _crc \
-	_cut _expand _newcat _newwc _ttt _uue
+	_cut _expand _newcat _newwc _ttt _uue \
+	_isatty-test
 
 all: ../../lib/libc.a $(UPROGS)
 	mv _* ../..
