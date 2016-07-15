@@ -1,7 +1,6 @@
 /*
  * tmpfile.c - create and open a temporary file
  */
-/* $Header: tmpfile.c,v 1.3 90/01/22 11:13:15 eck Exp $ */
 
 #include	<sys/types.h>
 #include	<stdio.h>

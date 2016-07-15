@@ -2,7 +2,6 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: rand.c,v 1.3 90/06/30 20:02:45 ceriel Exp $ */
 
 #include	<stdlib.h>
 

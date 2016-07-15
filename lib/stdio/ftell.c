@@ -1,7 +1,6 @@
 /*
  * ftell.c - obtain the value of the file-position indicator of a stream
  */
-/* $Header: ftell.c,v 1.4 90/01/22 11:12:12 eck Exp $ */
 
 #include	<sys/types.h>
 #include	<stdio.h>

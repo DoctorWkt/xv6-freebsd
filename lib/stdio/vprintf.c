@@ -1,7 +1,6 @@
 /*
  * vprintf - formatted output without ellipsis to the standard output stream
  */
-/* $Header: vprintf.c,v 1.3 89/12/18 15:04:14 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdarg.h>

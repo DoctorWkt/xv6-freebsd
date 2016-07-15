@@ -1,4 +1,3 @@
-/* $Header$ */
 #include	<stdlib.h>
 
 #define ALIGN(x)	(((x) + (sizeof(size_t) - 1)) & ~(sizeof(size_t) - 1))

@@ -2,9 +2,10 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: system.c,v 1.4 90/11/22 13:59:54 eck Exp $ */
 
+#if	defined(_POSIX_SOURCE)
 #include	<sys/types.h>
+#endif
 #include	<stdlib.h>
 #include	<signal.h>
 

@@ -1,0 +1,38 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@ * @;
+
+
+1.1
+date	2016.07.14.05.50.27;	author wkt;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+/* xv6 has no stat(), so we simulate it with fstat() */
+int stat(const char *path, struct stat *buf)
+{
+  int fd, err;
+  fd= open(path, O_RDONLY);
+  if (fd==-1) return(-1);
+  err= fstat(fd, buf);
+  close(fd);
+  return(err);
+}
+@

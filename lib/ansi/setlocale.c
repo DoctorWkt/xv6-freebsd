@@ -1,7 +1,6 @@
 /*
  * setlocale - set the programs locale
  */
-/* $Header: setlocale.c,v 1.2 89/12/18 15:49:11 eck Exp $ */
 
 #include	<locale.h>
 #include	<string.h>

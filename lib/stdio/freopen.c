@@ -1,7 +1,6 @@
 /*
  * freopen.c - open a file and associate a stream with it
  */
-/* $Header: freopen.c,v 1.8 90/08/28 13:44:48 eck Exp $ */
 
 #if	defined(_POSIX_SOURCE)
 #include	<sys/types.h>

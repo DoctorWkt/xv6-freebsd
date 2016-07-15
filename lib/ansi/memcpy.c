@@ -2,7 +2,6 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: memcpy.c,v 1.4 90/08/28 13:52:31 eck Exp $ */
 
 #include	<string.h>
 

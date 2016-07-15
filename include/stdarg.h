@@ -1,35 +1,26 @@
-/* The <stdarg.h> header is ANSI's way to handle variable numbers of params.
- * Some programming languages require a function that is declared with n
- * parameters to be called with n parameters.  C does not.  A function may
- * called with more parameters than it is declared with.  The well-known
- * printf function, for example, may have arbitrarily many parameters.
- * The question arises how one can access all the parameters in a portable
- * way.  The C standard defines three macros that programs can use to
- * advance through the parameter list.  The definition of these macros for
- * MINIX are given in this file.  The three macros are:
+/*
+ * Copyright (c) 1991, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
- *	va_start(ap, parmN)	prepare to access parameters
- *	va_arg(ap, type)	get next parameter value and type
- *	va_end(ap)		access is finished
- *
- * Ken Thompson's famous line from V6 UNIX is equally applicable to this file:
- *
- *	"You are not expected to understand this"
- *
+ * This file includes code from FreeBSD.
+ * See the file LICENSE.BSD for full license information.
  */
 
-#ifndef _STDARG_H
-#define _STDARG_H
-
+#ifndef _STDARG_H_
+#define	_STDARG_H_
 
 typedef char *va_list;
 
-#define __vasz(x)		((sizeof(x)+sizeof(int)-1) & ~(sizeof(int) -1))
+#define	__va_promote(type) \
+	(((sizeof(type) + sizeof(int) - 1) / sizeof(int)) * sizeof(int))
 
-#define va_start(ap, parmN)	((ap) = (va_list)&parmN + __vasz(parmN))
-#define va_arg(ap, type)      \
-  (*((type *)((va_list)((ap) = (void *)((va_list)(ap) + __vasz(type))) \
-						    - __vasz(type))))
-#define va_end(ap)
+#define	va_start(ap, last) \
+	(ap = ((va_list)&(last) + __va_promote(last)))
 
-#endif /* _STDARG_H */
+#define	va_arg(ap, type) \
+	((type *)(ap += sizeof(type) < sizeof(int) ? \
+		(exit(0), 0) : sizeof(type)))[-1]
+
+#define	va_end(ap)
+
+#endif /* !_STDARG_H_ */

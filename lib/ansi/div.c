@@ -2,7 +2,6 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: div.c,v 1.3 90/03/05 13:47:53 eck Exp $ */
 
 #include	<stdlib.h>
 

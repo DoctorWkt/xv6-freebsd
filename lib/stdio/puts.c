@@ -1,7 +1,6 @@
 /*
  * puts.c - print a string onto the standard output stream
  */
-/* $Header: puts.c,v 1.2 89/12/18 15:03:30 eck Exp $ */
 
 #include	<stdio.h>
 

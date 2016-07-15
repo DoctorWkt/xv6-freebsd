@@ -2,7 +2,6 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: strcspn.c,v 1.2 89/12/18 16:01:42 eck Exp $ */
 
 #include	<string.h>
 

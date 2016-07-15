@@ -1,7 +1,6 @@
 /*
  * fprintf - write output on a stream
  */
-/* $Header: fprintf.c,v 1.3 89/12/18 15:01:54 eck Exp $ */
 
 #include	<stdio.h>
 #if 0

@@ -1,7 +1,6 @@
 /*
  * fread.c - read a number of members into an array
  */
-/* $Header: fread.c,v 1.2 89/12/18 15:02:09 eck Exp $ */
 
 #include	<stdio.h>
 

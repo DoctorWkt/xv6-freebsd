@@ -1,7 +1,6 @@
 /*
  * fopen.c - open a stream
  */
-/* $Header: fopen.c,v 1.8 91/02/22 16:29:46 ceriel Exp $ */
 
 #if	defined(_POSIX_SOURCE)
 #include	<sys/types.h>

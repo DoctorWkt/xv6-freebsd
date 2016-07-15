@@ -1,7 +1,6 @@
 /*
  * data.c - this is the initialization for the standard streams
  */
-/* $Header: data.c,v 1.3 90/04/09 15:35:09 eck Exp $ */
 
 #include	<stdio.h>
 

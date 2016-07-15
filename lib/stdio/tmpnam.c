@@ -1,14 +1,13 @@
 /*
  * tmpnam.c - create a unique filename
  */
-/* $Header: tmpnam.c,v 1.4 91/02/26 09:28:39 ceriel Exp $ */
 
 #include	<sys/types.h>
 #include	<stdio.h>
 #include	<string.h>
 #include	"loc_incl.h"
 
-pid_t _getpid(void);
+pid_t getpid(void);
 
 char *
 tmpnam(char *s) {
@@ -18,7 +17,7 @@ tmpnam(char *s) {
 
 	if (!name) { 
 		name = name_buffer + strlen(name_buffer);
-		name = _i_compute((unsigned long)_getpid(), 10, name, 5);
+		name = _i_compute((unsigned long)getpid(), 10, name, 5);
 		*name++ = '.';
 		*name = '\0';
 	}

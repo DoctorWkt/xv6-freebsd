@@ -1,0 +1,30 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@ * @;
+
+
+1.1
+date	2016.07.14.06.24.36;	author wkt;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#include <time.h>
+
+/* xv6 has no time concept! */
+time_t time(time_t *_timeptr)
+{
+  return(0);
+}
+@

@@ -1,7 +1,6 @@
 /*
  * fwrite.c - write a number of array elements on a file
  */
-/* $Header: fwrite.c,v 1.3 89/12/18 15:02:39 eck Exp $ */
 
 #include	<stdio.h>
 

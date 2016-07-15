@@ -2,7 +2,6 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: exit.c,v 1.3 90/01/22 13:00:04 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdlib.h>
@@ -12,7 +11,7 @@
 void (*__functab[NEXITS])(void);
 int __funccnt = 0;
 
-extern void _exit(int);
+extern void _Exit(int);
 
 /* only flush output buffers when necessary */
 int (*_clean)(void) = NULL;
@@ -32,5 +31,5 @@ exit(int status)
 {
 	_calls();
 	if (_clean) _clean();
-	_exit(status) ;
+	_Exit(status) ;
 }

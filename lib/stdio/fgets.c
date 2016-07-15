@@ -1,7 +1,6 @@
 /*
  * fgets.c - get a string from a file
  */
-/* $Header: fgets.c,v 1.3 89/12/18 15:01:11 eck Exp $ */
 
 #include	<stdio.h>
 

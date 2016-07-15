@@ -20,21 +20,9 @@
 #define SHRT_MAX       32767	/* maximum value of a short */
 #define USHRT_MAX     0xFFFF	/* maximum value of unsigned short */
 
-/* _EM_WSIZE is a compiler-generated symbol giving the word size in bytes. */
-// wkt: Not any more!
-#define _EM_WSIZE 4
-
-#if _EM_WSIZE == 2
-#define INT_MIN   (-32767-1)	/* minimum value of a 16-bit int */
-#define INT_MAX        32767	/* maximum value of a 16-bit int */
-#define UINT_MAX      0xFFFF	/* maximum value of an unsigned 16-bit int */
-#endif
-
-#if _EM_WSIZE == 4
 #define INT_MIN (-2147483647-1)	/* minimum value of a 32-bit int */
 #define INT_MAX   2147483647	/* maximum value of a 32-bit int */
 #define UINT_MAX  0xFFFFFFFF	/* maximum value of an unsigned 32-bit int */
-#endif
 
 /*Definitions about longs (32 bits in MINIX). */
 #define LONG_MIN (-2147483647L-1)/* minimum value of a long */
@@ -62,11 +50,7 @@
 #define _NO_LIMIT        100	/* arbitrary number; limit not enforced */
 
 #define NGROUPS_MAX        0	/* supplemental group IDs not available */
-#if _EM_WSIZE > 2
-#define ARG_MAX        16384	/* # bytes of args + environ for exec() */
-#else
 #define ARG_MAX         4096	/* args + environ on small machines */
-#endif
 #define CHILD_MAX  _NO_LIMIT    /* MINIX does not limit children */
 #define OPEN_MAX          20	/* # open files a process may have */
 #define LINK_MAX         127	/* # links a file may have */

@@ -1,7 +1,6 @@
 /*
  * gets.c - read a line from a stream
  */
-/* $Header: gets.c,v 1.2 89/12/18 15:03:00 eck Exp $ */
 
 #include	<stdio.h>
 

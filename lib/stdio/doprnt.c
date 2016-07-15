@@ -1,10 +1,10 @@
 /*
  * doprnt.c - print formatted output
  */
-/* $Header: doprnt.c,v 1.8 91/06/10 17:06:53 ceriel Exp $ */
 
 #include	<ctype.h>
 #include	<stdio.h>
+#include      <stdlib.h>
 #include	<stdarg.h>
 #include	<string.h>
 #include	"loc_incl.h"

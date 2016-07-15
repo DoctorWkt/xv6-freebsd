@@ -1,7 +1,6 @@
 /*
  * localtime - convert a calendar time into broken down time
  */
-/* $Header: localtime.c,v 1.3 91/04/22 13:20:36 ceriel Exp $ */
 
 #include	<time.h>
 #include	"loc_time.h"
