@@ -1,7 +1,6 @@
 /*
  * asctime - print a date
  */
-/* $Header: asctime.c,v 1.3 91/04/22 13:20:15 ceriel Exp $ */
 
 #include	<string.h>
 #include	<time.h>

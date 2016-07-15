@@ -1,7 +1,6 @@
 /*
  * sscanf - read formatted output from a string
  */
-/* $Header: sscanf.c,v 1.3 90/09/26 13:17:39 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdarg.h>

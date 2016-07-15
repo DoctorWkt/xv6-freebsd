@@ -1,7 +1,6 @@
 /*
  * icompute.c - compute an integer
  */
-/* $Header: icompute.c,v 1.1 89/12/18 14:59:38 eck Exp $ */
 
 #include	"loc_incl.h"
 

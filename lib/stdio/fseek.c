@@ -1,7 +1,6 @@
 /*
  * fseek.c - perform an fseek
  */
-/* $Header: fseek.c,v 1.4 90/01/22 11:12:00 eck Exp $ */
 
 #include	<sys/types.h>
 #include	<stdio.h>

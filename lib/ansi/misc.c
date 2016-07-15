@@ -1,7 +1,6 @@
 /*
  * misc - data and miscellaneous routines
  */
-/* $Header: misc.c,v 1.11 91/04/22 13:20:45 ceriel Exp $ */
 
 #include	<ctype.h>
 #include	<time.h>

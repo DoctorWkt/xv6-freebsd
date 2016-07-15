@@ -1,4 +1,3 @@
-/* $Header: atexit.c,v 1.1 89/12/18 15:11:09 eck Exp $ */
 
 #include	<stdlib.h>
 

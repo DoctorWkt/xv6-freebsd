@@ -1,7 +1,6 @@
 /*
  * setbuf.c - control buffering of a stream
  */
-/* $Header: setbuf.c,v 1.2 89/06/26 10:36:22 eck Exp $ */
 
 #include	<stdio.h>
 #include	"loc_incl.h"

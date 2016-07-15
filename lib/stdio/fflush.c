@@ -1,7 +1,6 @@
 /*
  * fflush.c - flush stream(s)
  */
-/* $Header: fflush.c,v 1.6 90/04/04 15:52:01 eck Exp $ */
 
 #include	<sys/types.h>
 #include	<stdio.h>

@@ -1,0 +1,31 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@ * @;
+
+
+1.1
+date	2016.07.14.05.50.27;	author wkt;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#include <unistd.h>
+#include <sys/types.h>
+
+/* Every user is root in xv6 */
+uid_t getuid(void) { return(0); }
+uid_t geteuid(void) { return(0); }
+gid_t getgid(void) { return(0); }
+gid_t getegid(void) { return(0); }
+@

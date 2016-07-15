@@ -1,7 +1,6 @@
 /*
  * mktime - convert local time into calendar time
  */
-/* $Header: mktime.c,v 1.5 91/04/22 13:20:54 ceriel Exp $ */
 
 /* Michael A. Temari <temari@ix.netcom.com>   03/01/96    */
 /*   -  fixed bug is structure fixup code                 */

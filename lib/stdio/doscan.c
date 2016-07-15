@@ -1,7 +1,6 @@
 /*
  * doscan.c - scan formatted input
  */
-/* $Header: doscan.c,v 1.9 91/03/26 18:41:47 ceriel Exp $ */
 
 #include	<stdio.h>
 #include	<stdlib.h>

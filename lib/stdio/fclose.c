@@ -1,13 +1,12 @@
 /*
  * fclose.c - flush a stream and close the file
  */
-/* $Header: fclose.c,v 1.4 90/01/22 11:10:54 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdlib.h>
+#include	<unistd.h>
 #include	"loc_incl.h"
 
-int _close(int d);
 
 int
 fclose(FILE *fp)
@@ -22,7 +21,7 @@ fclose(FILE *fp)
 	if (i >= FOPEN_MAX)
 		return EOF;
 	if (fflush(fp)) retval = EOF;
-	if (_close(fileno(fp))) retval = EOF;
+	if (close(fileno(fp))) retval = EOF;
 	if ( io_testflag(fp,_IOMYBUF) && fp->_buf )
 		free((void *)fp->_buf);
 	if (fp != stdin && fp != stdout && fp != stderr)

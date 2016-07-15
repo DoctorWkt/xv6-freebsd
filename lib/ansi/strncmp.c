@@ -2,7 +2,7 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Id: strncmp.c,v 1.4 1994/06/24 11:57:04 ceriel Exp $ */
+/* $Id: strncmp.c,v 1.1 2016/07/13 23:41:12 wkt Exp $ */
 
 #include	<string.h>
 

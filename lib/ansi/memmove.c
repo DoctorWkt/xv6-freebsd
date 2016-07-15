@@ -2,7 +2,6 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: memmove.c,v 1.3 90/08/28 13:52:42 eck Exp $ */
 
 #include	<string.h>
 

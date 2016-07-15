@@ -1,7 +1,6 @@
 /*
  * gmtime - convert the calendar time into broken down time
  */
-/* $Header: gmtime.c,v 1.4 91/04/22 13:20:27 ceriel Exp $ */
 
 #include	<time.h>
 #include	<limits.h>

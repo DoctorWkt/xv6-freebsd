@@ -10,8 +10,8 @@ ulib.a: $(ULIB)
 libc.a: ulib.a
 	$(MAKE) -C ansi all
 	$(MAKE) -C stdio all
-	$(MAKE) -C other all
-	$(AR) vr libc.a ansi/*.o stdio/*.o other/*.o usys.o
+	$(MAKE) -C xv6 all
+	$(AR) vr libc.a ansi/*.o stdio/*.o xv6/*.o
 	$(RANLIB) libc.a
 
 clean:

@@ -1,7 +1,6 @@
 /*
  * vfprintf - formatted output without ellipsis
  */
-/* $Header: vfprintf.c,v 1.2 89/12/18 15:04:07 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdarg.h>

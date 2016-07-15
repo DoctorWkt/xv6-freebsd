@@ -1,7 +1,6 @@
 /*
  * fillbuf.c - fill a buffer
  */
-/* $Header: fillbuf.c,v 1.5 90/06/21 11:13:23 eck Exp $ */
 
 #if	defined(_POSIX_SOURCE)
 #include	<sys/types.h>

@@ -1,0 +1,46 @@
+Introduction
+------------
+xv is a minimalist Unix-like operating system, inspired by 6th Edition Unix
+and the Lions Commentary on 6th Edition Unix. xv6's purpose is to teach
+students about the workings of an operating system.
+Website: https://pdos.csail.mit.edu/6.828/2014/xv6.html
+
+xv is purposefully pared down from a real Unix-like system.
+It only has these system calls:
+
+chdir	 close	dup	exec	exit	fork	fstat	getpid	kill
+link	lseek	mkdir	mknod	open	pipe	read	sbrk	sleep
+unlink	uptime	wait	write
+
+Among the many things missing from xv6 are:
+ - no users, every user is effectively root
+ - no file permissions
+ - no signals, job control, networking
+
+Project Aim
+-----------
+The aim of this project is to give xv6 as much of a Unix library and run-time
+environment as possible without altering the kernel source code. Examples:
+ - add in ANSI C functions: strings, memory functions, malloc etc.
+ - add in a Stdio library: fopen, fclose, printf etc.
+ - regexps
+ - simulate some syscalls calls with exiting syscalls, or write dummy
+   syscalls
+ - port existing programs to provide a run-time environment
+
+So far I (Warren Toomey) have taken much of the Minix 2.0 header files,
+library code and a few commands and made them compile on the system.
+
+To Do
+-----
+In no particular order.
+
+ - Get the xv6 kernel to compile with the Minix headers, to ensure that
+   the kernel and libraries use consistent values
+ - Modify the library code to correctly use the xv6 system calls
+ - Write missing library functionality, e.g. opendir
+ - Write dummy library functions
+ - Compile more of the Minix commands
+ - Test everything to ensure that it works
+ - Write a more functional mkfs so that a multi-level filesystem can be
+   built, one that has /etc, /bin and friends

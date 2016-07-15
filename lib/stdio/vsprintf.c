@@ -1,7 +1,6 @@
 /*
  * vsprintf - print formatted output without ellipsis on an array
  */
-/* $Header: vsprintf.c,v 1.2 90/11/13 10:56:53 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdarg.h>

@@ -1,7 +1,6 @@
 /*
  * sprintf - print formatted output on an array
  */
-/* $Header: sprintf.c,v 1.2 89/12/18 15:03:52 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdarg.h>

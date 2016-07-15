@@ -134,10 +134,20 @@ _PROTOTYPE( int __flushbuf, (int _c, FILE *_stream)			);
 #define	ferror(p)	(((p)->_flags & _IOERR) != 0)
 #define clearerr(p)     ((p)->_flags &= ~(_IOERR|_IOEOF))
 
+#ifdef _POSIX_SOURCE
 _PROTOTYPE( int fileno, (FILE *_stream)					);
 _PROTOTYPE (FILE *fdopen, (int _fildes, const char *_types) );
 #define	fileno(stream)		((stream)->_fd)
 #define L_ctermid 255	/* required by POSIX */
 #define L_cuserid 255	/* required by POSIX */
+#endif
+
+#ifdef _MINIX
+_PROTOTYPE(FILE *popen, (const char *_command, const char *_type));
+_PROTOTYPE(int pclose, (FILE *_stream));
+_PROTOTYPE(int snprintf, (char *_s, size_t _n, const char *_format, ...));
+_PROTOTYPE(int vsnprintf, (char *_s, size_t _n, const char *_format,
+							char *_arg)	);
+#endif
 
 #endif /* _STDIO_H */

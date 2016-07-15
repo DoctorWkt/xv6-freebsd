@@ -1,7 +1,6 @@
 /*
  * ungetc.c - push a character back onto an input stream
  */
-/* $Header: ungetc.c,v 1.3 90/03/28 16:33:05 eck Exp $ */
 
 #include	<stdio.h>
 #include	"loc_incl.h"

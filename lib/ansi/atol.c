@@ -2,7 +2,6 @@
  * (c) copyright 1987 by the Vrije Universiteit, Amsterdam, The Netherlands.
  * See the copyright notice in the ACK home directory, in the file "Copyright".
  */
-/* $Header: atol.c,v 1.3 90/05/22 10:48:12 ceriel Exp $ */
 
 #include	<ctype.h>
 #include	<stdlib.h>

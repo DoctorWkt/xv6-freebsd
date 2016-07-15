@@ -1,7 +1,6 @@
 /*
  * fscanf.c - read formatted input from stream
  */
-/* $Header: fscanf.c,v 1.1 89/05/30 13:29:17 eck Exp $ */
 
 #include	<stdio.h>
 #include	<stdarg.h>

@@ -1,4 +1,3 @@
-/* $Header: ecvt.c,v 1.4 90/02/27 16:47:28 eck Exp $ */
 
 #ifndef NOFLOAT
 
