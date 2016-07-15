@@ -8,7 +8,7 @@ Website: https://pdos.csail.mit.edu/6.828/2014/xv6.html
 xv is purposefully pared down from a real Unix-like system.
 It only has these system calls:
 
-chdir	 close	dup	exec	exit	fork	fstat	getpid	kill
+chdir	close	dup	exec	exit	fork	fstat	getpid	kill
 link	lseek	mkdir	mknod	open	pipe	read	sbrk	sleep
 unlink	uptime	wait	write
 
@@ -24,8 +24,8 @@ environment as possible without altering the kernel source code. Examples:
  - add in ANSI C functions: strings, memory functions, malloc etc.
  - add in a Stdio library: fopen, fclose, printf etc.
  - regexps
- - simulate some syscalls calls with exiting syscalls, or write dummy
-   syscalls
+ - simulate some syscalls calls with existing syscalls,
+   or write dummy syscalls
  - port existing programs to provide a run-time environment
 
 So far I (Warren Toomey) have taken much of the Minix 2.0 header files,
