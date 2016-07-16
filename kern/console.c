@@ -316,6 +316,7 @@ consoleinit(void)
 
   devsw[CONSOLE].write = consolewrite;
   devsw[CONSOLE].read = consoleread;
+  devsw[CONSOLE].ioctl = consoleioctl;
   cons.termios.c_lflag = ECHO | ICANON;
   cons.locking = 1;
 
