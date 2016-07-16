@@ -114,7 +114,7 @@ char *argv[];
 	printf(" total\n");
   }
   fflush(stdout);
-  return(0);
+  exit(0);
 }
 
 void count(f)

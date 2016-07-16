@@ -1146,7 +1146,7 @@ char **argv;
 	}
 	printf("?\n");
   }
-  return(0);
+  exit(0);
 }
 
 /*	egets.c	*/

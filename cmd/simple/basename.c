@@ -72,5 +72,5 @@ char *argv[];
 
   /* Print the resultant string. */
   printf("%s\n", result_string);
-  return(0);
+  exit(0);
 }

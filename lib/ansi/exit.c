@@ -11,7 +11,7 @@
 void (*__functab[NEXITS])(void);
 int __funccnt = 0;
 
-extern void _Exit(int);
+extern void _Exit();
 
 /* only flush output buffers when necessary */
 int (*_clean)(void) = NULL;
@@ -19,7 +19,7 @@ int (*_clean)(void) = NULL;
 static void
 _calls(void)
 {
-	register int i = __funccnt;
+	int i = __funccnt;
 	
 	/* "Called in reversed order of their registration" */
 	while (--i >= 0)
@@ -31,5 +31,5 @@ exit(int status)
 {
 	_calls();
 	if (_clean) _clean();
-	_Exit(status) ;
+	_Exit();
 }

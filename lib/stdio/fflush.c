@@ -68,7 +68,7 @@ fflush(FILE *stream)
 void
 __cleanup(void)
 {
-	register int i;
+	int i;
 
 	for(i= 0; i < FOPEN_MAX; i++)
 		if (__iotab[i] && io_testflag(__iotab[i], _IOWRITING))

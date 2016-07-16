@@ -54,7 +54,7 @@ char *argv[];
 		fclose(f);
 	}
 
-  return(0);
+  exit(0);
 }
 
 

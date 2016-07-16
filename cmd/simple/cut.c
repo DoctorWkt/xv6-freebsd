@@ -306,5 +306,5 @@ char *argv[];
 	cut();
   }
 
-  return(exit_status);
+  exit(exit_status);
 }

@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 int error;
@@ -113,7 +114,7 @@ char *argv[];
 	crc(0, (char *) 0);
   else
 	for (argv++; argc--; argv++) crc(open(*argv, O_RDONLY), *argv);
-  return(error);
+  exit(error);
 }
 
 /* Compute crc and size of input file descriptor. */
