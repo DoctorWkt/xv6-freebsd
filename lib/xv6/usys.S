@@ -7,6 +7,12 @@ _Exit:
     int $T_SYSCALL;
     ret
 
+.globl _Fstat;
+_Fstat:
+    movl $SYS_fstat, %eax;
+    int $T_SYSCALL;
+    ret
+
 #define SYSCALL(name) \
   .globl name; \
   name: \
@@ -25,7 +31,6 @@ SYSCALL(exec)
 SYSCALL(open)
 SYSCALL(mknod)
 SYSCALL(unlink)
-SYSCALL(fstat)
 SYSCALL(link)
 SYSCALL(mkdir)
 SYSCALL(chdir)
