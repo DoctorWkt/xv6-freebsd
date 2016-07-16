@@ -52,7 +52,7 @@
 #define NGROUPS_MAX        0	/* supplemental group IDs not available */
 #define ARG_MAX         4096	/* args + environ on small machines */
 #define CHILD_MAX  _NO_LIMIT    /* MINIX does not limit children */
-#define OPEN_MAX          20	/* # open files a process may have */
+#define OPEN_MAX          16	/* # open files a process may have */
 #define LINK_MAX         127	/* # links a file may have */
 #define MAX_CANON        255	/* size of the canonical input queue */
 #define MAX_INPUT        255	/* size of the type-ahead buffer */
