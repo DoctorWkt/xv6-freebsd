@@ -83,6 +83,7 @@ main(int argc, char *argv[])
   assert((BSIZE % sizeof(struct dinode)) == 0);
   assert((BSIZE % sizeof(struct dirent)) == 0);
 
+  // Open the filesystem image file
   fsfd = open(argv[1], O_RDWR|O_CREAT|O_TRUNC, 0666);
   if(fsfd < 0){
     perror(argv[1]);
@@ -90,9 +91,13 @@ main(int argc, char *argv[])
   }
 
   // 1 fs block = 1 disk sector
+  // Number of meta blocks: boot block, superblock, log blocks,
+  // i-node blocks and the free bitmap blocks
   nmeta = 2 + nlog + ninodeblocks + nbitmap;
+  // Now work out how many free blocks are left
   nblocks = FSSIZE - nmeta;
 
+  // Set up the superblock
   sb.size = xint(FSSIZE);
   sb.nblocks = xint(nblocks);
   sb.ninodes = xint(NINODES);
@@ -104,31 +109,42 @@ main(int argc, char *argv[])
   printf("nmeta %d (boot, super, log blocks %u inode blocks %u, bitmap blocks %u) blocks %d total %d\n",
          nmeta, nlog, ninodeblocks, nbitmap, nblocks, FSSIZE);
 
-  freeblock = nmeta;     // the first free block that we can allocate
+  freeblock = nmeta;     // The first free block that we can allocate
 
+  // Fill the filesystem with zero'ed blocks
   for(i = 0; i < FSSIZE; i++)
     wsect(i, zeroes);
 
+  // Copy the superblock struct into a zero'ed buf
+  // and write it out as block 1
   memset(buf, 0, sizeof(buf));
   memmove(buf, &sb, sizeof(sb));
   wsect(1, buf);
 
+  // Grab an i-node for the root directory
   rootino = ialloc(T_DIR);
   assert(rootino == ROOTINO);
 
+  // Set up the directory entry for . and add it to the root dir
+  // So why did they use bzero() here and memset() above?!
   bzero(&de, sizeof(de));
   de.inum = xshort(rootino);
   strcpy(de.name, ".");
   iappend(rootino, &de, sizeof(de));
 
+  // Set up the directory entry for .. and add it to the root dir
   bzero(&de, sizeof(de));
   de.inum = xshort(rootino);
   strcpy(de.name, "..");
   iappend(rootino, &de, sizeof(de));
 
+  // Process the command-line arguments: files to add to the root dir
   for(i = 2; i < argc; i++){
+
+    // Ensure that each argument doesn't have a '/' in it
     assert(index(argv[i], '/') == 0);
 
+    // Open the file up
     if((fd = open(argv[i], 0)) < 0){
       perror(argv[i]);
       exit(1);
@@ -141,26 +157,30 @@ main(int argc, char *argv[])
     if(argv[i][0] == '_')
       ++argv[i];
 
+    // Allocate an i-node for the file
     inum = ialloc(T_FILE);
 
+    // Add the file's name to the root directory
     bzero(&de, sizeof(de));
     de.inum = xshort(inum);
     strncpy(de.name, argv[i], DIRSIZ);
     iappend(rootino, &de, sizeof(de));
 
+    // Read the file's contents in and write to the filesystem
     while((cc = read(fd, buf, sizeof(buf))) > 0)
       iappend(inum, buf, cc);
 
     close(fd);
   }
 
-  // fix size of root inode dir
+  // Fix the size of the root inode dir
   rinode(rootino, &din);
   off = xint(din.size);
   off = ((off/BSIZE) + 1) * BSIZE;
   din.size = xint(off);
   winode(rootino, &din);
 
+  // Mark the in-use blocks in the free block list
   balloc(freeblock);
 
   exit(0);
@@ -238,7 +258,7 @@ ialloc(ushort type)
   return inum;
 }
 
-// Allocate a disk block
+// Update the free block list by marking some blocks as in-use
 void
 balloc(int used)
 {
@@ -257,7 +277,7 @@ balloc(int used)
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
-// Append an i-node ??
+// Append more data to the file with i-node number inum
 void
 iappend(uint inum, void *xp, int n)
 {
