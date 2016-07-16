@@ -17,14 +17,18 @@ boot/bootblock:
 tools/mkfs:
 	$(MAKE) -C tools mkfs
 
-cmd/_cat:
+fs/cat:
 	$(MAKE) -C cmd all
 
 kern/kernel:
 	$(MAKE) -C kern kernel
 
-fs.img: tools/mkfs README cmd/_cat
-	tools/mkfs fs.img README _*
+#fs.img: tools/mkfs README cmd/_cat
+#	tools/mkfs fs.img README _*
+
+fs.img: tools/mkfs README fs/cat
+	cp README fs
+	tools/mkfs fs.img fs
 
 -include *.d
 
@@ -34,7 +38,7 @@ clean:
 	$(MAKE) -C cmd clean
 	$(MAKE) -C kern clean
 	$(MAKE) -C tools clean
-	rm -f _* *.img
+	rm -rf *.img fs/*
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)

@@ -1,14 +1,18 @@
+#include <sys/types.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <dirent.h>
 #include <assert.h>
 
+#define dirent xv6dirent
 #include "../include/xv6/types.h"
 #include "../include/xv6/fs.h"
 #include "../include/xv6/stat.h"
 #include "../include/xv6/param.h"
+#undef dirent
 
 #ifndef static_assert
 #define static_assert(a, b) do { switch (0) case 0: case (a): ; } while (0)
@@ -39,6 +43,8 @@ void rinode(uint inum, struct dinode *ip);
 void rsect(uint sec, void *buf);
 uint ialloc(ushort type);
 void iappend(uint inum, void *p, int n);
+void dappend(int dirino, char *name, int fileino);
+void add_directory(int dirino, char *localdir);
 
 // convert to intel byte order
 ushort
@@ -66,22 +72,20 @@ xint(uint x)
 int
 main(int argc, char *argv[])
 {
-  int i, cc, fd;
-  uint rootino, inum, off;
-  struct dirent de;
+  int i;
+  uint rootino, off;
   char buf[BSIZE];
   struct dinode din;
 
-
   static_assert(sizeof(int) == 4, "Integers must be 4 bytes!");
 
-  if(argc < 2){
-    fprintf(stderr, "Usage: mkfs fs.img files...\n");
+  if(argc != 3){
+    fprintf(stderr, "Usage: mkfs fs.img basedir\n");
     exit(1);
   }
 
   assert((BSIZE % sizeof(struct dinode)) == 0);
-  assert((BSIZE % sizeof(struct dirent)) == 0);
+  assert((BSIZE % sizeof(struct xv6dirent)) == 0);
 
   // Open the filesystem image file
   fsfd = open(argv[1], O_RDWR|O_CREAT|O_TRUNC, 0666);
@@ -126,52 +130,12 @@ main(int argc, char *argv[])
   assert(rootino == ROOTINO);
 
   // Set up the directory entry for . and add it to the root dir
-  // So why did they use bzero() here and memset() above?!
-  bzero(&de, sizeof(de));
-  de.inum = xshort(rootino);
-  strcpy(de.name, ".");
-  iappend(rootino, &de, sizeof(de));
-
   // Set up the directory entry for .. and add it to the root dir
-  bzero(&de, sizeof(de));
-  de.inum = xshort(rootino);
-  strcpy(de.name, "..");
-  iappend(rootino, &de, sizeof(de));
+  dappend(rootino, ".", rootino);
+  dappend(rootino, "..", rootino);
 
-  // Process the command-line arguments: files to add to the root dir
-  for(i = 2; i < argc; i++){
-
-    // Ensure that each argument doesn't have a '/' in it
-    assert(index(argv[i], '/') == 0);
-
-    // Open the file up
-    if((fd = open(argv[i], 0)) < 0){
-      perror(argv[i]);
-      exit(1);
-    }
-    
-    // Skip leading _ in name when writing to file system.
-    // The binaries are named _rm, _cat, etc. to keep the
-    // build operating system from trying to execute them
-    // in place of system binaries like rm and cat.
-    if(argv[i][0] == '_')
-      ++argv[i];
-
-    // Allocate an i-node for the file
-    inum = ialloc(T_FILE);
-
-    // Add the file's name to the root directory
-    bzero(&de, sizeof(de));
-    de.inum = xshort(inum);
-    strncpy(de.name, argv[i], DIRSIZ);
-    iappend(rootino, &de, sizeof(de));
-
-    // Read the file's contents in and write to the filesystem
-    while((cc = read(fd, buf, sizeof(buf))) > 0)
-      iappend(inum, buf, cc);
-
-    close(fd);
-  }
+  // Add the contents of the command-line directory to the root dir
+  add_directory(rootino, argv[2]);
 
   // Fix the size of the root inode dir
   rinode(rootino, &din);
@@ -320,4 +284,68 @@ iappend(uint inum, void *xp, int n)
   }
   din.size = xint(off);
   winode(inum, &din);
+}
+
+// Add the given filename and i-number as a directory entry 
+void dappend(int dirino, char *name, int fileino)
+{
+  struct xv6dirent de;
+
+  bzero(&de, sizeof(de));
+  de.inum = xshort(fileino);
+  strncpy(de.name, name, DIRSIZ);
+  iappend(dirino, &de, sizeof(de));
+}
+
+// Add a file to the directory with given i-num
+void fappend(int dirino, char *filename)
+{
+    char buf[BSIZE];
+    int cc, fd, inum;
+
+    // Open the file up
+    if((fd = open(filename, 0)) < 0){
+      perror(filename);
+      exit(1);
+    }
+
+    // Allocate an i-node for the file
+    inum = ialloc(T_FILE);
+
+    // Add the file's name to the root directory
+    dappend(dirino, filename, inum);
+
+    // Read the file's contents in and write to the filesystem
+    while((cc = read(fd, buf, sizeof(buf))) > 0)
+      iappend(inum, buf, cc);
+
+    close(fd);
+}
+
+// Given a local directory name and a directory i-node number
+// on the image, add all the files from the local directory
+// to the on-image directory
+void add_directory(int dirino, char *localdir)
+{
+  DIR *D;
+  struct dirent *dent;
+
+  D= opendir(localdir);
+  if (D==NULL) {
+    perror(localdir);
+    exit(1);
+  }
+  chdir(localdir);
+
+  while ((dent=readdir(D))!=NULL) {
+
+    // Skip . and ..
+    if (!strcmp(dent->d_name, ".")) continue;
+    if (!strcmp(dent->d_name, "..")) continue;
+
+    // XXX: All entries are assumed to be files for now
+    fappend(dirino, dent->d_name);
+  }
+
+  closedir(D);
 }
