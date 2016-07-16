@@ -62,12 +62,12 @@ _PROTOTYPE( void qsort, (void *_base, size_t _nmemb, size_t _size,
 	int (*compar) (const void *, const void *))			);
 _PROTOTYPE( unsigned long int strtoul,
 			(const char *_nptr, char **_endptr, int _base)	);
-
-#ifdef _MINIX
-_PROTOTYPE( int putenv, (const char *_name)				);
 _PROTOTYPE(int getopt, (int _argc, char **_argv, char *_opts));
 extern char *optarg;
 extern int optind, opterr, optopt;
+
+#ifdef _MINIX
+_PROTOTYPE( int putenv, (const char *_name)				);
 #endif /* _MINIX */
 
 #endif /* STDLIB_H */
