@@ -9,7 +9,7 @@
 #define DIRSIZ	14
 #endif
 
-struct direct {
+struct dirent {
   ino_t d_ino;
   char d_name[DIRSIZ];
 };
