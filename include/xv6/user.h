@@ -1,4 +1,4 @@
-struct stat;
+struct xv6stat;
 struct rtcdate;
 
 // system calls
@@ -14,7 +14,7 @@ int exec(char*, char**);
 int open(char*, int);
 int mknod(char*, short, short);
 int unlink(char*);
-int fstat(int fd, struct stat*);
+int fstat(int fd, struct xv6stat*);
 int link(char*, char*);
 int mkdir(char*);
 int chdir(char*);
@@ -25,7 +25,7 @@ int sleep(int);
 int uptime(void);
 
 // ulib.c
-int stat(char*, struct stat*);
+int stat(char*, struct xv6stat*);
 char* strcpy(char*, char*);
 void *memmove(void*, void*, int);
 char* strchr(const char*, char c);

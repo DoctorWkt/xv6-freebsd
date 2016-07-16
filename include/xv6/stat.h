@@ -2,7 +2,7 @@
 #define T_FILE 0100000   // File
 #define T_DEV  0020000   // Device
 
-struct stat {
+struct xv6stat {
   int type;    // Type of file
   int dev;     // File system's disk device
   uint ino;    // Inode number

@@ -104,7 +104,7 @@ int
 sys_fstat(void)
 {
   struct file *f;
-  struct stat *st;
+  struct xv6stat *st;
   
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
     return -1;

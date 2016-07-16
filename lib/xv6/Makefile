@@ -7,7 +7,7 @@ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 &
 
 all: chown.o chmod.o creat.o stat.o getuid.o umask.o mkfifo.o \
         time.o utime.o rename.o rmdir.o usys.o oldmalloc.o oldprintf.o \
-	tcgetattr.o opendir.o
+	tcgetattr.o opendir.o fstat.o
 
 clean:
 	rm -f *.o

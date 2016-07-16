@@ -6,7 +6,7 @@ struct pipe;
 struct proc;
 struct rtcdate;
 struct spinlock;
-struct stat;
+struct xv6stat;
 struct superblock;
 
 // bio.c
@@ -30,7 +30,7 @@ void            fileclose(struct file*);
 struct file*    filedup(struct file*);
 void            fileinit(void);
 int             fileread(struct file*, char*, int n);
-int             filestat(struct file*, struct stat*);
+int             filestat(struct file*, struct xv6stat*);
 int             filewrite(struct file*, char*, int n);
 
 // fs.c
@@ -49,7 +49,7 @@ int             namecmp(const char*, const char*);
 struct inode*   namei(char*);
 struct inode*   nameiparent(char*, char*);
 int             readi(struct inode*, char*, uint, uint);
-void            stati(struct inode*, struct stat*);
+void            stati(struct inode*, struct xv6stat*);
 int             writei(struct inode*, char*, uint, uint);
 
 // ide.c
