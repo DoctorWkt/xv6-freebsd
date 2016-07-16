@@ -1,3 +1,6 @@
+#include <termios.h>
+
+#if 0
 #ifndef _UCC_TERMIOS_H
 #define _UCC_TERMIOS_H
 
@@ -24,4 +27,5 @@ int tcsetattr(int, int, const struct termios *);
 /* tcsetattr uses these */
 #define	TCSANOW		0
 
+#endif
 #endif
