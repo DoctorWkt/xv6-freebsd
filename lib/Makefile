@@ -3,11 +3,12 @@ include $(TOP_SRCDIR)/Makefile.common
 
 ULIB = ulib.o usys.o printf.o umalloc.o libc.a
 
-ulib.a: $(ULIB)
-	$(AR) vr ulib.a ulib.o usys.o printf.o umalloc.o
-	$(RANLIB) ulib.a
+all: ulib.a libc.a
 
-libc.a: ulib.a
+ulib.a:
+	$(MAKE) -C ulib all
+
+libc.a:
 	$(MAKE) -C ansi all
 	$(MAKE) -C stdio all
 	$(MAKE) -C xv6 all
@@ -15,4 +16,8 @@ libc.a: ulib.a
 	$(RANLIB) libc.a
 
 clean:
+	$(MAKE) -C ansi clean
+	$(MAKE) -C stdio clean
+	$(MAKE) -C ulib clean
+	$(MAKE) -C xv6 clean
 	rm -f *.d *.o */*.o ulib.a libc.a
