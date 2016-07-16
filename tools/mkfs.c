@@ -5,7 +5,6 @@
 #include <fcntl.h>
 #include <assert.h>
 
-#define stat xv6_stat  // avoid clash with host struct stat
 #include "../include/xv6/types.h"
 #include "../include/xv6/fs.h"
 #include "../include/xv6/stat.h"
@@ -167,6 +166,7 @@ main(int argc, char *argv[])
   exit(0);
 }
 
+// Write a sector to the image
 void
 wsect(uint sec, void *buf)
 {
@@ -180,6 +180,7 @@ wsect(uint sec, void *buf)
   }
 }
 
+// Write an i-node to the image
 void
 winode(uint inum, struct dinode *ip)
 {
@@ -194,6 +195,7 @@ winode(uint inum, struct dinode *ip)
   wsect(bn, buf);
 }
 
+// Read an i-node from the image
 void
 rinode(uint inum, struct dinode *ip)
 {
@@ -207,6 +209,7 @@ rinode(uint inum, struct dinode *ip)
   *ip = *dip;
 }
 
+// Read a sector from the image
 void
 rsect(uint sec, void *buf)
 {
@@ -220,6 +223,7 @@ rsect(uint sec, void *buf)
   }
 }
 
+// Allocate an i-node
 uint
 ialloc(ushort type)
 {
@@ -234,6 +238,7 @@ ialloc(ushort type)
   return inum;
 }
 
+// Allocate a disk block
 void
 balloc(int used)
 {
@@ -252,6 +257,7 @@ balloc(int used)
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
+// Append an i-node ??
 void
 iappend(uint inum, void *xp, int n)
 {

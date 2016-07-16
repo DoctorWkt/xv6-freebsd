@@ -26,7 +26,7 @@ void
 ls(char *path)
 {
   char buf[512], *p;
-  int fd;
+  int fd, type;
   struct dirent de;
   struct xv6stat st;
   
@@ -43,7 +43,8 @@ ls(char *path)
   
   switch(st.type){
   case T_FILE:
-    printf(1, "%s %d %d %d\n", fmtname(path), st.type, st.ino, st.size);
+    type= st.type & 0xffff;	// stop the msb being interpreted as -ve
+    printf(1, "%s %o %d %d\n", fmtname(path), type, st.ino, st.size);
     break;
   
   case T_DIR:
@@ -63,7 +64,8 @@ ls(char *path)
         printf(1, "ls: cannot stat %s\n", buf);
         continue;
       }
-      printf(1, "%s %d %d %d\n", fmtname(buf), st.type, st.ino, st.size);
+      type= st.type & 0xffff;	// stop the msb being interpreted as -ve
+      printf(1, "%s %o %d %d\n", fmtname(buf), type, st.ino, st.size);
     }
     break;
   }
