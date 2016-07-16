@@ -17,6 +17,8 @@ DIR *opendir(const char *dirname)
   int fd;
   DIR *dirp;
 
+  // TODO: Add in a stat() to ensure that we are opening a directory
+
   if (dirname==NULL) return(NULL);
   fd= open(dirname, O_RDONLY);
   if (fd==-1) return(NULL);
