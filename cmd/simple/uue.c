@@ -118,7 +118,7 @@ char *argv[];
   encode();
   fprintf(outp, "end\n");
   fclose(outp);
-  return(0);
+  exit(0);
 }
 
 /* Create ASCII table so a mailer can screw it up and the decode

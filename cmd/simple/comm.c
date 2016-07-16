@@ -72,7 +72,7 @@ char *argv[];
   eopen(argv[1], &files[0]);
   eopen(argv[2], &files[1]);
   comm();
-  return(0);
+  exit(0);
 }
 
 void usage()

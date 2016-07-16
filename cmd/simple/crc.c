@@ -37,7 +37,7 @@ char **argv;
 		argv++;
 		argc--;
 	} while (argc > 1);
-  return(errs != 0);
+  exit(errs != 0);
 }
 
 /* Crctab calculated by Mark G. Mendel, Network Systems Corporation */

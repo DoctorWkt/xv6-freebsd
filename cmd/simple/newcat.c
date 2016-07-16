@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	}
   }
   output(obuf, (op - obuf));
-  return(excode);
+  exit(excode);
 }
 
 static void copyout(char *file, int fd)

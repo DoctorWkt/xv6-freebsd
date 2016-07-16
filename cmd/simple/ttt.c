@@ -294,5 +294,5 @@ int main()
 #ifdef CURSES
   endwin();
 #endif
-  return(0);
+  exit(0);
 }

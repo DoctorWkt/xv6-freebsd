@@ -169,7 +169,7 @@ char *argv[];
 		exit_status &= file_status;
 	++optind;
   }
-  return(exit_status);
+  exit(exit_status);
 }
 
 

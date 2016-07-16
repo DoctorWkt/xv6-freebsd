@@ -76,7 +76,7 @@ char *argv[];
 			do3months(arg2val, arg1val);
 	}
   }
-  return(IO_SUCCESS);
+  exit(IO_SUCCESS);
 }
 
 void doyear(year)
