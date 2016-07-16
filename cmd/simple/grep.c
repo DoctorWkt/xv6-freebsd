@@ -33,7 +33,7 @@
 
 /* External interfaces */
 #include <sys/types.h>
-#include <regexp.h>		/* Thanks to Henry Spencer */
+#include <regex.h>		/* Thanks to Henry Spencer */
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -371,8 +371,7 @@ static void tov8(char *v8, char *basic)
 }
 
 /* Regular expression code calls this routine to print errors. */
-
-void regerror(s)
+void regerror(const char *s)
 char *s;
 {
   rerr=s;
