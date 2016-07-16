@@ -3,43 +3,42 @@ include $(TOP_SRCDIR)/Makefile.common
 CFLAGS = -fno-builtin -Wall -m32 -Werror -nostdinc -I$(INCLDIR)
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
-# Prevent deletion of intermediate files, e.g. cat.o, after first build, so
-# that disk image changes after first build are persistent until clean.  More
-# details:
-# http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
-.PRECIOUS: %.o
-
-UPROGS=\
-	_cat\
-	_echo\
-	_forktest\
-	_grep\
-	_init\
-	_kill\
-	_ln\
-	_ls\
-	_mkdir\
-	_rm\
-	_sh\
-	_stressfs\
-	_usertests\
-	_wc\
-	_zombie
+UPROGS= cat\
+	echo\
+	forktest\
+	grep\
+	init\
+	kill\
+	ln\
+	ls\
+	mkdir\
+	rm\
+	sh\
+	stressfs\
+	usertests\
+	wc\
+	zombie
 
 all: ../../lib/ulib.a $(UPROGS)
-	mv _* ../..
+	mv $(UPROGS) ../../fs
 
 ../../lib/ulib.a:
 	$(MAKE) -C ../../lib ulib.a
 
-_%: %.o ../../lib/ulib.a
+# Cancel the .c -> output implicit rule
+%: %.c
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
+
+%: %.o ../../lib/ulib.a
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
 
-_forktest: forktest.o ../../lib/ulib.a
+forktest: forktest.o ../../lib/ulib.a
 	# forktest has less library code linked in - needs to be small
 	# in order to be able to max out the proc table.
-	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o _forktest forktest.o ../../lib/ulib.a
+	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o forktest forktest.o ../../lib/ulib.a
 
 
 clean:
-	rm -f _* *.asm *.o *.sym *.d
+	rm -f $(UPROGS) *.asm *.o *.sym *.d
