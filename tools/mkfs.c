@@ -216,6 +216,7 @@ ialloc(ushort type)
   uint inum = freeinode++;
   struct dinode din;
 
+  assert(freeinode<NINODES);
   bzero(&din, sizeof(din));
   din.type = xshort(type);
   din.nlink = xshort(1);
@@ -284,6 +285,7 @@ iappend(uint inum, void *xp, int n)
     off += n1;
     p += n1;
   }
+  assert(freeblock<FSSIZE);
   din.size = xint(off);
   winode(inum, &din);
 }
