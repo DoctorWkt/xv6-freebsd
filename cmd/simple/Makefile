@@ -8,7 +8,7 @@ UPROGS= basename cal cksum cmp comm cp crc \
 	isatty-test odir-test open-test
 
 all: ../../lib/libc.a $(UPROGS)
-	mv $(UPROGS) ../../fs
+	mv $(UPROGS) ../../fs/bin
 
 ../../lib/libc.a:
 	$(MAKE) -C ../../lib libc.a
