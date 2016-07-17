@@ -20,7 +20,7 @@ UPROGS= cat\
 	zombie
 
 all: ../../lib/ulib.a $(UPROGS)
-	mv $(UPROGS) ../../fs
+	mv $(UPROGS) ../../fs/bin
 
 ../../lib/ulib.a:
 	$(MAKE) -C ../../lib ulib.a
