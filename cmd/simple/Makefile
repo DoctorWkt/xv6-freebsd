@@ -21,6 +21,7 @@ all: ../../lib/libc.a $(UPROGS)
 
 %: %.o ../../lib/libc.a
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
+	strip $@
 
 clean:
 	rm -f $(UPROGS) *.asm *.o *.sym *.d

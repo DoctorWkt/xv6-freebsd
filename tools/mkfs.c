@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -45,6 +46,7 @@ uint ialloc(ushort type);
 void iappend(uint inum, void *p, int n);
 void dappend(int dirino, char *name, int fileino);
 void add_directory(int dirino, char *localdir);
+int makdir(int dirino, char *newdir);
 
 // convert to intel byte order
 ushort
@@ -329,6 +331,8 @@ void add_directory(int dirino, char *localdir)
 {
   DIR *D;
   struct dirent *dent;
+  struct stat sb;
+  int newdirino;
 
   D= opendir(localdir);
   if (D==NULL) {
@@ -343,9 +347,38 @@ void add_directory(int dirino, char *localdir)
     if (!strcmp(dent->d_name, ".")) continue;
     if (!strcmp(dent->d_name, "..")) continue;
 
-    // XXX: All entries are assumed to be files for now
-    fappend(dirino, dent->d_name);
+    if (stat(dent->d_name, &sb)==-1) {
+      perror(dent->d_name);
+      exit(1);
+    }
+
+    if (S_ISDIR(sb.st_mode)) {
+      newdirino= makdir(dirino, dent->d_name);
+      add_directory(newdirino, dent->d_name);
+    }
+    if (S_ISREG(sb.st_mode)) {
+      fappend(dirino, dent->d_name);
+    }
   }
 
   closedir(D);
+  chdir("..");
+}
+
+// Make a directory entry in the directory with the given i-node number
+// and return the new directory's i-number
+int makdir(int dirino, char *newdir)
+{
+  int ino;
+
+  // Allocate the inode number for this directory
+  // and set up the . and .. entries
+  ino = ialloc(T_DIR);
+  dappend(ino, ".", ino);
+  dappend(ino, "..", dirino);
+
+  // In the parent directory, add the new directory entry
+  dappend(dirino, newdir, ino);
+
+  return(ino);
 }
