@@ -3,20 +3,20 @@ include $(TOP_SRCDIR)/Makefile.common
 CFLAGS = -fno-builtin -Wall -m32 -Werror -nostdinc -I$(INCLDIR)
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
-UPROGS= cat\
+UPROGS= oldcat\
 	echo\
 	forktest\
 	grep\
 	init\
 	kill\
 	ln\
-	ls\
+	oldls\
 	mkdir\
 	rm\
 	sh\
 	stressfs\
 	usertests\
-	wc\
+	oldwc\
 	zombie
 
 all: ../../lib/ulib.a $(UPROGS)
