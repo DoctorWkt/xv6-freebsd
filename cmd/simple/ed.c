@@ -301,12 +301,12 @@ char *boln;
 		 * beginning of the closure.  The recursion goes, at
 		 * most two levels deep. */
 
-		if (pat = pat->next) {
+		if ((pat = pat->next)) {
 			int savbtwn = between;
 			int savprnm = parnum;
 
 			while (bocl <= lin) {
-				if (rval = match(lin, pat, boln)) {
+				if ((rval = match(lin, pat, boln))) {
 					/* Success */
 					return(rval);
 				} else {
@@ -409,7 +409,7 @@ unsigned size;
   printf("Making a %d bit map (%d bytes required)\n", size, numbytes);
 #endif
 
-  if (map = (unsigned *) malloc(numbytes + sizeof(unsigned))) {
+  if ((map = (unsigned *) malloc(numbytes + sizeof(unsigned)))) {
 	*map = size;
 	memset(map + 1, 0, numbytes);
   }
@@ -1125,7 +1125,7 @@ char **argv;
 		continue;
 	}
 	inptr = inlin;
-	if (getlst() >= 0)
+	if (getlst() >= 0) {
 		if ((stat = ckglob()) != 0) {
 			if (stat >= 0 && (stat = doglob()) >= 0) {
 				curln = stat;
@@ -1137,6 +1137,7 @@ char **argv;
 				continue;
 			}
 		}
+	}
 	if (stat == EOF) {
 		exit(0);
 	}
@@ -1654,7 +1655,7 @@ int delim;
 			arg++;
 		}
 
-		if (ntok->bitmap = makebitmap(CLS_SIZE))
+		if ((ntok->bitmap = makebitmap(CLS_SIZE)))
 			arg = dodash(CCLEND, arg, ntok->bitmap);
 		else {
 			fprintf(stderr, "Not enough memory for pat\n");
@@ -2016,13 +2017,13 @@ struct tbl {
   int t_val;
 } *t, tbl[] = {
 
-  "number", &nflg, TRUE,
-  "nonumber", &nflg, FALSE,
-  "list", &lflg, TRUE,
-  "nolist", &lflg, FALSE,
-  "eightbit", &eightbit, TRUE,
-  "noeightbit", &eightbit, FALSE,
-  0
+  { "number", &nflg, TRUE },
+  { "nonumber", &nflg, FALSE },
+  { "list", &lflg, TRUE },
+  { "nolist", &lflg, FALSE },
+  { "eightbit", &eightbit, TRUE },
+  { "noeightbit", &eightbit, FALSE },
+  { NULL, NULL, 0 }
 };
 
 int set()
@@ -2144,6 +2145,8 @@ int gflg, pflag;
 int System(c)
 char *c;
 {
+// Until the xv6 shell has the -c flag, this is commented out
+#if 0
   int pid, status;
 
   switch (pid = fork()) {
@@ -2156,6 +2159,9 @@ char *c;
       default:	while (wait(&status) != pid);
 }
   return status;
+#else
+  return(-1);
+#endif
 }
 
 /*	unmkpat.c	*/
