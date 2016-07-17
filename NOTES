@@ -33,7 +33,7 @@ library code and a few commands and made them compile on the system.
 
 To Do
 -----
-In no particular order.
+In no particular order:
 
  - Get the xv6 kernel to compile with the Minix headers, to ensure that
    the kernel and libraries use consistent values
@@ -54,3 +54,22 @@ In no particular order.
 
  - DONE: Write a more functional mkfs so that a multi-level filesystem
    can be built, one that has /etc, /bin and friends
+
+Sunday 17 July  21:21:21 AEST 2016 - Warren
+-------------------------------------------
+A reasonably successful weekend. I changed mkfs to create subdirs and got
+it to build a filesystem image by cloning a local directory and its
+subdirectories. Then I changed the shell to look in /bin for binaries. I
+changed init to live in /etc and to start /bin/sh. Now we have a filesystem
+which looks vaguely Unix-like.
+
+I wrote a new ls whose output better resembles a Unix ls, with -d, -a and -l
+flags. I got ed to compile and run. I finally got cp to work, and in doing
+so I'm using the stdio functions, so they seem to work as well.
+
+The next task is to bring in more of the simple Minix commands. I'm
+struggling with getting grep to compile and link against the regexp
+library functions.
+
+I also need to go back and remove some of my changes to kern/* and
+include/xv6/*, to get them back to a format which the MIT people can print.
