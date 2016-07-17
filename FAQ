@@ -10,11 +10,7 @@ xv-minix2 FAQ
    exists. Then run 'make qemu' to build the kernel, commands, filesystem
    and launch qemu to boot the system.
 
-3. What are these _cat, _ls etc. files at the top-level?
-   The existing mkfs tool is simplistic: it adds any files with a leading
-   underscore to the filesystem. I'll write a more sophisticated mkfs later.
-
-4. Structure of the source code?
+3. Structure of the source code?
    boot/  holds the bootstrap
    kern/  holds the xv6 kernel code. We want this as untouched as possible
    tools/ holds mkfs
@@ -27,13 +23,14 @@ xv-minix2 FAQ
 	  programs. Otherwise I'm using the Minix layout: simple/ for
 	  one-file programs, the other directories will hold the code
   	  for multi-file programs.
+   fs/    is a temporary staging area for the filesystem
 
-5. What's with all the CFLAGS?
+4. What's with all the CFLAGS?
    I've kept most of the CFLAGS from the original xv6 Makefile; I'm not sure
    if we need all of them. We need POSIX_SOURCE for now as a lot of the Minix
    libraries need this. Over time, we can factor POSIX_SOURCE out.
 
-6. Do you specifically want Minix code?
+5. Do you specifically want Minix code?
    I'm not wedded to Minix code. It is covered under a BSD license and the
    functions are reasonably small. I don't mind where code comes from as long
    as it's small and is covered by a BSD or MIT-compatible license.
