@@ -37,10 +37,20 @@ In no particular order.
 
  - Get the xv6 kernel to compile with the Minix headers, to ensure that
    the kernel and libraries use consistent values
+   ==> No, on second thoughts, we should not do this. The xv6 folk will
+   still want to print their book of code. We should align the xv6 files
+   and the library code, but not force the xv6 code to include the Minix
+   headers
+
  - Modify the library code to correctly use the xv6 system calls
- - Write missing library functionality, e.g. opendir
+
+ - Write missing library functionality, e.g. opendir (DONE), more to do
+
  - Write dummy library functions
+
  - Compile more of the Minix commands
+
  - Test everything to ensure that it works
- - Write a more functional mkfs so that a multi-level filesystem can be
-   built, one that has /etc, /bin and friends
+
+ - DONE: Write a more functional mkfs so that a multi-level filesystem
+   can be built, one that has /etc, /bin and friends
