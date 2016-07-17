@@ -1,4 +1,4 @@
-# Initial process execs /init.
+# Initial process execs /etc/init.
 
 #include <xv6/syscall.h>
 #include <xv6/traps.h>
@@ -19,9 +19,9 @@ exit:
   int $T_SYSCALL
   jmp exit
 
-# char init[] = "/init\0";
+# char init[] = "/etc/init\0";
 init:
-  .string "/init\0"
+  .string "/etc/init\0"
 
 # char *argv[] = { init, 0 };
 .p2align 2

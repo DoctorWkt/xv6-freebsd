@@ -19,6 +19,7 @@ tools/mkfs:
 
 fs/cat:
 	mkdir -p fs/bin
+	mkdir -p fs/etc
 	$(MAKE) -C cmd all
 
 kern/kernel:
@@ -29,7 +30,7 @@ kern/kernel:
 
 fs.img: tools/mkfs README fs/cat
 	cp README fs
-	cp fs/bin/init fs
+	mv fs/bin/init fs/etc
 	tools/mkfs fs.img fs
 
 -include *.d
