@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /* ls: List directory contents.		Author: Warren Toomey */
 
@@ -18,6 +19,10 @@ int dircontents=1;		// Show the contents of a directory
 
 void listone(char *entry, struct stat *sbptr)
 {
+  // Lose the newline on the time string
+  char *timestring= ctime(&(sbptr->st_mtime));
+  timestring[ strlen(timestring) - 1 ]= '\0';
+
   if (longoutput) {
     // Print the type of entry as the first character
     if S_ISDIR(sbptr->st_mode)
@@ -28,9 +33,9 @@ void listone(char *entry, struct stat *sbptr)
       printf("  ");
 
     // Print out the perms in octal, the inum, the uid/gid, the size and name
-    printf("%03o %5d %3d %3d %6ld %10d %s\n", sbptr->st_mode & 0777,
+    printf("%03o %5d %3d %3d %6ld %s %s\n", sbptr->st_mode & 0777,
 	sbptr->st_ino, sbptr->st_uid, sbptr->st_gid, sbptr->st_size,
-	sbptr->st_mtime, entry);
+	timestring, entry);
   } else {
     // Just print out the name
     puts(entry);
