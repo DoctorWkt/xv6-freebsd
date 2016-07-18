@@ -10,7 +10,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <minix/minlib.h>
 #include <stdio.h>
 
 #define CHUNK_SIZE	(2048 * sizeof(char *))

@@ -16,7 +16,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <minix/minlib.h>
 #include <stdio.h>
 
 #define BUFFER_SIZE (512)
@@ -78,7 +77,7 @@ char *argv[];
 void usage()
 {
 
-  std_err(umsg);
+  fprintf(stderr,umsg);
   exit(1);
 }
 

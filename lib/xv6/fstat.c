@@ -2,7 +2,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <xv6/types.h>
+
+#define stat xv6stat
 #include <xv6/stat.h>
+#undef stat
 
 extern int _Fstat(int fd, struct xv6stat*);
 
@@ -20,7 +23,6 @@ int fstat(int fildes, struct stat *buf)
 
   buf->st_dev=   s.dev;
   buf->st_ino=   s.ino;
-  buf->st_mode=  s.type | 0777;
   buf->st_nlink= s.nlink;
   buf->st_uid=   0;
   buf->st_gid=   0;
@@ -29,5 +31,12 @@ int fstat(int fildes, struct stat *buf)
   buf->st_atime= 0;
   buf->st_mtime= 0;
   buf->st_ctime= 0;
+
+  buf->st_mode=  0777;		// Simulate a file acessible by all
+  switch (s.type) {
+    case T_DIR:   buf->st_mode |= S_IFDIR; break;
+    case T_FILE:  buf->st_mode |= S_IFREG; break;
+    case T_DEV:   buf->st_mode |= S_IFBLK; break;
+  }
   return(0);
 }

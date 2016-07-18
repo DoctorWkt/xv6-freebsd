@@ -420,7 +420,7 @@ itrunc(struct inode *ip)
 
 // Copy stat information from inode.
 void
-stati(struct inode *ip, struct xv6stat *st)
+stati(struct inode *ip, struct stat *st)
 {
   st->dev = ip->dev;
   st->ino = ip->inum;
