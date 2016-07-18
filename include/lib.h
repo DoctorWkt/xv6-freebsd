@@ -10,16 +10,12 @@
 #define _MINIX             1	/* tell headers to include MINIX stuff */
 
 /* The following are so basic, all the lib files get them automatically. */
-#include <minix/config.h>	/* must be first */
 #include <sys/types.h>
 #include <limits.h>
 #include <errno.h>
 #include <ansi.h>
 
-#include <minix/const.h>
-#include <minix/type.h>
-#include <minix/callnr.h>
-
+#if 0
 #define MM                 0
 #define FS                 1
 
@@ -31,5 +27,6 @@ _PROTOTYPE( int _len, (const char *_s)					);
 _PROTOTYPE( void panic, (const char *_message, int _errnum)		);
 _PROTOTYPE( int _sendrec, (int _src_dest, message *_m_ptr)		);
 _PROTOTYPE( void _begsig, (int _dummy)					);
+#endif
 
 #endif /* _LIB_H */

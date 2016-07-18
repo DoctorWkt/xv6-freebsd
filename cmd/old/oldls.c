@@ -1,7 +1,7 @@
-#include "xv6/types.h"
-#include "xv6/stat.h"
-#include "xv6/user.h"
-#include "xv6/fs.h"
+#include <xv6/types.h>
+#include <xv6/stat.h>
+#include <xv6/user.h>
+#include <xv6/fs.h>
 
 char*
 fmtname(char *path)
@@ -26,9 +26,9 @@ void
 ls(char *path)
 {
   char buf[512], *p;
-  int fd, type;
+  int fd;
   struct dirent de;
-  struct xv6stat st;
+  struct stat st;
   
   if((fd = open(path, 0)) < 0){
     printf(2, "ls: cannot open %s\n", path);
@@ -43,8 +43,7 @@ ls(char *path)
   
   switch(st.type){
   case T_FILE:
-    type= st.type & 0xffff;	// stop the msb being interpreted as -ve
-    printf(1, "%s %o %d %d\n", fmtname(path), type, st.ino, st.size);
+    printf(1, "%s %d %d %d\n", fmtname(path), st.type, st.ino, st.size);
     break;
   
   case T_DIR:
@@ -64,8 +63,7 @@ ls(char *path)
         printf(1, "ls: cannot stat %s\n", buf);
         continue;
       }
-      type= st.type & 0xffff;	// stop the msb being interpreted as -ve
-      printf(1, "%s %o %d %d\n", fmtname(buf), type, st.ino, st.size);
+      printf(1, "%s %d %d %d\n", fmtname(buf), st.type, st.ino, st.size);
     }
     break;
   }

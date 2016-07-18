@@ -1,8 +1,8 @@
 // Simple grep.  Only supports ^ . * $ operators.
 
-#include "xv6/types.h"
-#include "xv6/stat.h"
-#include "xv6/user.h"
+#include <xv6/types.h>
+#include <xv6/stat.h>
+#include <xv6/user.h>
 
 char buf[1024];
 int match(char*, char*);

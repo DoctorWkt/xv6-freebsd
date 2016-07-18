@@ -9,11 +9,13 @@
 #include <assert.h>
 
 #define dirent xv6dirent
+#define stat   xv6stat
 #include "../include/xv6/types.h"
 #include "../include/xv6/fs.h"
 #include "../include/xv6/stat.h"
 #include "../include/xv6/param.h"
 #undef dirent
+#undef stat
 
 #ifndef static_assert
 #define static_assert(a, b) do { switch (0) case 0: case (a): ; } while (0)

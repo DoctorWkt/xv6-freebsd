@@ -1,12 +1,12 @@
-#include "xv6/param.h"
-#include "xv6/types.h"
-#include "xv6/stat.h"
-#include "xv6/user.h"
-#include "xv6/fs.h"
-#include "xv6/fcntl.h"
-#include "xv6/syscall.h"
-#include "xv6/traps.h"
-#include "xv6/memlayout.h"
+#include <xv6/param.h>
+#include <xv6/types.h>
+#include <xv6/stat.h>
+#include <xv6/user.h>
+#include <xv6/fs.h>
+#include <xv6/fcntl.h>
+#include <xv6/syscall.h>
+#include <xv6/traps.h>
+#include <xv6/memlayout.h>
 
 char buf[8192];
 char name[3];
