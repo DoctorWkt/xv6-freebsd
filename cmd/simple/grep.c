@@ -33,7 +33,7 @@
 
 /* External interfaces */
 #include <sys/types.h>
-#include <regex.h>		/* Thanks to Henry Spencer */
+#include <regexp.h>		/* Thanks to Henry Spencer */
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -66,7 +66,7 @@ _PROTOTYPE(int main, (int argc, char **argv));
 _PROTOTYPE(static int match, (FILE *input, char *label, char *filename));
 _PROTOTYPE(static char *get_line, (FILE *input));
 _PROTOTYPE(static char *map_nocase, (char *line));
-_PROTOTYPE(void regerror , (char *s ) );
+_PROTOTYPE(void regerror , (const char *s ) );
 _PROTOTYPE(static void tov8, (char *v8pattern, char *pattern));
 
 int main(argc, argv)
@@ -372,7 +372,8 @@ static void tov8(char *v8, char *basic)
 
 /* Regular expression code calls this routine to print errors. */
 void regerror(const char *s)
-char *s;
 {
-  rerr=s;
+  // Compiler won't let us do rerr=s;
+  rerr= malloc(strlen(s)+1);
+  strcpy(rerr,s);
 }
