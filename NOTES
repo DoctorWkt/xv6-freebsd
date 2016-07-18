@@ -73,3 +73,8 @@ library functions.
 
 I also need to go back and remove some of my changes to kern/* and
 include/xv6/*, to get them back to a format which the MIT people can print.
+
+Monday 18 July  17:28:22 AEST 2016 - Warren
+-------------------------------------------
+I have reverted some of the xv6 file changes, so the code can be printed
+again and it doesn't refer to any of the Minix header files.
