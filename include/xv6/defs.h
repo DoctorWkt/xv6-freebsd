@@ -21,6 +21,11 @@ void            cprintf(char*, ...);
 void            consoleintr(int(*)(void));
 void            panic(char*) __attribute__((noreturn));
 
+// cmos.c
+int		sys_time();
+void		rtcintr();
+void		cmosinit();
+
 // exec.c
 int             exec(char*, char**);
 

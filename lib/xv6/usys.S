@@ -13,6 +13,18 @@ _Fstat:
     int $T_SYSCALL;
     ret
 
+.globl _Time;
+_Time:
+    movl $SYS_time, %eax;
+    int $T_SYSCALL;
+    ret
+
+.globl _Sleep;
+_Sleep:
+    movl $SYS_sleep, %eax;
+    int $T_SYSCALL;
+    ret
+
 #define SYSCALL(name) \
   .globl name; \
   name: \
@@ -37,7 +49,6 @@ SYSCALL(chdir)
 SYSCALL(dup)
 SYSCALL(getpid)
 SYSCALL(sbrk)
-SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(lseek)
 SYSCALL(ioctl)
