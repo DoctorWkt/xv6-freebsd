@@ -5,6 +5,13 @@
 
 #include	<stdlib.h>
 
+// xv6 doesn't have any environment
+char * getenv(const char *name)
+{
+  return (char *)NULL;
+}
+
+#if 0
 extern const char ***_penviron;
 
 char *
@@ -25,3 +32,4 @@ getenv(const char *name)
 	}
 	return (char *)NULL;
 }
+#endif
