@@ -21,6 +21,7 @@ struct inode {
   short minor;
   short nlink;
   uint size;
+  int mtime;
   uint addrs[NDIRECT+1];
 };
 #define I_BUSY 0x1
