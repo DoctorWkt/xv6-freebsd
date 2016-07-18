@@ -3,6 +3,7 @@ include $(TOP_SRCDIR)/Makefile.common
 
 OBJS = \
 	bio.o\
+	cmos.o\
 	console.o\
 	exec.o\
 	file.o\

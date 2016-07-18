@@ -1,7 +1,10 @@
 #include <time.h>
 
-/* xv6 has no time concept! */
-time_t time(time_t *_timeptr)
+extern int _Time(void);
+
+time_t time(time_t *timeptr)
 {
-  return(0);
+  time_t x= _Time();
+  if (timeptr) *timeptr=x;
+  return(x);
 }
