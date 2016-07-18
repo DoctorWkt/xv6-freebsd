@@ -12,7 +12,7 @@ UPROGS= oldcat\
 	ln\
 	oldls\
 	mkdir\
-	rm\
+	oldrm\
 	sh\
 	stressfs\
 	usertests\

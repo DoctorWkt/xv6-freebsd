@@ -4,7 +4,7 @@ CFLAGS = -fno-builtin -Wall -m32 -Werror -nostdinc -I$(INCLDIR)
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 UPROGS= basename cal cksum cmp comm cp crc \
-	cut ed expand ls cat wc ttt uue
+	cut ed expand ls cat wc ttt uue mv rm
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 	mv $(UPROGS) ../../fs/bin
