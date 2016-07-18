@@ -44,11 +44,11 @@ void wsect(uint, void*);
 void winode(uint, struct dinode*);
 void rinode(uint inum, struct dinode *ip);
 void rsect(uint sec, void *buf);
-uint ialloc(ushort type);
+uint ialloc(ushort type, int mtime);
 void iappend(uint inum, void *p, int n);
 void dappend(int dirino, char *name, int fileino);
 void add_directory(int dirino, char *localdir);
-int makdir(int dirino, char *newdir);
+int makdir(int dirino, char *newdir, struct stat *sb);
 
 // convert to intel byte order
 ushort
@@ -130,7 +130,7 @@ main(int argc, char *argv[])
   wsect(1, buf);
 
   // Grab an i-node for the root directory
-  rootino = ialloc(T_DIR);
+  rootino = ialloc(T_DIR, 0); // Epoch mtime for now
   assert(rootino == ROOTINO);
 
   // Set up the directory entry for . and add it to the root dir
@@ -213,7 +213,7 @@ rsect(uint sec, void *buf)
 
 // Allocate an i-node
 uint
-ialloc(ushort type)
+ialloc(ushort type, int mtime)
 {
   uint inum = freeinode++;
   struct dinode din;
@@ -223,6 +223,7 @@ ialloc(ushort type)
   din.type = xshort(type);
   din.nlink = xshort(1);
   din.size = xint(0);
+  din.mtime = mtime;
   winode(inum, &din);
   return inum;
 }
@@ -304,7 +305,7 @@ void dappend(int dirino, char *name, int fileino)
 }
 
 // Add a file to the directory with given i-num
-void fappend(int dirino, char *filename)
+void fappend(int dirino, char *filename, struct stat *sb)
 {
     char buf[BSIZE];
     int cc, fd, inum;
@@ -316,7 +317,7 @@ void fappend(int dirino, char *filename)
     }
 
     // Allocate an i-node for the file
-    inum = ialloc(T_FILE);
+    inum = ialloc(T_FILE, sb->st_mtime);
 
     // Add the file's name to the root directory
     dappend(dirino, filename, inum);
@@ -357,11 +358,11 @@ void add_directory(int dirino, char *localdir)
     }
 
     if (S_ISDIR(sb.st_mode)) {
-      newdirino= makdir(dirino, dent->d_name);
+      newdirino= makdir(dirino, dent->d_name, &sb);
       add_directory(newdirino, dent->d_name);
     }
     if (S_ISREG(sb.st_mode)) {
-      fappend(dirino, dent->d_name);
+      fappend(dirino, dent->d_name, &sb);
     }
   }
 
@@ -371,13 +372,13 @@ void add_directory(int dirino, char *localdir)
 
 // Make a directory entry in the directory with the given i-node number
 // and return the new directory's i-number
-int makdir(int dirino, char *newdir)
+int makdir(int dirino, char *newdir, struct stat *sb)
 {
   int ino;
 
   // Allocate the inode number for this directory
   // and set up the . and .. entries
-  ino = ialloc(T_DIR);
+  ino = ialloc(T_DIR, sb->st_mtime);
   dappend(ino, ".", ino);
   dappend(ino, "..", dirino);
 

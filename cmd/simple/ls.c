@@ -28,8 +28,9 @@ void listone(char *entry, struct stat *sbptr)
       printf("  ");
 
     // Print out the perms in octal, the inum, the uid/gid, the size and name
-    printf("%03o %5d %3d %3d %6ld %s\n", sbptr->st_mode & 0777,
-	sbptr->st_ino, sbptr->st_uid, sbptr->st_gid, sbptr->st_size, entry);
+    printf("%03o %5d %3d %3d %6ld %10d %s\n", sbptr->st_mode & 0777,
+	sbptr->st_ino, sbptr->st_uid, sbptr->st_gid, sbptr->st_size,
+	sbptr->st_mtime, entry);
   } else {
     // Just print out the name
     puts(entry);

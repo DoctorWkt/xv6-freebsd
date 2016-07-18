@@ -29,7 +29,7 @@ int fstat(int fildes, struct stat *buf)
   buf->st_rdev=  0;
   buf->st_size=  s.size;
   buf->st_atime= 0;
-  buf->st_mtime= 0;
+  buf->st_mtime= s.mtime;
   buf->st_ctime= 0;
 
   buf->st_mode=  0777;		// Simulate a file acessible by all

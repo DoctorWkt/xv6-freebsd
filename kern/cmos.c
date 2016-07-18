@@ -114,8 +114,8 @@ void cmosinit() {
 	outb(CMOS_DATA_PORT, 0x10); // IRQ 8 on update
 	picenable(IRQ_RTC);
 	ioapicenable(IRQ_RTC, 1);
-	cprintf("CMOS time %d-%d-%d %d:%d.%d\n", cmos_time.year + 2000,
-		cmos_time.month, cmos_time.day, cmos_time.hour,
-		cmos_time.min, cmos_time.sec);
-	cprintf("Julian date: %d\n", cmos_to_julian());
+//	cprintf("CMOS time %d-%d-%d %d:%d.%d\n", cmos_time.year + 2000,
+//		cmos_time.month, cmos_time.day, cmos_time.hour,
+//		cmos_time.min, cmos_time.sec);
+//	cprintf("Julian date: %d\n", cmos_to_julian());
 }
