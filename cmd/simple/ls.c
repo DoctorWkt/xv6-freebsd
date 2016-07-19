@@ -15,27 +15,29 @@ extern char *optarg;
 
 int longoutput=0;		// Do a long (-l) output
 int showdots=0;			// Show dot files
+int showinums=0;		// Show i-numbers not link counts
 int dircontents=1;		// Show the contents of a directory
 
 void listone(char *entry, struct stat *sbptr)
 {
-  // Lose the newline on the time string
+  // Lose the year on the time string
   char *timestring= ctime(&(sbptr->st_mtime));
-  timestring[ strlen(timestring) - 1 ]= '\0';
+  timestring[ strlen(timestring) - 6 ]= '\0';
+  char ftype;
 
   if (longoutput) {
     // Print the type of entry as the first character
-    if S_ISDIR(sbptr->st_mode)
-      printf("d ");
-    else if S_ISREG(sbptr->st_mode)
-      printf("- ");
-    else
-      printf("  ");
+    switch (sbptr->st_mode& S_IFMT) {
+      case S_IFDIR: ftype='d'; break;
+      case S_IFREG: ftype='-'; break;
+      case S_IFBLK:
+      case S_IFCHR: ftype='c'; break;
+      default: ftype=' ';
+    }
 
-    // Print out the perms in octal, the inum, the uid/gid, the size and name
-    printf("%03o %5d %3d %3d %6ld %s %s\n", sbptr->st_mode & 0777,
-	sbptr->st_ino, sbptr->st_uid, sbptr->st_gid, sbptr->st_size,
-	timestring, entry);
+    printf("%crwxrwxrwx %5d root root %6ld %s %s\n", 
+	ftype, (showinums ? sbptr->st_ino : sbptr->st_nlink),
+	sbptr->st_size, timestring, entry);
   } else {
     // Just print out the name
     puts(entry);
@@ -136,11 +138,13 @@ int main(int argc, char *argv[])
   int opt;                      /* option letter from getopt() */
 
   /* Process any command line flags. */
-  while ((opt = getopt(argc, argv, "lad")) != EOF) {
+  while ((opt = getopt(argc, argv, "ilad")) != EOF) {
         if (opt == 'l')
                 longoutput = 1;
         if (opt == 'a')
                 showdots = 1;
+        if (opt == 'i')
+                showinums = 1;
         if (opt == 'd')
                 dircontents = 0;
   }
