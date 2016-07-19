@@ -29,7 +29,7 @@ extern char	**environ;
 /* This is a new version of the system() function.  The only difference
  * between this one and the library one is: this one uses the o_shell option.
  */
-int system(cmd)
+int sksystem(cmd)
 	char	*cmd;	/* a command to run */
 {
 	int	pid;	/* process ID of child */

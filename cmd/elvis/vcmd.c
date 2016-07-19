@@ -628,7 +628,7 @@ MARK v_keyword(keyword, m, cnt)
 	waswarn = *o_warn;
 	*o_warn = FALSE;
 	suspend_curses();
-	if (system(cmdline))
+	if (sksystem(cmdline))
 	{
 		addstr("<<< failed >>>\n");
 	}

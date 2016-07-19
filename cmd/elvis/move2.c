@@ -17,7 +17,7 @@
 extern long	atol();
 
 static regexp	*re;	/* compiled version of the pattern to search for */
-static		prevsf;	/* boolean: previous search direction was forward? */
+static int      prevsf;	/* boolean: previous search direction was forward? */
 
 #ifndef NO_EXTENSIONS
 /*ARGSUSED*/

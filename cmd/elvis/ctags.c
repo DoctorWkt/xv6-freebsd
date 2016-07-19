@@ -803,9 +803,9 @@ main(argc, argv)
 		 * use it with the real vi;  elvis permits unsorted tags.
 		 */
 # if OSK
-		system("qsort tags >-_tags; -nx; del tags; rename _tags tags");
+		sksystem("qsort tags >-_tags; -nx; del tags; rename _tags tags");
 # else	
-		system("sort tags >_tags$$; mv _tags$$ tags");
+		sksystem("sort tags >_tags$$; mv _tags$$ tags");
 # endif
 #endif
 

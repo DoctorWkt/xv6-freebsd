@@ -295,7 +295,7 @@ void cmd_shell(frommark, tomark, cmd, bang, extra)
 	suspend_curses();
 	if (frommark == 0L)
 	{
-		system(extra);
+		sksystem(extra);
 	}
 	else /* pipe lines from the file through the command */
 	{
@@ -1453,7 +1453,7 @@ void cmd_make(frommark, tomark, cmd, bang, extra)
 
 	/* run the command, with curses temporarily disabled */
 	suspend_curses();
-	system(buf.c);
+	sksystem(buf.c);
 	resume_curses(mode == MODE_EX);
 	if (mode == MODE_COLON)
 		mode = MODE_VI;

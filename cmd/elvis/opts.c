@@ -262,7 +262,7 @@ void initopts()
 #if MSDOS
 	if (val = getenv("COMSPEC")) /* yes, ASSIGNMENT! */
 #else
-	if (val = getenv("SHELL")) /* yes, ASSIGNMENT! */
+	if ((val = getenv("SHELL"))) /* yes, ASSIGNMENT! */
 #endif
 	{
 		strcpy(o_shell, val);

@@ -230,7 +230,7 @@ static int isperiod(ptr)
 	} while (*ptr == ')' || *ptr == ']' || *ptr == '"');
 
 	/* do we have two spaces or EOL? */
-	if (!*ptr || ptr[0] == ' ' && ptr[1] == ' ')
+	if (!*ptr || (ptr[0] == ' ' && ptr[1] == ' '))
 	{
 		return TRUE;
 	}

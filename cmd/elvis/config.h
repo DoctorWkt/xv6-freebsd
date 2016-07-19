@@ -3,6 +3,8 @@
  * We try to automatically configure to various compilers and operating
  * systems. Extend the autoconf section as needed.
  */
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>

@@ -52,8 +52,8 @@ static void do_modelines(l, stop)
 		for (str = fetchline(l); *str; str++)
 		{
 			/* if it is the start of a modeline command... */
-			if ((str[0] == 'e' && str[1] == 'x'
-			  || str[0] == 'v' && str[1] == 'i')
+			if (((str[0] == 'e' && str[1] == 'x')
+			  || (str[0] == 'v' && str[1] == 'i'))
 			  && str[2] == ':')
 			{
 				start = str += 3;
@@ -748,7 +748,7 @@ int deathtrap(sig)
 	{
 		close(tmpfd);
 		sprintf(tmpblk.c, "%s \"%s\" %s", PRESERVE, why, tmpname);
-		system(tmpblk.c);
+		sksystem(tmpblk.c);
 	}
 
 	/* delete any old temp files */
@@ -756,4 +756,5 @@ int deathtrap(sig)
 
 	/* exit with the proper exit status */
 	exit(sig);
+	return(0);
 }
