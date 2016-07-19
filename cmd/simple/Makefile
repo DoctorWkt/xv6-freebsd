@@ -23,7 +23,8 @@ all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 	$(CC) $(CFLAGS) -c -o $@ $^
 
 %: %.o ../../lib/libc.a
-	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
+#	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
+	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip $@
 
 clean:
