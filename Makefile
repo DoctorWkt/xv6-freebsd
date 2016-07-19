@@ -20,6 +20,7 @@ tools/mkfs:
 fs/cat:
 	mkdir -p fs/bin
 	mkdir -p fs/etc
+	mkdir -p fs/dev
 	$(MAKE) -C cmd all
 
 kern/kernel:
@@ -41,7 +42,7 @@ clean:
 	$(MAKE) -C cmd clean
 	$(MAKE) -C kern clean
 	$(MAKE) -C tools clean
-	rm -rf *.img fs/*
+	rm -rf *.img fs/bin/*
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)
