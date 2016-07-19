@@ -5,7 +5,7 @@ CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 &
 
 UPROGS= basename cal cksum cmp comm cp crc \
 	cut ed expand ls cat wc ttt uue mv rm \
-	showtime grep date
+	showtime grep date head tail od yes pwd
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 	mv $(UPROGS) ../../fs/bin

@@ -40,3 +40,8 @@ struct dirent *readdir(DIR *dirp)
   if (err < sizeof(struct dirent)) return(NULL);
   return(d);
 }
+
+void rewinddir(DIR *dirp)
+{
+  lseek(dirp->fd, 0, SEEK_SET);
+}
