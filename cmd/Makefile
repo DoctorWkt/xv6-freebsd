@@ -11,4 +11,4 @@ all: ../lib/ulib.a
 clean:
 	$(MAKE) -C old clean
 	$(MAKE) -C simple clean
-	rm -rf ../fs/*
+	rm -rf ../fs/bin/*
