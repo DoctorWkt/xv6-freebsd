@@ -30,17 +30,17 @@ CFLAGS+= -D_POSIX_SOURCE -D_MINIX -DCRUNCH \
 OBJ=blk.o cmd1.o cmd2.o ctype.o curses.o cut.o ex.o input.o \
    main.o misc.o modify.o move1.o move2.o move3.o move4.o move5.o \
    opts.o recycle.o redraw.o regexp.o regsub.o system.o tio.o tmp.o \
-   unix.o vars.o vcmd.o vi.o
+   unix.o vars.o vcmd.o vi.o tinytcap.o
 
-all:	$(PROGS)
+#all:	$(PROGS)
+all:	elvis
 
 elvis:	$(OBJ)
-	$(CC) $(LDFLAGS) -o elvis $(OBJ)
-	install -S 18kw elvis
+	$(LD) $(LDFLAGS) -N -Ttext 0 -o elvis $(OBJ) ../../lib/libc.a
+	mv elvis ../../fs/bin
 
 ctags:	ctags.c
 	$(CC) $(CFLAGS) $(SORT) $(LDFLAGS) -o ctags ctags.c
-	install -S 4kw $@
 
 ref:	ref.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o ref ref.c
@@ -57,31 +57,6 @@ fmt:	fmt.c
 elvprsv:	elvprsv.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o elvprsv elvprsv.c ctype.o
 	install -S 4kw $@
-
-install:	/usr/bin/elvis /usr/bin/ex /usr/bin/vi \
-		/usr/bin/ctags /usr/bin/ref /usr/bin/fmt \
-		/usr/bin/elvrec /usr/bin/elvprsv
-
-/usr/bin/elvis:	elvis
-	install -cs -o bin elvis $@
-
-/usr/bin/ex /usr/bin/vi:	/usr/bin/elvis
-	install -l /usr/bin/elvis $@
-
-/usr/bin/ctags:	ctags
-	install -cs -o bin ctags $@
-
-/usr/bin/ref:	ref
-	install -cs -o bin ref $@
-
-/usr/bin/fmt:	fmt
-	install -cs -o bin fmt $@
-
-/usr/bin/elvrec:	elvrec
-	install -cs -o root -m 4755 elvrec $@
-
-/usr/bin/elvprsv:	elvprsv
-	install -cs -o root -m 4755 elvprsv $@
 
 # Dependencies
 $(OBJ):	vi.h curses.h config.h regexp.h ctype.h

@@ -46,16 +46,12 @@ extern char *getenv();
 
 #if AMIGA
 # define	TERM_AMIGA	/* Internal Amiga termcap entry */
-/* # define	TERM_VT52	/* The rest of these are here for those */
 # define	TERM_VT100	/* people who want to use elvis over an */
-/* # define	TERM_NANSI	/* AUX: port (serial.device). */
-/* # define	TERM_DOSANSI	/* Take out all but AMIGA to save memory. */
-/* # define	TERM_MINIX	/* Vanilla ANSI? */
-/* # define	TERM_925	/* Hang a terminal off your Amiga */
 #endif
 
 #if MINIX || UNIXV
 # define	TERM_MINIX
+# define	TERM_VT100
 #endif
 
 #if COHERENT

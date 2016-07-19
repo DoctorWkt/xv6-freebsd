@@ -19,8 +19,8 @@ void regsub(re, src, dst)
 	REG char	*cpy;	/* pointer to start of text to copy */
 	REG char	*end;	/* pointer to end of text to copy */
 	REG char	c;
-	char		*start;
 #ifndef CRUNCH
+	char		*start;
 	int		mod = 0;/* used to track \U, \L, \u, \l, and \E */
 	int		len;	/* used to calculate length of subst string */
 	static char	*prev;	/* a copy of the text from the previous subst */
@@ -99,10 +99,9 @@ void regsub(re, src, dst)
 	if (prev)
 		free(prev);
 	prev = src = start;
-
+	start = src;
 #endif /* undef CRUNCH */
 
-	start = src;
 	while ((c = *src++) != '\0')
 	{
 #ifndef NO_MAGIC
@@ -132,8 +131,8 @@ void regsub(re, src, dst)
 			  case '9':
 				/* \0 thru \9 mean "copy subexpression" */
 				c -= '0';
-				cpy = re->startp[c];
-				end = re->endp[c];
+				cpy = re->startp[(int)c];
+				end = re->endp[(int)c];
 				break;
 # ifndef CRUNCH
 			  case 'U':

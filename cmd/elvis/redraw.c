@@ -277,7 +277,7 @@ int idx2col(curs, text, inputting)
 			col += *o_tabstop;
 			col -= col % *o_tabstop;
 		}
-		else if (i >= '\0' && i < ' ' || i == '\177')
+		else if ((i >= '\0' && i < ' ') || i == '\177')
 		{
 			col += 2;
 		}
@@ -357,7 +357,9 @@ static void drawtext(text, lno, clr)
 	REG int		i;
 	REG int		tabstop;	/* *o_tabstop */
 	REG int		limitcol;	/* leftcol or leftcol + COLS */
+#ifndef NO_CHARATTR
 	int		abnormal;	/* boolean: charattr != A_NORMAL? */
+#endif
 #ifndef NO_VISIBLE
 	int		rev;		/* boolean: standout mode, too? */
 	int		idx = 0;
@@ -388,7 +390,9 @@ static void drawtext(text, lno, clr)
 	/* move some things into registers... */
 	limitcol = leftcol;
 	tabstop = *o_tabstop;
+#ifndef NO_CHARATTR
 	abnormal = FALSE;
+#endif
 
 #ifndef CRUNCH
 	if (clr)
@@ -407,7 +411,7 @@ static void drawtext(text, lno, clr)
 		{
 			col = col + tabstop - (col % tabstop);
 		}
-		else if (i >= 0 && i < ' ' || i == '\177')
+		else if ((i >= 0 && i < ' ') || i == '\177')
 		{
 			col += 2;
 		}
@@ -422,22 +426,30 @@ static void drawtext(text, lno, clr)
 			  case 'R':
 			  case 'P':
 				attrset(A_NORMAL);
+#ifndef NO_CHARATTR
 				abnormal = FALSE;
+#endif
 				break;
 
 			  case 'B':
 				attrset(A_BOLD);
+#ifndef NO_CHARATTR
 				abnormal = TRUE;
+#endif
 				break;
 
 			  case 'U':
 				attrset(A_UNDERLINE);
+#ifndef NO_CHARATTR
 				abnormal = TRUE;
+#endif
 				break;
 
 			  case 'I':
 				attrset(A_ALTCHARSET);
+#ifndef NO_CHARATTR
 				abnormal = TRUE;
+#endif
 				break;
 			}
 		}
@@ -534,7 +546,7 @@ static void drawtext(text, lno, clr)
 				}
 			}
 		}
-		else if (i >= 0 && i < ' ' || i == '\177')
+		else if ((i >= 0 && i < ' ') || i == '\177')
 		{
 			col += 2;
 			qaddch('^');
@@ -552,22 +564,30 @@ static void drawtext(text, lno, clr)
 			  case 'R':
 			  case 'P':
 				attrset(A_NORMAL);
+#ifndef NO_CHARATTR
 				abnormal = FALSE;
+#endif
 				break;
 
 			  case 'B':
 				attrset(A_BOLD);
+#ifndef NO_CHARATTR
 				abnormal = TRUE;
+#endif
 				break;
 
 			  case 'U':
 				attrset(A_UNDERLINE);
+#ifndef NO_CHARATTR
 				abnormal = TRUE;
+#endif
 				break;
 
 			  case 'I':
 				attrset(A_ALTCHARSET);
+#ifndef NO_CHARATTR
 				abnormal = TRUE;
+#endif
 				break;
 			}
 		}

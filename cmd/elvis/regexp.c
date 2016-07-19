@@ -580,7 +580,7 @@ int match1(re, ch, token)
 		if (re->program[1 + 32 * (token - M_CLASS(0)) + (ch >> 3)] & (1 << (ch & 7)))
 			return 0;
 	}
-	else if (ch == token || *o_ignorecase && tolower(ch) == tolower(token))
+	else if (ch == token || (*o_ignorecase && tolower(ch) == tolower(token)))
 	{
 		return 0;
 	}

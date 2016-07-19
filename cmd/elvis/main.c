@@ -20,7 +20,6 @@
 #include <setjmp.h>
 #include "vi.h"
 
-extern		trapint(); /* defined below */
 extern char	*getenv();
 jmp_buf		jmpenv;
 
@@ -38,7 +37,7 @@ main (argc, argv)
 #  include "vmswild.c"
 main (argc, argv)
 # else
-void main(argc, argv)
+int main(argc, argv)
 # endif
 #endif
 	int	argc;
@@ -46,7 +45,6 @@ void main(argc, argv)
 {
 	int	i;
 	char	*cmd = (char *)0;
-	char	*err = (char *)0;
 	char	*str;
 	char	*tag = (char *)0;
 
