@@ -125,13 +125,14 @@ _PROTOTYPE( int unlink, (const char *_path)				);
 _PROTOTYPE( ssize_t write, (int _fd, const void *_buf, size_t _n)	);
 _PROTOTYPE( char *sbrk, (int _incr)					);
 _PROTOTYPE( int mknod, (const char *_name, Mode_t _mode, Dev_t _addr)	);
+_PROTOTYPE( char *mktemp, (char *_template)				);
+_PROTOTYPE( int mkstemp, (char *_template)				);
 
 #ifdef _MINIX
 _PROTOTYPE( int brk, (char *_addr)					);
 _PROTOTYPE( int chroot, (const char *_name)				);
 _PROTOTYPE( int mknod4, (const char *_name, Mode_t _mode, Dev_t _addr,
 	    long _size)							);
-_PROTOTYPE( char *mktemp, (char *_template)				);
 _PROTOTYPE( int mount, (char *_spec, char *_name, int _flag)		);
 _PROTOTYPE( long ptrace, (int _req, pid_t _pid, long _addr, long _data)	);
 _PROTOTYPE( int sync, (void)						);

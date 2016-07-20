@@ -16,7 +16,7 @@ all: abort.o abs.o asctime.o assert.o atexit.o atof.o atoi.o atol.o \
 	strcpy.o strcspn.o strerror.o strftime.o strlen.o strncat.o \
 	strncmp.o strncpy.o strpbrk.o strrchr.o strspn.o strstr.o \
 	strtok.o strtol.o strxfrm.o system.o tolower.o toupper.o tzset.o \
-	wcstombs.o wctomb.o
+	wcstombs.o wctomb.o strdup.o
 
 clean:
 	rm -f *.o

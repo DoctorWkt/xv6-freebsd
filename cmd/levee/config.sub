@@ -1,0 +1,24 @@
+s;@CPP@;/lib/cpp;g
+s;@CPPFLAGS@;;g
+s;@INSTALL@;/usr/bin/install;g
+s;@INSTALL_PROGRAM@;/usr/bin/install -s -m 755;g
+s;@INSTALL_DATA@;/usr/bin/install -m 444;g
+s;@INSTALL_DIR@;/home/wkt/levee-3.5b/config.md;g
+s;@CC@;cc;g
+s;@FIND@;/usr/bin/find;g
+s;@LN_S@;/bin/ln -s;g
+s;@NOMK@;;g
+s;@LIBS@;;g
+s;@CONFIGURE_FILES@;config.cmd config.sub config.h config.mak config.log config.md;g
+s;@GENERATED_FILES@;Makefile;g
+s;@CFLAGS@;-g;g
+s;@LDFLAGS@;-g;g
+s;@srcdir@;/home/wkt/levee-3.5b;g
+s;@prefix@;/usr/local;g
+s;@exedir@;/usr/local/bin;g
+s;@sbindir@;/usr/local/sbin;g
+s;@libdir@;/usr/local/lib;g
+s;@libexec@;/usr/local/lib;g
+s;@confdir@;/etc;g
+s;@mandir@;/usr/local/man;g
+s;@SED@;/bin/sed;g

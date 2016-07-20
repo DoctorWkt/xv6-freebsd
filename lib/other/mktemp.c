@@ -34,3 +34,10 @@ char *mktemp(char *template)
   }
   return("/");
 }
+
+int mkstemp(char *template)
+{
+  char *name= mktemp(template);
+  if (name==NULL) return(-1);
+  return(open(name, O_RDWR));
+}

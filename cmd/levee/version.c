@@ -1,0 +1,1 @@
+char codeversion[] = VERSION;
