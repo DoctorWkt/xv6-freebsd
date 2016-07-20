@@ -121,6 +121,8 @@ _PROTOTYPE( int ferror, (FILE *_stream)					);
 _PROTOTYPE( void perror, (const char *_s)				);
 _PROTOTYPE( int __fillbuf, (FILE *_stream)				);
 _PROTOTYPE( int __flushbuf, (int _c, FILE *_stream)			);
+_PROTOTYPE(FILE *popen, (const char *_command, const char *_type));
+_PROTOTYPE(int pclose, (FILE *_stream));
 
 #define	getchar()	getc(stdin)
 #define	putchar(c)	putc(c,stdout)
@@ -145,8 +147,6 @@ _PROTOTYPE (FILE *fdopen, (int _fildes, const char *_types) );
 _PROTOTYPE(void std_err, (char *s));	// Part of Minix
 
 #ifdef _MINIX
-_PROTOTYPE(FILE *popen, (const char *_command, const char *_type));
-_PROTOTYPE(int pclose, (FILE *_stream));
 _PROTOTYPE(int snprintf, (char *_s, size_t _n, const char *_format, ...));
 _PROTOTYPE(int vsnprintf, (char *_s, size_t _n, const char *_format,
 							char *_arg)	);

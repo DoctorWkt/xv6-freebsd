@@ -14,6 +14,8 @@
 #include "ctype.h"
 #include "vi.h"
 
+#ifdef OLDCODE
+
 /* This data type is used to describe the possible argument combinations */
 typedef short ARGT;
 #define FROM	1		/* allow a linespec */
@@ -720,3 +722,42 @@ void exstring(buf, len, qchar)
 		doexcmd(single);
 	}
 }
+
+#else
+
+void ex()
+{
+}
+
+void doexcmd(cmdbuf)
+        char            *cmdbuf;        /* string containing an ex command */
+{
+}
+
+int doexrc(filename)
+        char    *filename;      /* name of a ".exrc" file */
+{
+  return(0);
+}
+
+void exstring(buf, len, qchar)
+        char    *buf;   /* the commands to execute */
+        int     len;    /* the length of the string */
+        int     qchar;  /* the quote character -- ^V for file, or \ for kbd */
+{
+}
+
+char    *parseptrn(ptrn)
+        REG char        *ptrn;
+{
+  return(NULL);
+}
+
+char *linespec(s, markptr)
+        REG char        *s;             /* start of the line specifier */
+        MARK            *markptr;       /* where to store the mark's value */
+{
+  return(NULL);
+}
+
+#endif // OLDCODE
