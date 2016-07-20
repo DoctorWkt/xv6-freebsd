@@ -225,14 +225,22 @@ consoleintr(int (*getc)(void))
       if(c != 0 && input.e-input.r < INPUT_BUF){
         c = (c == '\r') ? '\n' : c;
         input.buf[input.e++ % INPUT_BUF] = c;
-	consechoc(c);
-	if(c == '\n' || c == C('D') || input.e == input.r+INPUT_BUF || (cons.termios.c_lflag & ICANON) == 0){
+        consechoc(c);
+        if(c == '\n' || c == C('D') || input.e == input.r+INPUT_BUF){
           input.w = input.e;
           wakeup(&input.r);
         }
       }
       break;
     }
+   }
+else {		// Not canonical input
+      if(c != 0 && input.e-input.r < INPUT_BUF){
+        input.buf[input.e++ % INPUT_BUF] = c;
+        consechoc(c);
+        input.w = input.e;
+        wakeup(&input.r);
+      }
    }
   }
   release(&cons.lock);
@@ -270,7 +278,7 @@ consoleread(struct inode *ip, char *dst, int n)
     }
     *dst++ = c;
     --n;
-    if(c == '\n' && cons.termios.c_lflag & ICANON)
+    if(c == '\n' || ((cons.termios.c_lflag & ICANON)==0))
       break;
   }
   release(&cons.lock);

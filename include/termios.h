@@ -137,6 +137,7 @@ _PROTOTYPE( int cfsetospeed, (struct termios *_termios_p, speed_t _speed)    );
 _PROTOTYPE( int tcgetattr, (int _filedes, struct termios *_termios_p)        );
 _PROTOTYPE( int tcsetattr, \
 	(int _filedes, int _opt_actions, const struct termios *_termios_p)   );
+_PROTOTYPE( void cfmakeraw, (struct termios *)				     );
 
 #define cfgetispeed(termios_p)		((termios_p)->c_ispeed)
 #define cfgetospeed(termios_p)		((termios_p)->c_ospeed)
