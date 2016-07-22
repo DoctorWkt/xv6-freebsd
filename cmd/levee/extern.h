@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-2007 David L Parsons
+ * Copyright (c) 1982-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -80,21 +80,18 @@ char rcb[], *rcp,		/* last modification command */
 extern
 struct ybuf yank;		/* last deleted/yanked text */
 /* STATIC INITIALIZATIONS: */
-
 /* ttydef stuff */
-#if OS_ATARI | USE_TERMCAP
+#if ST | TERMCAP
 extern int LINES, COLS;
 #endif
-
-#if USE_TERMCAP
+#if TERMCAP
 extern bool CA, canUPSCROLL;
 extern char FkL,
 	    CurRT,
 	    CurLT,
 	    CurDN,
 	    CurUP;
-#endif /*USE_TERMCAP*/
-
+#endif /*TERMCAP*/
 extern char *TERMNAME,
 	    *HO,
 	    *UP,
@@ -112,7 +109,8 @@ char Erasechar,
      eraseline;
 
 extern
-char codeversion[],		/* Editor version */
+char ED_NOTICE[],		/* Editor version */
+     ED_REVISION,		/* Small revisions & corrections */
      fismod[],			/* File is modified message */
      fisro[];			/* permission denied message */
      
@@ -178,26 +176,24 @@ cmdtype movemap[];
 #define EXTERN_D
 #define wc(ch)	(scan(65,'=',(ch),wordset)<65)
 
-#if HAVE_STRING_H
+#if SYS5
 #include <string.h>
-#endif
 
-#if HAVE_MEMSET
 #define fillchar(p,l,c)	memset((p),(c),(l))
-#elif HAVE_BLKFILL
-#define fillchar(p,l,c)	blkfill((p),(c),(l))
-#endif
-#if HAVE_STRCHR
 #define index(s,c)	strchr((s),(c))
-#endif
-
+#else /*!SYS5*/
+#if ST
+#define fillchar(p,l,c)	blkfill((p),(c),(l))
+#endif /*ST*/
+#endif /*SYS5*/
+		
 extern findstates PROC findCP();
 extern exec_type PROC editcore();
 
 extern char PROC line(), peekc(), readchar();
 extern char PROC *findparse(),*makepat();
 
-extern bool PROC lvgetline();
+extern bool PROC getline();
 extern bool PROC putfile();
 extern bool PROC doyank(), deletion(), putback();
 extern bool PROC pushb(),pushi(),pushmem(),uputcmd(), delete_to_undo();
@@ -207,9 +203,8 @@ extern int PROC min(), max(), fseekeol(), bseekeol(), settop();
 extern int PROC scan(), findDLE(), setY(), skipws(), nextline(), setX();
 extern int PROC insertion(), chop(), fixcore(), lookup(), to_index();
 extern int PROC doaddwork(), addfile(), expandargs(), to_line();
-extern int PROC findfwd(), findback(), lvgetcontext(), getKey();
+extern int PROC findfwd(), findback(), getcontext(), getKey();
 extern int PROC cclass();
-extern int PROC insertfile();
 
 extern VOID PROC strput(), numtoa(), clrprompt(), setend(), error();
 extern VOID PROC insert_to_undo(), resetX(), zerostack(), swap();
@@ -230,7 +225,7 @@ extern VOID PROC moveright();
 extern VOID PROC fillchar();
 #endif
 
-#if USE_TERMCAP
+#if TERMCAP
 extern void tc_init();
 #endif
 

@@ -20,7 +20,9 @@ UPROGS= oldcat\
 	zombie
 
 all: ../../lib/ulib.a $(UPROGS)
-	mv $(UPROGS) ../../fs/bin
+
+install: all
+	cp $(UPROGS) ../../fs/bin
 
 ../../lib/ulib.a:
 	$(MAKE) -C ../../lib ulib.a

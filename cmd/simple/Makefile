@@ -10,7 +10,9 @@ UPROGS= basename cal cksum cmp comm cp crc \
 	strings tee paste join env tryraw
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
-	mv $(UPROGS) ../../fs/bin
+
+install: all
+	cp $(UPROGS) ../../fs/bin
 
 ../../fs/bin:
 	mkdir -p ../../fs/bin

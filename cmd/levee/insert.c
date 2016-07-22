@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-2007 David L Parsons
+ * Copyright (c) 1982-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -49,7 +49,7 @@ bool visual;
 	if (autoindent)
 	    currDLE = findDLE(lstart, &i, skipws(lstart),0);
 	if (visual) {
-#if TTY_VT52
+#if VT52
 	    if (OL) {
 #else
 	    if (OL && (*yp) < LINES-2) {
@@ -115,7 +115,7 @@ bool visual;
 	    strput(CE);				/* clear this line */
 	    println();
 	    if (visual) {
-#if OS_RMX
+#if RMX
 		/* at OL at bottom kludge... */
 		if (OL && (*yp) < LINES-2) {
 #else

@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-2008 David L Parsons
+ * Copyright (c) 1982-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -19,7 +19,6 @@
  */
 #include "levee.h"
 #include "extern.h"
-#include <stdlib.h>
     
 /* do some undoable modification */
 
@@ -173,53 +172,14 @@ bool before;
     return(putback(curr, &newend));
 }
 
-bool PROC
-execute(int start, int end)
-{
-    int tf;
-    FILE *f;
-    char scratch[20];
-    bool ret = FALSE;
-    int size;
-
-    strcpy(scratch, "/tmp/lv.XXXXXX");
-    
-    clrprompt();
-    printch('!');
-    if ( !lvgetline(instring) )
-	return FALSE;
-
-    if ( (tf = mkstemp(scratch)) < 0 ) {
-	prints("[tempfile error]");
-	return FALSE;
-    }
-
-    strcat(instring, " 2>&1 <");
-    strcat(instring, scratch);
-    
-    if ( (size = write(tf, core+start, end-start)) == (end-start) ) {
-	if ( (f=popen(instring, "r")) ) {
-	    if ( deletion(start, end) && (insertfile(f, 1, start, &size) > 0) )
-		ret = TRUE;
-	    pclose(f);
-	}
-	else
-	    error();
-    }
-	
-    close(tf);
-    unlink(scratch);
-    
-    return ret;
-}
-
 VOID PROC
 gcount()
 {
-    do {
+    count = 0;
+    while (count>=0 && ch >= '0' && ch <='9') {
 	count = (count*10) + (ch-'0');
-	readchar(); /* get a char to replace the one we dumped */
-    } while ( count >= 0 && isdigit(ch) );
+	readchar();		/* get a char to replace the one we dumped */
+    }
 }
 
 VOID PROC
@@ -254,9 +214,8 @@ cmdtype cmd;
 
     if (cmd <= YANK_C) {
 	readchar();
-	if ( isdigit(ch) && ch != '0' ) {
+	if (ch >= '0' && ch <= '9') {
 	    oldc = count;
-	    count = 0;
 	    gcount();				/* get a new count */
 	    if (cmd == ADJUST_C)		/* special for >>,<< wierdness */
 		swap(&count, &oldc);		/* reverse sw & count */
@@ -294,9 +253,6 @@ cmdtype cmd;
 	newend = curr;
 	disp = curr;
 	switch (cmd) {
-	    case EXEC_C:
-		ok = execute(curr, endp);
-		break;
 	    case DELETE_C:
 		ok = deletion(curr, endp);
 		break;
@@ -477,8 +433,6 @@ macrocommand()
     else
 	gcb[0] = 0;
     switch (ch) { /* which macro? */
-	case 'g':			/* go to start of file */
-	    strcat(gcb,"1G"); break;
 	case 'x':			/* x out characters */
 	    strcat(gcb,"dl"); break;
 	case 'X':			/* ... backwards */
@@ -564,9 +518,7 @@ editcore()
     for (;;) {
 	s_wrapped = 0;
 	ch = readchar();			/* get a char */
-	count = 0;
-	if (isdigit(ch) && ch != '0')
-	    gcount();			/* ... a possible count */
+	gcount();			/* ... a possible count */
 	switch (cmd = movemap[(unsigned int)ch]) {
 	  case FILE_C:
 	    wr_stat();			/* write file stats */

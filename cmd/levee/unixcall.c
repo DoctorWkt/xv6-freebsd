@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-2007 David L Parsons
+ * Copyright (c) 1982-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -21,9 +21,6 @@
  * Unix interface for levee
  */
 #include "levee.h"
-
-#ifdef OS_UNIX
-
 #include "extern.h"
 #include <termios.h>
 #include <string.h>
@@ -31,7 +28,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#if USE_TERMCAP3
+#if TERMCAP && !TERMCAP_EMULATION
 #include <termcap.h>
 #endif
 
@@ -52,16 +49,16 @@ int a, b;
 void strput(s)
 char *s;
 {
-#if USE_TERMCAP3
+#if TERMCAP && !TERMCAP_EMULATION
     if (s)
 	tputs(s, 1, putchar);
 #else
     if (s)
-	write(1, s, strlen(s));
+	(void)write(1, s, strlen(s));
 #endif
 }
 
-#if !HAVE_BASENAME
+#ifdef LIBC_HAS_NO_BASENAME
 char *
 basename(s)
 char *s;
@@ -85,11 +82,13 @@ initcon()
     struct termios new;
 
     if (!ioset) {
-	tcgetattr(0, &old);	/* get editing keys */
-
+#if 0
+        ioctl(0, TCGETS, &old);	/* get editing keys */
         Erasechar = old.c_cc[VERASE];
         eraseline = old.c_cc[VKILL];
+#endif
 
+	tcgetattr(0, &old);
         new = old;
 
 	// new.c_iflag &= ~(IXON|IXOFF|IXANY|ICRNL|INLCR);
@@ -126,8 +125,7 @@ getKey()
      *
      * ... and watch your load-average peg.
      */
-    while (read(0,c,1) != 1)
-	;
-    return c[0];
+     while (read(0,c,1) != 1)
+     	;
+     return c[0];
 }
-#endif

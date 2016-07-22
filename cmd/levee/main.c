@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-2007 David L Parsons
+ * Copyright (c) 1982-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -20,14 +20,13 @@
 
 #include "levee.h"
 #include "extern.h"
+VOID PROC doexec(char *cmd, exec_type *mode, bool *noquit);
 
-#include <stdlib.h>
-
-#if HAVE_SIGNAL_H
+#if (SYS5 & !ST)	/* if system 5 compatable, it has signals */
 #include <signal.h>
 #endif
 
-#if OS_RMX
+#if RMX
     extern alien token rq$get$task$tokens();	/* for unique files */
 #endif
 
@@ -37,26 +36,26 @@ stamp(s, template)
 char *s;
 char *template;
 {
-#if OS_RMX
+#if RMX
     token dummy;
 
     strcpy(s, ":work:");
     strcat(s, template);
     numtoa(&s[strlen(s)], rq$get$task$tokens(0,&dummy));
 #else
-#if OS_DOS || OS_ATARI
+#if MSDOS || ST
     char *p;
 #endif
 
-#if OS_UNIX
+#if UNIX
     strcpy(s, "/tmp/");
 #endif
 
-#if OS_FLEXOS
+#if FLEXOS
     s[0] = 0;
 #endif
 
-#if OS_DOS
+#if MSDOS
     if (p=getenv("TMP")) {
 	strcpy(s, p);
 	if (s[strlen(s)-1] != '\\')
@@ -65,7 +64,7 @@ char *template;
     else
 	s[0] = 0;
 #endif
-#if OS_ATARI
+#if ST
     if (p=getenv("_TMP")) {
 	strcpy(s, p);
 	if (s[strlen(s)-1] != '\\')
@@ -79,7 +78,7 @@ char *template;
 #endif
 }
 
-#if OS_RMX|OS_UNIX
+#if RMX|UNIX
 PROC void
 ctrlc()
 /* ctrlc: RMX control-C handler */
@@ -88,7 +87,7 @@ ctrlc()
 }
 #endif
 
-#if OS_RMX
+#if RMX
 PROC
 settty()
 /* settty: set up the terminal for raw input */
@@ -109,38 +108,38 @@ char **args;
 /* initialize: set up everything I can in levee */
 {
     int i;
-#if OS_RMX
+#if RMX
     int xmode = E_INIT, xquit;
 #else
     char *getenv();
-#if OS_ATARI
+#if ST
     extern int mapslash;
 #endif
 #endif
 
-#if OS_UNIX
+#if UNIX
     signal(SIGINT, ctrlc);
 #else
     signal(SIGINT, SIG_IGN);
 #endif
     initcon();
 
-#if OS_RMX
+#if RMX
     exception(0);
     dq$trap$cc(ctrlc,&i);
 #endif
 
-#if TTY_ZTERM
+#if ZTERM
     zconfig();
-#endif /*TTY_ZTERM*/
+#endif /*ZTERM*/
 
-#if OS_ATARI
+#if ST
     screensz(&LINES, &COLS);
     dofscroll = LINES/2;
 #endif
 
-#if OS_RMX
-#if USE_TERMCAP
+#if RMX
+#if TERMCAP
     {	FILE *tcf;
 	extern char termcap[];
 
@@ -150,15 +149,15 @@ char **args;
 	    fclose(tcf);			/* close the file */
 	}
     }
-#endif /*USE_TERMCAP*/
+#endif /*TERMCAP*/
     settty();
-#endif /*OS_RMX*/
+#endif /*RMX*/
 
-#if USE_TERMCAP
+#if TERMCAP
     tc_init();
 #endif
 
-    version(); strput(".  Copyright (c) 1983-2007 by David Parsons");
+    version(); strput(".  Copyright (c) 1983-1989 by David Parsons");
 
     if (!CA) {
 	lineonly = TRUE;
@@ -200,12 +199,12 @@ char **args;
     stamp(undotmp, "$tm");
     
     mvcur(LINES-1,0);
-#if OS_ATARI
+#if ST
     mapslash = getenv("mapslash") != 0L;
 #endif
-#if OS_RMX
+#if RMX
     do_file(":lvrc:", &xmode, &xquit);
-#else /*!OS_RMX	system has a environment.. */
+#else /*!RMX	system has a environment.. */
     {	char *p;
 	extern char *execstr;	/* [exec.c] */
 
@@ -253,8 +252,8 @@ exec_type emode;
     mode=emode;
     do {
 	prompt(FALSE,":");
-	if (lvgetline(instring))
-	    exec(instring, &mode, &noquit);
+	if (getline(instring))
+	    doexec(instring, &mode, &noquit);
 	indirect = FALSE;
 	if (mode == E_VISUAL && zotscreen && noquit) {	/*ask for more*/
 	    prints(" [more]");
@@ -274,7 +273,7 @@ exec_type emode;
     return noquit;
 }
 
-#if OS_ATARI
+#if ST
 long _STKSIZ = 4096;
 long _BLKSIZ = 4096;
 #endif
@@ -297,13 +296,13 @@ char **argv;
     unlink(undobuf);
     unlink(yankbuf);
 
-#if TTY_ZTERM
+#if ZTERM
     zclose();
 #endif
 
     fixcon();
 
-#if OS_RMX
+#if RMX
     strputs("\033]T:C15=3,C18=13,C20=5,C21=6,C23=4\033\\\n");
     dq$special(2,&fileno(stdin),&curr);
 #else

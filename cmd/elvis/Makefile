@@ -37,7 +37,9 @@ all:	elvis
 
 elvis:	$(OBJ)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o elvis $(OBJ) ../../lib/libc.a
-	mv elvis ../../fs/bin
+
+install: elvis
+	cp elvis ../../fs/bin
 
 ctags:	ctags.c
 	$(CC) $(CFLAGS) $(SORT) $(LDFLAGS) -o ctags ctags.c
