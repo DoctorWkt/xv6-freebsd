@@ -1,3 +1,22 @@
+/*
+ * LEVEE, or Captain Video;  A vi clone
+ *
+ * Copyright (c) 1982-1997 David L Parsons
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, without or
+ * without modification, are permitted provided that the above
+ * copyright notice and this paragraph are duplicated in all such
+ * forms and that any documentation, advertising materials, and
+ * other materials related to such distribution and use acknowledge
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
+ * My name may not be used to endorse or promote products derived
+ * from this software without specific prior written permission.
+ * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE.
+ */
 #include "levee.h"
 #include "extern.h"
 #include <string.h>
@@ -66,7 +85,7 @@ VOID PROC
 version()
 /* version: print which version of levee we are... */
 {
-    errmsg("levee (c)");prints(codeversion);
+    errmsg("levee ");prints(ED_NOTICE);printch(ED_REVISION);
 } /* version */
 
 
@@ -82,13 +101,13 @@ args()
 	else if (i > 0)
 	    printch(' ');
 	if (pc == i) {			/* highlight the current filename.. */
-#if OS_ATARI|OS_FLEXOS
+#if ST|FLEXOS
 	    strput("\033p");
 #else
 	    printch('[');
 #endif
 	    prints(argv[i]);
-#if OS_ATARI|OS_FLEXOS
+#if ST|FLEXOS
 	    strput("\033q");
 #else
 	    printch(']');
@@ -326,14 +345,14 @@ char * PROC
 getname()
 {
     extern int wilderr;
-#if OS_ATARI
+#if ST
     extern int mapslash;
     register char *p;
 #endif
     register char *name;
 
     if ( (name = getarg()) ) {
-	if ( 0 == strcmp(name,"#") ) {
+	if (strcmp(name,"#") == 0) {
 	    if (*altnm)
 		name = altnm;
 	    else {
@@ -342,7 +361,7 @@ getname()
 		return NULL;
 	    }
 	}
-#if OS_ATARI
+#if ST
 	if (mapslash)
 	    for (p=name; *p; p++)
 		if (*p == '/')
@@ -424,62 +443,37 @@ splat:	errmsg("bad substitute");
 } /* cutandpaste */
 
 
-/* quietly read in a file (and mark it in the undo stack)
- */
-int PROC
-insertfile(FILE *f, int insert, int at, int *fsize)
-{
-    int high,
-	onright,
-	rc=0;
-
-    onright = (bufmax-at);
-    high = SIZE-onright;
-
-    if ( insert && (onright > 0) )
-	 moveright(&core[at], &core[high], onright);
-
-    rc = addfile(f, at, high, fsize);
-
-    if ( (rc == 0) && (*fsize < 0) ) {
-	rc = -1;
-	*fsize=0;
-    }
-    if ( insert ) {
-	if ( *fsize ) 
-	    insert_to_undo(&undo, at, *fsize);
-	modified = YES;
-	if (onright > 0)
-	    moveleft(&core[high], &core[at+(*fsize)], onright);
-    }
-    diddled = YES;
-    return rc;
-} /* insertfile */
-
-
-
 VOID PROC
 inputf(fname, newbuf)
 register char *fname;
 bool newbuf;
 {
+    int onright = 0,	/* text moved right for :read */
+	fsize;		/* bytes read in */
     FILE *f;
-    int fsize,		/* bytes read in */
-	rc;
+
 
     if (newbuf)
 	readonly = NO;
-	
-    zerostack(&undo);
 
-    if ( newbuf ) {
+    zerostack(&undo);
+    if (newbuf) {
 	modified = NO;
 	low = 0;
+	high = SIZE;
     }
-    else {
+    else {		/* append stuff to the buffer */
 	fixupline(bseekeol(curr));
+	onright = bufmax-low;
+#if MSDOS
+	high = SIZE;
+	high -= onright;
+#else
+	high = (SIZE-onright);
+#endif
+	if (onright > 0)
+	    moveright(&core[low], &core[high], onright);
     }
-    
     printch('"');
     prints(fname);
     prints("\" ");
@@ -490,22 +484,29 @@ bool newbuf;
 	    newfile = YES;
     }
     else {
-	rc = insertfile(f, !newbuf, low, &fsize);
-	fclose(f);
-
-	if ( rc > 0 )
-	    plural(fsize, " byte");
-	else if ( rc < 0 )
+	if (addfile(f, low, high, &fsize))
+	    plural(fsize," byte");
+	else if (fsize < 0) {
 	    prints("[read error]");
+	    fsize = 0;
+	}
 	else {
 	    prints("[overflow]");
-	    readonly=1;
+	    readonly = YES;
 	}
-	if (newbuf) newfile = NO;
+	fclose(f);
+	if (newbuf)
+	    newfile = NO;
     }
     if (newbuf) {
 	fillchar(contexts, sizeof(contexts), -1);
 	bufmax = fsize;
+    }
+    else {
+	insert_to_undo(&undo, low, fsize);
+	modified = YES;
+	if (onright > 0)
+	    moveleft(&core[high], &core[low+fsize], onright);
     }
     if (*startcmd) {
 	count = 1;
@@ -515,6 +516,7 @@ bool newbuf;
     }
     else
 	curr = low;
+    diddled = YES;
 } /* inputf */
 
 
@@ -524,12 +526,12 @@ backup(name)
 char *name;
 {
     char back[80];
-#if !OS_UNIX
+#if !UNIX
     char *p;
 #endif
 
     strcpy(back, name);
-#if OS_UNIX
+#if UNIX
     strcat(back, "~");
 #else
     p = strrchr(basename(back), '.');
@@ -1078,16 +1080,16 @@ bool *noquit;
 	    zotscreen = YES;
 	    exprintln();
 	    if (*execstr) {
-#if TTY_ZTERM
+#if ZTERM
 		zclose();
 #endif
-#if OS_FLEXOS|OS_UNIX
+#if FLEXOS|UNIX
 		fixcon();
 #else
 		allowintr();
 #endif
-		system(execstr);
-#if OS_FLEXOS|OS_UNIX
+		(void)system(execstr);
+#if FLEXOS|UNIX
 		initcon();
 #else
 		nointr();

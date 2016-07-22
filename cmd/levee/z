@@ -1,2 +1,0 @@
-#export TERMCAP='Ansi subset:CM=\E[%d;%dH,Y,1,1:CE=\E[K:CL=\E[H\E[J:LINES=24:COLS=79:HO=\E[H:FkL=\E:CurR=C:CurL=D:CurU=A:CurD=B'
-export TERMCAP='Ansi subset:CM=\E[%i%d;%dH:CE=\E[K:CL=\E[H\E[2J:LINES=24:COLS=79:HO=\E[H:FkL=\E:CurR=C:CurL=D:CurU=A:CurD=B'

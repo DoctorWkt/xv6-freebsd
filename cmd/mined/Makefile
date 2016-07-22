@@ -14,7 +14,9 @@ all:	mined
 mined:	$(OBJ)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o mined $(OBJ) ../../lib/libc.a
 	strip mined
-	mv mined ../../fs/bin
+
+install: mined
+	cp mined ../../fs/bin
 
 $(OBJ):	mined.h
 

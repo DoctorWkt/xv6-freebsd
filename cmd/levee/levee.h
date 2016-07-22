@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1980-2008 David L Parsons
+ * Copyright (c) 1980-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -32,8 +32,8 @@
 #ifndef LEVEE_D
 
 #define LEVEE_D
-
-#include "config.h"
+#define	TOUPPER_FTN	/* defined if the libraries support toupper as */
+			/* a function call */
 
 #ifndef TRUE
 #define	TRUE	(1)	/* Nobody defines TRUE & FALSE, so I will do */
@@ -47,9 +47,26 @@
 
 /*
  * Compilation defines for different systems.
+ * Choose only one from each group.
  */
+/* system you are compiling Levee on */
+#define ST	0
+#define RMX	0
+#define UNIX	1
+#define MSDOS	0
+#define	FLEXOS	0
 
-#if OS_ATARI
+/* do your libraries follow system V standards? */
+#define SYS5	1
+
+/* what sort of terminal are you emulating? */
+#define TERMCAP	1		/* use termcap to get terminal information */
+#define TERMCAP_EMULATION 1	/* use our own termcap? */
+#define VT52	0		/* this must be nonzero for the Atari ST */
+#define ZTERM	0		/* fast nonportable x86 terminal */
+#define ANSI	0		/* ANSI.SYS PC terminal */
+
+#if ST
 
 #include <stdio.h>
 
@@ -66,9 +83,9 @@
 extern char *malloc();
 extern long gemdos();
 
-#endif /*OS_ATARI*/
+#endif /*ST*/
 
-#if OS_RMX
+#if RMX
 #include <:inc:stdio.h>
 #include <:inc:udi.h>
 
@@ -81,9 +98,9 @@ extern long gemdos();
 
 #define zwrite(p,s)	write(1,(p), (unsigned)(s))
 
-#endif /*OS_RMX*/
+#endif /*RMX*/
 
-#if OS_DOS
+#if MSDOS
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -102,11 +119,12 @@ extern long gemdos();
 
 #include "proto.h"
 
-#endif /*OS_DOS*/
+#endif /*MSDOS*/
 
-#if OS_UNIX
+#if UNIX
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -119,11 +137,13 @@ extern long gemdos();
 #define READ_TEXT(f,p,c)	read(f, p, (int)(c))
 #define WRITE_TEXT(f,p,c)	write(f, p, (int)(c))
 
-#define zwrite(p,s)		fwrite(p, 1, s, stdout)
+#define zwrite(p,s)           	write(1, p, s)
 
-#endif /*OS_UNIX*/
+#endif /*MSDOS*/
 
-#if OS_FLEXOS
+#if FLEXOS
+
+#undef TOUPPER_FTN			/* Nope, gotta do macro */
 
 #include <stdio.h>
 
@@ -144,12 +164,12 @@ extern long gemdos();
 #undef	HANDLE
 #define	HANDLE	long
 
-#endif /*OS_FLEXOS*/
+#endif /*FLEXOS*/
 
 #define bool int
 
 /* ttydef stuff */
-#if !(OS_ATARI | USE_TERMCAP)
+#if !(ST | TERMCAP)
 
 #ifndef LINES
 #define LINES	25
@@ -166,11 +186,9 @@ extern long gemdos();
 #define LTARROW	erase
 #define RTARROW	12
 
-#if !USE_TERMCAP
+#if !TERMCAP
 #define CA	TRUE
-#if !(OS_DOS||OS_FLEXOS)
-#define canUPSCROLL 1
-#endif
+#define canUPSCROLL !(MSDOS|FLEXOS)
 #endif
 
 /* nospecific stuff */
@@ -283,8 +301,7 @@ extern long gemdos();
 #define PARA_FWD	31
 #define PARA_BACK	32
 		/*modifications*/
-#define DELETE_C	39
-#define EXEC_C		40
+#define DELETE_C	40
 #define ADJUST_C	41
 #define CHANGE_C	42
 #define YANK_C		43
@@ -384,3 +401,5 @@ struct variable {	/* Settable Variable Record */
     union optionrec *u;		/* pointer to it */
 };
 #endif /*LEVEE_D*/
+
+#define getline levee_getline

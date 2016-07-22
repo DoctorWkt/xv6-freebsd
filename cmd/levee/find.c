@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-2007 David L Parsons
+ * Copyright (c) 1982-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -60,6 +60,9 @@ char *pattern, **cp, *endp;
       case TOKENE:
 	  return !isalnum(**cp);
       case LITCHAR:
+#ifdef TOUPPER_FTN
+#undef toupper
+#endif
 	  if (ignorecase)
 	      flag = (toupper(**cp) == toupper(*(pattern+1)));
 	  else
@@ -424,7 +427,7 @@ int *idx,start;
 	break;
 	case '`':
 	case '\'':
-	    addr = lvgetcontext(*(src+1), (*src == '\''));
+	    addr = getcontext(*(src+1), (*src == '\''));
 	    src += 2;
 	break;
     }
@@ -496,7 +499,7 @@ int origin;
 /* get something from the context table */
 
 int PROC
-lvgetcontext(c,begline)
+getcontext(c,begline)
 char c;
 bool begline;
 {

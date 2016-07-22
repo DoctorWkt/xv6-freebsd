@@ -19,7 +19,7 @@
     mode addresses,  except that a naked + will put  you at the very
     end of the file.
 
-      Levee is copyright (c) 1982-2015 by David L. Parsons. (see
+      Levee is copyright (c) 1982-1997 by David L. Parsons. (see
       the notice at the end of this document for distribution terms)
 
     Levee.					A Screen Oriented Editor.
@@ -540,11 +540,7 @@ NOTE:	If you are running Levee on RMX or Osy/SWOs, it will read
     Find the next (count'th) occurance of a character on the current line.
     For example, if the cursor is sitting on the first character of the
     line 'abcdef', typing "ff" will put the cursor on the 'f'.
-
----------------
-	g
-    Move to the start of the file. Shorthand for 1G. (See below for G.)
-
+    
 (*)------------
 	(#)h
     Move left one (count) characters. Exactly like ^H.
@@ -656,8 +652,7 @@ NOTE:	If you are running Levee on RMX or Osy/SWOs, it will read
     Goto line. If you specify a count, Levee will move to that line, and if
     there is no count, Levee moves to the absolute end of the file.
 
-    To get to the start of the file, type "1G". To the end, just "G". As a
-    convenience, "g" will also move to the start of the file.
+    To get to the start of the file, type "1G". To the end, just "G".
 
 (*)------------
 	H
@@ -858,7 +853,7 @@ NOTE:	If you are running Levee on RMX or Osy/SWOs, it will read
 
     COPYRIGHT
   
-   Copyright (c) 1982-2015 David L. Parsons
+   Copyright (c) 1982-1997 David L Parsons
    All rights reserved.
   
    Redistribution and use in source and binary forms are permitted
@@ -866,7 +861,7 @@ NOTE:	If you are running Levee on RMX or Osy/SWOs, it will read
    duplicated in all such forms and that any documentation,
    advertising materials, and other materials related to such
    distribution and use acknowledge that the software was developed
-   by David L. Parsons (orc@pell.portland.or.us).  My name may not be used
+   by David L Parsons (orc@pell.chi.il.us).  My name may not be used
    to endorse or promote products derived from this software without
    specific prior written permission.  THIS SOFTWARE IS PROVIDED
    AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,

@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-2007 David L Parsons
+ * Copyright (c) 1982-1997 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.portland.or.us).
+ * that the software was developed by David L Parsons (orc@pell.chi.il.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -23,9 +23,9 @@
 #include "levee.h"
 #include "extern.h"
 
-#if OS_UNIX
+#if UNIX
 # include <stdlib.h>
-#elif !OS_RMX
+#elif !RMX
 # include <glob.h>
 #endif
 
@@ -38,7 +38,7 @@ char *name;
 int *argcp;
 char ***argvp;
 {
-#if OS_RMX|OS_UNIX
+#if RMX|UNIX
     wilderr = doaddwork(name, argcp, argvp) < 0;
 #else
     register char *p;
@@ -55,7 +55,7 @@ char ***argvp;
     }
     else if (doaddwork(name, argcp, argvp) < 0)
 	wilderr++;
-#endif /*!OS_RMX*/
+#endif /*!RMX*/
     if (wilderr)
 	killargs(argcp, argvp);
     return !wilderr;
@@ -82,7 +82,7 @@ char ***argvp;
 	}
     }
     if ( (ap[ac] = strdup(token)) ) {
-#if OS_ATARI|OS_RMX|OS_FLEXOS
+#if ST|RMX|FLEXOS
 	strlwr(ap[ac]);		/* monocase filesystem */
 #endif
 	*argvp = ap;
