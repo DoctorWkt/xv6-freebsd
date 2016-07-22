@@ -7,7 +7,7 @@ UPROGS= basename cal cksum cmp comm cp crc \
 	cut ed ls cat wc ttt uue mv rm \
 	showtime grep date head tail od yes pwd \
 	uud uniq tr tsort expand unexpand split \
-	strings tee paste join env tryraw
+	strings tee paste join env tryraw roff
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 
