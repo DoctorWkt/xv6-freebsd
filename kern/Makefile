@@ -32,6 +32,8 @@ OBJS = \
 	vectors.o\
 	vm.o\
 
+all: kernel
+
 entryother: entryother.S
 	$(CC) $(CFLAGS) -fno-pic -c entryother.S
 	$(LD) $(LDFLAGS) -N -e start -Ttext 0x7000 -o bootblockother.o entryother.o

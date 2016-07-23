@@ -1,7 +1,4 @@
-TOP_SRCDIR = ..
-include $(TOP_SRCDIR)/Makefile.common
-
-ULIB = ulib.o usys.o printf.o umalloc.o libc.a
+include ../Makefile.common
 
 all: ulib.a libc.a libcurses.a
 

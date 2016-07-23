@@ -10,8 +10,6 @@
 #	SORT	if the "tags" file must be sorted, then SORT=-DSORT
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
-CFLAGS = -fno-builtin -Wall -m32 -Werror -nostdinc -I$(INCLDIR)
-CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 PROGS=	elvis ctags ref elvrec fmt elvprsv
 
@@ -32,7 +30,6 @@ OBJ=blk.o cmd1.o cmd2.o ctype.o curses.o cut.o ex.o input.o \
    opts.o recycle.o redraw.o regexp.o regsub.o system.o tio.o tmp.o \
    unix.o vars.o vcmd.o vi.o tinytcap.o
 
-#all:	$(PROGS)
 all:	elvis
 
 elvis:	$(OBJ)
