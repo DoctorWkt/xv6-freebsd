@@ -17,20 +17,25 @@ char *getenv(const char *key)
 
   // Try to open the env file
   if ((in=fopen(ENV_FILE, "r"))==NULL) return(NULL);
+  // printf("In getenv, looking for %s\n", key);
+  // fflush(stdout);
 
   // Read lines from the file
   while (fgets(_env_line, LINE_LEN-1, in)!=NULL) {
     // Skip those starting with '#'
     if (_env_line[0]=='#') continue;
+    // printf("line is %s\n", _env_line);
 
     // Find an '=' character
     if ((valptr=strchr(_env_line, '='))!=NULL) {
       // Break the line into two strings
       *(valptr++)= '\0';
+    // printf("We now have %s and %s\n",  _env_line,  valptr);
 
       // We have a match on the key
       if (!strcmp(key, _env_line)) {
 	found=1;
+	// printf("A match against %s\n", key);
 	// Remove the newline
 	nlptr=strrchr(valptr, '\n');
 	if (nlptr!=NULL) *nlptr='\0';
