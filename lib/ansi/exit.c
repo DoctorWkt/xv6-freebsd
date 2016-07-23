@@ -11,7 +11,7 @@
 void (*__functab[NEXITS])(void);
 int __funccnt = 0;
 
-extern void _Exit();
+extern void _Exit(int exitval);
 
 /* only flush output buffers when necessary */
 int (*_clean)(void) = NULL;
@@ -31,5 +31,5 @@ exit(int status)
 {
 	_calls();
 	if (_clean) _clean();
-	_Exit();
+	_Exit(status);
 }

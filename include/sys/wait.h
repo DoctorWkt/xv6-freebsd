@@ -26,12 +26,12 @@
 #define WNOHANG         1	/* do not wait for child to exit */
 #define WUNTRACED       2	/* for job control; not implemented */
 
-#define WIFEXITED(s)	(_LOW(s) == 0)			    /* normal exit */
-#define WEXITSTATUS(s)	(_HIGH(s))			    /* exit status */
-#define WTERMSIG(s)	(_LOW(s) & 0177)		    /* sig value */
-#define WIFSIGNALED(s)	(((unsigned int)(s)-1 & 0xFFFF) < 0xFF) /* signaled */
-#define WIFSTOPPED(s)	(_LOW(s) == 0177)		    /* stopped */
-#define WSTOPSIG(s)	(_HIGH(s) & 0377)		    /* stop signal */
+#define WIFEXITED(s)	((s & 0x100) == 0)		    /* normal exit */
+#define WEXITSTATUS(s)	(_LOW(s))			    /* exit status */
+#define WTERMSIG(s)	(9)				    /* sig value */
+#define WIFSIGNALED(s)	(s & 0x100)			    /* signaled */
+#define WIFSTOPPED(s)	(0)				    /* stopped */
+#define WSTOPSIG(s)	(0)		    		    /* stop signal */
 
 /* Function Prototypes. */
 _PROTOTYPE( pid_t wait, (int *_stat_loc)			   	   );
