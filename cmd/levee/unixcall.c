@@ -46,12 +46,17 @@ int a, b;
     return (a<b) ? b : a;
 }
 
+void vputchar(int x)
+{
+  putchar(x);
+}
+
 void strput(s)
 char *s;
 {
 #if TERMCAP && !TERMCAP_EMULATION
     if (s)
-	tputs(s, 1, putchar);
+	tputs(s, 1, vputchar);
 #else
     if (s)
 	(void)write(1, s, strlen(s));

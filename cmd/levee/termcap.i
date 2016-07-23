@@ -30,11 +30,10 @@
  *  * -> internal routine.
  */
 
-#if RMX | MSDOS		/* default to ANSI.SYS termcap */
+		/* default to ANSI.SYS termcap */
 char termcap[200] = "Ansi subset:CM=\033[%d;%dH,Y,1,1:\
 CE=\033[K:CL=\033[H\033[J:LINES=24:COLS=79:HO=\033[H:FkL=\033:\
 CurR=C:CurL=D:CurU=A:CurD=B";
-#endif
 
 char *
 parseit(ptr,savearea)
@@ -130,12 +129,7 @@ tc_init()
 /* get the termcap stuff and go berserk parsing it */
 /* if anything horrid goes wrong, levee will crash */
 {
-#if RMX
     char *p = termcap;
-#else
-    char *getenv();
-    char *p = getenv("TERMCAP");
-#endif
     char *lp, *ptr;
 
 #if MSDOS
