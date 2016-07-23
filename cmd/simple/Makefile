@@ -1,7 +1,5 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
-CFLAGS = -fno-builtin -Wall -m32 -Werror -nostdinc -I$(INCLDIR)
-CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 UPROGS= basename cal cksum cmp comm cp crc \
 	cut ed ls cat wc ttt uue mv rm \
@@ -27,7 +25,6 @@ install: all
 	$(CC) $(CFLAGS) -c -o $@ $^
 
 %: %.o ../../lib/libc.a
-#	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip $@
 

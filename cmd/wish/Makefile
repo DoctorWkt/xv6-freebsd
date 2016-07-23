@@ -15,8 +15,6 @@ include $(TOP_SRCDIR)/Makefile.common
 #CFLAGS= -O
 #CFLAGS= -Wall
 #CFLAGS= -pg
-CFLAGS = -fno-builtin -Wall -m32 -Werror -nostdinc -I$(INCLDIR)
-CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 
 #LDFLAGS= -3
 #LDFLAGS= -i
