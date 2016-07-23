@@ -1,6 +1,11 @@
 #include <unistd.h>
+#include <string.h>
 
 char **environ=NULL;
+
+// If the exec path doesn't stat with a /, append it to "/bin"
+char *_execfullpath="/bin/                                                                          ";
+
 extern int exec(const char *path, char *const argv[]);
 
 int execl(const char *path, const char *arg, ...)
@@ -20,15 +25,21 @@ int execle(const char *path, const char *arg, ...)
 
 int execv(const char *path, char *const argv[])
 {
-  return(exec(path, argv));
+  const char *f= path;
+  if (f[0] != '/') { strcpy(&(_execfullpath[5]), f); f=_execfullpath; }
+  return(exec(f, argv));
 }
 
 int execvp(const char *file, char *const argv[])
 {
-  return(exec(file, argv));
+  const char *f= file;
+  if (f[0] != '/') { strcpy(&(_execfullpath[5]), f); f=_execfullpath; }
+  return(exec(f, argv));
 }
 
 int execvpe(const char *file, char *const argv[], char *const envp[])
 {
-  return(exec(file, argv));
+  const char *f= file;
+  if (f[0] != '/') { strcpy(&(_execfullpath[5]), f); f=_execfullpath; }
+  return(exec(f, argv));
 }
