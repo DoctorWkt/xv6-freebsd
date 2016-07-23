@@ -388,7 +388,7 @@ int start, endd, *size;
 		return(0);
 	    }
 	}
-	else if (c=='\r' || c==ESC) {
+	else if (c=='\r' || c=='\n' || c==ESC) {
 	    *size = (ip-start);
             return (c==ESC) ? ESC : EOL;
 	}
