@@ -78,3 +78,10 @@ Monday 18 July  17:28:22 AEST 2016 - Warren
 -------------------------------------------
 I have reverted some of the xv6 file changes, so the code can be printed
 again and it doesn't refer to any of the Minix header files.
+
+Sunday 24 July  10:30:13 AEST 2016 - Warren
+-------------------------------------------
+I've got a few big programs up and running: less, levee (a vi clone) and
+my wish shell. I've written a few more system call replacements. I've
+increased the filesystem block size to 1K, and I've also added exit
+values to the kernel.
