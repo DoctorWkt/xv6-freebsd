@@ -13,13 +13,15 @@ pad()
 # create formatted (numbered) files
 mkdir -p fmt
 rm -f fmt/*
-cp README fmt
+cp ../README fmt
 files=`grep -v '^#' runoff.list | awk '{print $1}'`
 n=99
 for i in $files
 do
-	./runoff1 -n $n $i >fmt/$i
-	nn=`tail -1 fmt/$i | sed 's/ .*//; s/^0*//'`
+	j=`echo $i | sed 's/.*\///'`
+	echo "./runoff1 -n $n $i >fmt/$j"
+	./runoff1 -n $n $i >fmt/$j
+	nn=`tail -1 fmt/$j | sed 's/ .*//; s/^0*//'`
 	if [ "x$nn" != x ]; then
 		n=$nn
 	fi
