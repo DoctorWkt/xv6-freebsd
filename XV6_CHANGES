@@ -6,6 +6,9 @@ lseek() system call
 This is a major Unix system call and is used by many programs
 and libraries, e.g. stdio.
 
+Files affected (lines):
+	syscall.c (+2), sysfile.c (+60), file.h (+4), syscall.h (+1)
+
 ioctl() system call
 -------------------
 I've added ioctl() only to support tcgetattr() and tcsetattr()
@@ -15,14 +18,27 @@ is needed by curses and editline. I agree that ioctl() is an
 abomination, so alternatively tcgetattr() and tcsetattr() could
 be made into system calls.
 
+Files affected (lines):
+	console.c (+40), syscall.c (+2), sysfile.c (+16), file.h (+1),
+	syscall.h (+1)
+
 time() system call and mtime in inodes
 --------------------------------------
 This is crucial to programs like make, and users like to see
 timestamps on their files when they run ls.
 
+Files affected (lines):
+	fs.c (+6), main.c (+1), syscall.c (+2), defs,h (+1), 
+	file.h (+1), fs.h (+1), stat.h (+1), syscall.h (+1)
+	and a new kernel file: cmos.c (+121)
+
 exit() and wait() exchange values
 ---------------------------------
 This is crucial to programs like make and the change was minor.
+
+Files affected (lines):
+	proc.c (+7), sysproc.c (+4), trap.c (+2), defs,h (+2),
+	proc.h (+1)
 
 Arbitrary filesystem block size
 -------------------------------
@@ -30,6 +46,10 @@ The code is set up to have arbitrary filesystem block sizes but
 the wrong ATA commands were being sent to the hardware. The fix
 was minor.
 
+Files affected (lines):
+	ide.c (+4), fs.h (+1)
+
+	
 Userland xv6 Changes
 ====================
 
