@@ -1,0 +1,43 @@
+Changes to the xv6 Kernel
+=========================
+
+lseek() system call
+-------------------
+This is a major Unix system call and is used by many programs
+and libraries, e.g. stdio.
+
+ioctl() system call
+-------------------
+I've added ioctl() only to support tcgetattr() and tcsetattr()
+on the console device, with recognised flags ECHO and ICANON.
+This is to allow programs to put the console into raw mode, which
+is needed by curses and editline. I agree that ioctl() is an
+abomination, so alternatively tcgetattr() and tcsetattr() could
+be made into system calls.
+
+time() system call and mtime in inodes
+--------------------------------------
+This is crucial to programs like make, and users like to see
+timestamps on their files when they run ls.
+
+exit() and wait() exchange values
+---------------------------------
+This is crucial to programs like make and the change was minor.
+
+Arbitrary filesystem block size
+-------------------------------
+The code is set up to have arbitrary filesystem block sizes but
+the wrong ATA commands were being sent to the hardware. The fix
+was minor.
+
+Userland xv6 Changes
+====================
+
++ The layout of the source code has been rearranged to have files
+  grouped into kernel, commands, libraries, include files etc.
++ mkfs is now more generic, and it clones an existing directory
+  and subdirectories into the filesystem image
++ init now lives in /etc and calls /bin/sh
++ sh now looks in /bin for executables
++ xv6 include files have been modified to have the defines
+  and struct changes to implement all the above changes
