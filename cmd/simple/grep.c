@@ -1,379 +1,527 @@
-/* grep - search a file for a pattern	Author: Norbert Schlenker */
+#ifndef lint
+// static char sccsid[] = "@(#)grep.c	4.6 (Berkeley) 5/14/84";
+#endif
 
-/* Norbert Schlenker (nfs@princeton.edu)  1990-02-08
- * Released into the public domain.
+/*
+ * grep -- print lines matching (or not matching) a pattern
  *
- * Grep searches files for lines containing a pattern, as specified by
- * a regular expression, and prints those lines.  It is invoked by:
- *	grep [flags] [pattern] [file ...]
- *
- * Flags:
- *	-e pattern	useful when pattern begins with '-'
- *	-c		print a count of lines matched
- *	-i		ignore case
- *	-l		prints just file names, no lines (quietly overrides -n)
- *	-n		printed lines are preceded by relative line numbers
- *	-s		prints errors only (quietly overrides -l and -n)
- *	-v		prints lines which don't contain the pattern
- *
- * Semantic note:
- * 	If both -l and -v are specified, grep prints the names of those
- *	files which do not contain the pattern *anywhere*.
- *
- * Exit:
- *	Grep sets an exit status which can be tested by the caller.
- *	Note that these settings are not necessarily compatible with
- *	any other version of grep, especially when -v is specified.
- *	Possible status values are:
- *	  0	if any matches are found
- *	  1	if no matches are found
- *	  2	if syntax errors are detected or any file cannot be opened
+ *	status returns:
+ *		0 - ok, and some matches
+ *		1 - ok, but no matches
+ *		2 - some error
  */
 
-
-/* External interfaces */
-#include <sys/types.h>
-#include <regexp.h>		/* Thanks to Henry Spencer */
-#include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
 #include <unistd.h>
 
-/* Internal constants */
-#define MATCH		0	/* exit code: some match somewhere */
-#define NO_MATCH	1	/* exit code: no match on any line */
-#define FAILURE		2	/* exit code: syntax error or bad file name */
+#define	CBRA	1
+#define	CCHR	2
+#define	CDOT	4
+#define	CCL	6
+#define	NCCL	8
+#define	CDOL	10
+#define	CEOF	11
+#define	CKET	12
+#define	CBRC	14
+#define	CLET	15
+#define	CBACK	18
 
-/* Macros */
-#define SET_FLAG(c)	(flags[(c)-'a'] = 1)
-#define FLAG(c)		(flags[(c)-'a'] != 0)
+#define	STAR	01
 
-#define uppercase(c)	(((unsigned) ((c) - 'A')) <= ('Z' - 'A'))
-#define downcase(c)	((c) - 'A' + 'a')
+#define	LBSIZE	BUFSIZ
+#define	ESIZE	256
+#define	NBRA	9
 
-/* Private storage */
-static char *program;		/* program name */
-static char flags[26];		/* invocation flags */
-static regexp *expression;	/* compiled search pattern */
-static char *rerr;              /* error message */
+char	expbuf[ESIZE];
+long	lnum;
+char	linebuf[LBSIZE+1];
+char	ybuf[ESIZE];
+int	bflag;
+int	lflag;
+int	nflag;
+int	cflag;
+int	vflag;
+int	nfile;
+int	hflag	= 1;
+int	sflag;
+int	yflag;
+int	wflag;
+int	retcode = 0;
+int	circf;
+int	blkno;
+long	tln;
+int	nsucc;
+char	*braslist[NBRA];
+char	*braelist[NBRA];
+char	bittab[] = {
+	1,
+	2,
+	4,
+	8,
+	16,
+	32,
+	64,
+	128
+};
 
-/* External variables. */
-extern int optind;
-extern char *optarg;
+void compile(char *astr);
+void execute(char *file);
+int advance(char *lp, char *ep);
+void succeed(char *f);
+int ecmp(char *a, char *b, int count);
+void errexit(char *s, char *f);
 
-/* Internal interfaces */
-_PROTOTYPE(int main, (int argc, char **argv));
-_PROTOTYPE(static int match, (FILE *input, char *label, char *filename));
-_PROTOTYPE(static char *get_line, (FILE *input));
-_PROTOTYPE(static char *map_nocase, (char *line));
-_PROTOTYPE(void regerror , (const char *s ) );
-_PROTOTYPE(static void tov8, (char *v8pattern, char *pattern));
-
-int main(argc, argv)
-int argc;
-char *argv[];
+int main(int argc, char **argv)
 {
-  int opt;			/* option letter from getopt() */
-  int egrep=0;			/* using extended regexp operators */
-  char *pattern;		/* search pattern */
-  char *v8pattern;		/* v8 regexp search pattern */
-  int exit_status = NO_MATCH;	/* exit status for our caller */
-  int file_status;		/* status of search in one file */
-  FILE *input;			/* input file (if not stdin) */
+	while (--argc > 0 && (++argv)[0][0]=='-')
+		switch (argv[0][1]) {
 
-  program = argv[0];
-  if (strlen(program)>=5 && strcmp(program+strlen(program)-5,"egrep")==0) egrep=1;
-  memset(flags, 0, sizeof(flags));
-  pattern = NULL;
+		case 'i':
+		case 'y':
+			yflag++;
+			continue;
 
-/* Process any command line flags. */
-  while ((opt = getopt(argc, argv, "e:cilnsv")) != EOF) {
-	if (opt == '?')
-		exit_status = FAILURE;
-	else
-	if (opt == 'e')
-		pattern = optarg;
-	else
-		SET_FLAG(opt);
-  }
+		case 'w':
+			wflag++;
+			continue;
 
-/* Detect a few problems. */
-  if ((exit_status == FAILURE) || (optind == argc && pattern == NULL)) {
-	fprintf(stderr,"Usage: %s [-cilnsv] [-e] expression [file ...]\n",program);
-	exit(FAILURE);
-  }
+		case 'h':
+			hflag = 0;
+			continue;
 
-/* Ensure we have a usable pattern. */
-  if (pattern == NULL)
-	pattern = argv[optind++];
+		case 's':
+			sflag++;
+			continue;
 
-/* Map pattern to lowercase if -i given. */
-  if (FLAG('i')) {
-	char *p;
-	for (p = pattern; *p != '\0'; p++) {
-		if (uppercase(*p))
-			*p = downcase(*p);
-	}
-  }
+		case 'v':
+			vflag++;
+			continue;
 
-  if (!egrep) {
-	  if ((v8pattern=malloc(2*strlen(pattern)))==(char*)0) {
-		fprintf(stderr,"%s: out of memory\n");
-		exit(FAILURE);
-	  }
-	  tov8(v8pattern,pattern);
-  } else v8pattern=pattern;
+		case 'b':
+			bflag++;
+			continue;
 
-  rerr=(char*)0;
-  if ((expression = regcomp(v8pattern)) == NULL) {
-	fprintf(stderr,"%s: bad regular expression",program);
-	if (rerr) fprintf(stderr," (%s)",rerr);
-	fprintf(stderr,"\n");
-	exit(FAILURE);
-  }
+		case 'l':
+			lflag++;
+			continue;
 
-/* Process the files appropriately. */
-  if (optind == argc) {		/* no file names - find pattern in stdin */
-	exit_status = match(stdin, (char *) NULL, "<stdin>");
-  }
-  else 
-  if (optind + 1 == argc) {	/* one file name - find pattern in it */
-	if (strcmp(argv[optind], "-") == 0) {
-		exit_status = match(stdin, (char *) NULL, "-");
-	} else {
-		if ((input = fopen(argv[optind], "r")) == NULL) {
-			fprintf(stderr, "%s: couldn't open %s\n",
-							program, argv[optind]);
-			exit_status = FAILURE;
+		case 'c':
+			cflag++;
+			continue;
+
+		case 'n':
+			nflag++;
+			continue;
+
+		case 'e':
+			--argc;
+			++argv;
+			goto out;
+
+		default:
+			errexit("grep: unknown flag\n", (char *)NULL);
+			continue;
 		}
-		else {
-			exit_status = match(input, (char *) NULL, argv[optind]);
+out:
+	if (argc<=0)
+		exit(2);
+	if (yflag) {
+		register char *p, *s;
+		for (s = ybuf, p = *argv; *p; ) {
+			if (*p == '\\') {
+				*s++ = *p++;
+				if (*p)
+					*s++ = *p++;
+			} else if (*p == '[') {
+				while (*p != '\0' && *p != ']')
+					*s++ = *p++;
+			} else if (islower(*p)) {
+				*s++ = '[';
+				*s++ = toupper(*p);
+				*s++ = *p++;
+				*s++ = ']';
+			} else
+				*s++ = *p++;
+			if (s >= ybuf+ESIZE-5)
+				errexit("grep: argument too long\n", (char *)NULL);
 		}
+		*s = '\0';
+		*argv = ybuf;
 	}
-  }
-  else
-  while (optind < argc) {	/* lots of file names - find pattern in all */
-	if (strcmp(argv[optind], "-") == 0) {
-		file_status = match(stdin, "-", "-");
-	} else {
-		if ((input = fopen(argv[optind], "r")) == NULL) {
-			fprintf(stderr, "%s: couldn't open %s\n",
-							program, argv[optind]);
-			exit_status = FAILURE;
-		} else {
-			file_status = match(input, argv[optind], argv[optind]);
-			fclose(input);
-		}
+	compile(*argv);
+	nfile = --argc;
+	if (argc<=0) {
+		if (lflag)
+			exit(1);
+		execute((char *)NULL);
+	} else while (--argc >= 0) {
+		argv++;
+		execute(*argv);
 	}
-	if (exit_status != FAILURE)
-		exit_status &= file_status;
-	++optind;
-  }
-  exit(exit_status);
+	exit(retcode != 0 ? retcode : nsucc == 0);
 }
 
-
-/* match - matches the lines of a file with the regular expression.
- * To improve performance when either -s or -l is specified, this
- * function handles those cases specially.
- */
-
-static int match(input, label, filename)
-FILE *input;
-char *label;
-char *filename;
+void compile(char *astr)
 {
-  char *line, *testline;	/* pointers to input line */
-  long int lineno = 0;		/* line number */
-  long int matchcount = 0;	/* lines matched */
-  int status = NO_MATCH;	/* summary of what was found in this file */
+	register int c;
+	register char *ep, *sp;
+	char *cstart;
+	char *lastep;
+	int cclcnt;
+	char bracket[NBRA], *bracketp;
+	int closed;
+	char numbra;
+	char neg;
 
-  if (FLAG('s') || FLAG('l')) {
-	while ((line = get_line(input)) != NULL) {
-		testline = FLAG('i') ? map_nocase(line) : line;
-		if (regexec(expression, testline, 1)) {
-			status = MATCH;
-			break;
+	ep = expbuf;
+	sp = astr;
+	lastep = 0;
+	bracketp = bracket;
+	closed = numbra = 0;
+	if (*sp == '^') {
+		circf++;
+		sp++;
+	}
+	if (wflag)
+		*ep++ = CBRC;
+	for (;;) {
+		if (ep >= &expbuf[ESIZE])
+			goto cerror;
+		if ((c = *sp++) != '*')
+			lastep = ep;
+		switch (c) {
+
+		case '\0':
+			if (wflag)
+				*ep++ = CLET;
+			*ep++ = CEOF;
+			return;
+
+		case '.':
+			*ep++ = CDOT;
+			continue;
+
+		case '*':
+			if (lastep==0 || *lastep==CBRA || *lastep==CKET ||
+			    *lastep == CBRC || *lastep == CLET)
+				goto defchar;
+			*lastep |= STAR;
+			continue;
+
+		case '$':
+			if (*sp != '\0')
+				goto defchar;
+			*ep++ = CDOL;
+			continue;
+
+		case '[':
+			if(&ep[17] >= &expbuf[ESIZE])
+				goto cerror;
+			*ep++ = CCL;
+			neg = 0;
+			if((c = *sp++) == '^') {
+				neg = 1;
+				c = *sp++;
+			}
+			cstart = sp;
+			do {
+				if (c=='\0')
+					goto cerror;
+				if (c=='-' && sp>cstart && *sp!=']') {
+					for (c = sp[-2]; c<*sp; c++)
+						ep[c>>3] |= bittab[c&07];
+					sp++;
+				}
+				ep[c>>3] |= bittab[c&07];
+			} while((c = *sp++) != ']');
+			if(neg) {
+				for(cclcnt = 0; cclcnt < 16; cclcnt++)
+					ep[cclcnt] ^= -1;
+				ep[0] &= 0376;
+			}
+
+			ep += 16;
+
+			continue;
+
+		case '\\':
+			if((c = *sp++) == 0)
+				goto cerror;
+			if(c == '<') {
+				*ep++ = CBRC;
+				continue;
+			}
+			if(c == '>') {
+				*ep++ = CLET;
+				continue;
+			}
+			if(c == '(') {
+				if(numbra >= NBRA) {
+					goto cerror;
+				}
+				*bracketp++ = numbra;
+				*ep++ = CBRA;
+				*ep++ = numbra++;
+				continue;
+			}
+			if(c == ')') {
+				if(bracketp <= bracket) {
+					goto cerror;
+				}
+				*ep++ = CKET;
+				*ep++ = *--bracketp;
+				closed++;
+				continue;
+			}
+
+			if(c >= '1' && c <= '9') {
+				if((c -= '1') >= closed)
+					goto cerror;
+				*ep++ = CBACK;
+				*ep++ = c;
+				continue;
+			}
+
+		defchar:
+		default:
+			*ep++ = CCHR;
+			*ep++ = c;
 		}
 	}
-	if (FLAG('l'))
-		if ((!FLAG('v') && status == MATCH) ||
-		    ( FLAG('v') && status == NO_MATCH))
-			puts(filename);
-	return status;
-  }
+    cerror:
+	errexit("grep: RE error\n", (char *)NULL);
+}
 
-  while ((line = get_line(input)) != NULL) {
-	++lineno;
-	testline = FLAG('i') ? map_nocase(line) : line;
-	if (regexec(expression, testline, 1)) {
-		status = MATCH;
-		if (!FLAG('v')) {
-			if (label != NULL)
-				printf("%s:", label);
-			if (FLAG('n'))
-				printf("%ld:", lineno);
-			if (!FLAG('c')) puts(line);
-			matchcount++;
-		}
-	} else {
-		if (FLAG('v')) {
-			if (label != NULL)
-				printf("%s:", label);
-			if (FLAG('n'))
-				printf("%ld:", lineno);
-			if (!FLAG('c')) puts(line);
-			matchcount++;
+void execute(char *file)
+{
+	register char *p1, *p2;
+	register int c;
+
+	if (file) {
+		if (freopen(file, "r", stdin) == NULL) {
+			perror(file);
+			retcode = 2;
 		}
 	}
-  }
-  if (FLAG('c')) printf("%ld\n", matchcount);
-  return status;
-}
-
-
-/* get_line - fetch a line from the input file
- * This function reads a line from the input file into a dynamically
- * allocated buffer.  If the line is too long for the current buffer,
- * attempts will be made to increase its size to accomodate the line.
- * The trailing newline is stripped before returning to the caller.
- */
-
-#define FIRST_BUFFER (size_t)256		/* first buffer size */
-
-static char *buf = NULL;	/* input buffer */
-static size_t buf_size = 0;		/* input buffer size */
-
-static char *get_line(input)
-FILE *input;
-{
-  int n;
-  register char *bp;
-  register int c;
-  char *new_buf;
-  size_t new_size;
-
-  if (buf_size == 0) {
-	if ((buf = (char *) malloc(FIRST_BUFFER)) == NULL) {
-		fprintf(stderr,"%s: not enough memory\n",program);
-		exit(FAILURE);
-	}
-	buf_size = FIRST_BUFFER;
-  }
-
-  bp = buf;
-  n = buf_size;
-  while (1) {
-	while (--n > 0 && (c = getc(input)) != EOF) {
-		if (c == '\n') {
-			*bp = '\0';
-			return buf;
+	lnum = 0;
+	tln = 0;
+	for (;;) {
+		lnum++;
+		p1 = linebuf;
+		while ((c = getchar()) != '\n') {
+			if (c == EOF) {
+				if (cflag) {
+					if (nfile>1)
+						printf("%s:", file);
+					printf("%D\n", tln);
+					fflush(stdout);
+				}
+				return;
+			}
+			*p1++ = c;
+			if (p1 >= &linebuf[LBSIZE-1])
+				break;
 		}
-		*bp++ = c;
+		*p1++ = '\0';
+		p1 = linebuf;
+		p2 = expbuf;
+		if (circf) {
+			if (advance(p1, p2))
+				goto found;
+			goto nfound;
+		}
+		/* fast check for first character */
+		if (*p2==CCHR) {
+			c = p2[1];
+			do {
+				if (*p1!=c)
+					continue;
+				if (advance(p1, p2))
+					goto found;
+			} while (*p1++);
+			goto nfound;
+		}
+		/* regular algorithm */
+		do {
+			if (advance(p1, p2))
+				goto found;
+		} while (*p1++);
+	nfound:
+		if (vflag)
+			succeed(file);
+		continue;
+	found:
+		if (vflag==0)
+			succeed(file);
 	}
-	if (c == EOF)
-		return (ferror(input) || bp == buf) ? NULL : buf;
-	new_size = buf_size << 1;
-	if ((new_buf = (char *) realloc(buf, new_size)) == NULL) {
-		fprintf(stderr, "%s: line too long - truncated\n", program);
-		while ((c = getc(input)) != EOF && c != '\n') ;
-		*bp = '\0';
-		return buf;
-	} else {
-		bp = new_buf + (buf_size - 1);
-		n = buf_size + 1;
-		buf = new_buf;
-		buf_size = new_size;
-	}
-  }
 }
 
-
-/* map_nocase - map a line down to lowercase letters only.
- * bad points:	assumes line gotten from get_line.
- *		there is more than A-Z you say?
- */
-
-static char *map_nocase(line)
-char *line;
+int advance(char *lp, char *ep)
 {
-  static char *mapped=(char*)0;
-  static size_t map_size = 0;
-  char *mp;
+	register char *curlp;
+	char c;
+	char *bbeg;
+	int ct;
 
-  if (map_size < buf_size) {
-	if ((mapped=realloc(mapped,map_size=buf_size)) == NULL) {
-		fprintf(stderr,"%s: not enough memory\n",program);
-		exit(FAILURE);
+	for (;;) switch (*ep++) {
+
+	case CCHR:
+		if (*ep++ == *lp++)
+			continue;
+		return(0);
+
+	case CDOT:
+		if (*lp++)
+			continue;
+		return(0);
+
+	case CDOL:
+		if (*lp==0)
+			continue;
+		return(0);
+
+	case CEOF:
+		return(1);
+
+	case CCL:
+		c = *lp++ & 0177;
+		if(ep[c>>3] & bittab[(int)c & 07]) {
+			ep += 16;
+			continue;
+		}
+		return(0);
+	case CBRA:
+		braslist[(int)*ep++] = lp;
+		continue;
+
+	case CKET:
+		braelist[(int)*ep++] = lp;
+		continue;
+
+	case CBACK:
+		bbeg = braslist[(int)*ep];
+		if (braelist[(int)*ep]==0)
+			return(0);
+		ct = braelist[(int)*ep++] - bbeg;
+		if(ecmp(bbeg, lp, ct)) {
+			lp += ct;
+			continue;
+		}
+		return(0);
+
+	case CBACK|STAR:
+		bbeg = braslist[(int)*ep];
+		if (braelist[(int)*ep]==0)
+			return(0);
+		ct = braelist[(int)*ep++] - bbeg;
+		curlp = lp;
+		while(ecmp(bbeg, lp, ct))
+			lp += ct;
+		while(lp >= curlp) {
+			if(advance(lp, ep))	return(1);
+			lp -= ct;
+		}
+		return(0);
+
+
+	case CDOT|STAR:
+		curlp = lp;
+		while (*lp++);
+		goto star;
+
+	case CCHR|STAR:
+		curlp = lp;
+		while (*lp++ == *ep);
+		ep++;
+		goto star;
+
+	case CCL|STAR:
+		curlp = lp;
+		do {
+			c = *lp++ & 0177;
+		} while(ep[(int)c>>3] & bittab[c & 07]);
+		ep += 16;
+		goto star;
+
+	star:
+		if(--lp == curlp) {
+			continue;
+		}
+
+		if(*ep == CCHR) {
+			c = ep[1];
+			do {
+				if(*lp != c)
+					continue;
+				if(advance(lp, ep))
+					return(1);
+			} while(lp-- > curlp);
+			return(0);
+		}
+
+		do {
+			if (advance(lp, ep))
+				return(1);
+		} while (lp-- > curlp);
+		return(0);
+
+	case CBRC:
+		if (lp == expbuf)
+			continue;
+#define	uletter(c)	(isalpha(c) || (c) == '_')
+		if (uletter(*lp) || isdigit(*lp))
+			if (!uletter(lp[-1]) && !isdigit(lp[-1]))
+				continue;
+		return (0);
+
+	case CLET:
+		if (!uletter(*lp) && !isdigit(*lp))
+			continue;
+		return (0);
+
+	default:
+		errexit("grep RE botch\n", (char *)NULL);
 	}
-  }
-
-  mp = mapped;
-  do {
-	*mp++ = uppercase(*line) ? downcase(*line) : *line;
-  } while (*line++ != '\0');
-
-  return mapped;
+	return(0);
 }
 
-/* In basic regular expressions, the characters ?, +, |, (, and )
-   are taken literally; use the backslashed versions for RE operators.
-   In v8 regular expressions, things are the other way round, so
-   we have to swap those characters and their backslashed versions.
-*/
-static void tov8(char *v8, char *basic)
+void succeed(char *f)
 {
-  while (*basic) switch (*basic)
-  {
-    case '?':
-    case '+':
-    case '|':
-    case '(':
-    case ')':        
-    {        
-      *v8++='\\';
-      *v8++=*basic++;
-      break;
-    }                    
-    case '\\':
-    {
-      switch (*(basic+1))
-      {
-        case '?':
-        case '+':
-        case '|':
-        case '(': 
-        case ')':
-        {
-          *v8++=*++basic;
-          ++basic;
-          break;
-        }
-        case '\0':
-        {
-          *v8++=*basic++;
-          break;
-        }
-        default:
-        {       
-          *v8++=*basic++;
-          *v8++=*basic++;
-        }                
-      }     
-      break;
-    }       
-    default:
-    {
-      *v8++=*basic++;
-    }                
-  }   
-  *v8++='\0';
+	nsucc = 1;
+	if (sflag)
+		return;
+	if (cflag) {
+		tln++;
+		return;
+	}
+	if (lflag) {
+		printf("%s\n", f);
+		fflush(stdout);
+		fseek(stdin, 0l, 2);
+		return;
+	}
+	if (nfile > 1 && hflag)
+		printf("%s:", f);
+	if (bflag)
+		printf("%u:", blkno);
+	if (nflag)
+		printf("%ld:", lnum);
+	printf("%s\n", linebuf);
+	fflush(stdout);
 }
 
-/* Regular expression code calls this routine to print errors. */
-void regerror(const char *s)
+int ecmp(char *a, char *b, int count)
 {
-  // Compiler won't let us do rerr=s;
-  rerr= malloc(strlen(s)+1);
-  strcpy(rerr,s);
+	register int cc = count;
+	while(cc--)
+		if(*a++ != *b++)	return(0);
+	return(1);
+}
+
+void errexit(char *s, char *f)
+{
+	fprintf(stderr, s, f);
+	exit(2);
 }
