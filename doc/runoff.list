@@ -1,77 +1,77 @@
 # basic headers
-types.h
-param.h
-memlayout.h
-defs.h
-x86.h
-asm.h
-mmu.h
-elf.h
+../include/xv6/types.h
+../include/xv6/param.h
+../include/xv6/memlayout.h
+../include/xv6/defs.h
+../include/xv6/x86.h
+../include/xv6/asm.h
+../include/xv6/mmu.h
+../include/xv6/elf.h
 
 # entering xv6
-entry.S
-entryother.S
-main.c
+../kern/entry.S
+../kern/entryother.S
+../kern/main.c
 
 # locks
-spinlock.h
-spinlock.c
+../include/xv6/spinlock.h
+../kern/spinlock.c
 
 # processes
-vm.c
-proc.h
-proc.c
-swtch.S
-kalloc.c
+../kern/vm.c
+../include/xv6/proc.h
+../kern/proc.c
+../kern/swtch.S
+../kern/kalloc.c
 
 # system calls
-traps.h
-vectors.pl
-trapasm.S
-trap.c
-syscall.h
-syscall.c
-sysproc.c
+../include/xv6/traps.h
+../kern/vectors.pl
+../kern/trapasm.S
+../kern/trap.c
+../include/xv6/syscall.h
+../kern/syscall.c
+../kern/sysproc.c
 
 # file system
-buf.h
-fcntl.h
-stat.h
-fs.h
-file.h
-ide.c
-bio.c
-log.c
-fs.c
-file.c
-sysfile.c
-exec.c
+../include/xv6/buf.h
+../include/xv6/fcntl.h
+../include/xv6/stat.h
+../include/xv6/fs.h
+../include/xv6/file.h
+../kern/ide.c
+../kern/bio.c
+../kern/log.c
+../kern/fs.c
+../kern/file.c
+../kern/sysfile.c
+../kern/exec.c
 
 # pipes
-pipe.c
+../kern/pipe.c
 
 # string operations
-string.c
+../kern/string.c
 
 # low-level hardware
-mp.h
-mp.c
-lapic.c
-ioapic.c
-picirq.c
-kbd.h
-kbd.c
-console.c
-timer.c
-uart.c
+../include/xv6/mp.h
+../kern/mp.c
+../kern/lapic.c
+../kern/ioapic.c
+../kern/picirq.c
+../include/xv6/kbd.h
+../kern/kbd.c
+../kern/console.c
+../kern/timer.c
+../kern/uart.c
 
 # user-level
-initcode.S
-usys.S
-init.c
-sh.c
+../kern/initcode.S
+../lib/ulib/usys.S
+../cmd/old/init.c
+../cmd/old/sh.c
 
 # bootloader
-bootasm.S
-bootmain.c
+../boot/bootasm.S
+../boot/bootmain.c
 
