@@ -1,148 +1,88 @@
-/* The <setjmp.h> header relates to the C phenomenon known as setjmp/longjmp.
- * It is used to escape out of the current situation into a previous one.
- * A typical example is in an editor, where hitting DEL breaks off the current
- * command and puts the editor back in the main loop, though care has to be
- * taken when the DEL occurs while executing a library function, since
- * some of them are not reentrant.
+/*
+ * Copyright (c) UNIX System Laboratories, Inc.  All or some portions
+ * of this file are derived from material licensed to the
+ * University of California by American Telephone and Telegraph Co.
+ * or UNIX System Laboratories, Inc. and are reproduced herein with
+ * the permission of UNIX System Laboratories, Inc.
  *
- * POSIX does not require the process signal mask to be saved and restored
- * during setjmp/longjmp.  However, the current implementation does this
- * in order to agree with OSF/1 and other BSD derived systems.
+ *	$Id: setjmp.h,v 1.3 1994/05/04 08:08:38 rgrimes Exp $
+ */
+/*-
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
  *
- * The pair of functions _setjmp/_longjmp may be used when the signal
- * mask is not to be saved/restored.  These functions are traditional
- * in BSD systems.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
  *
- * There are different ways of implementing setjmp/longjmp.  Probably
- * the best way is to unify it with signal handling.  This is true for the
- * following reasons:  Both setjmp/longjmp and signal delivery must save 
- * a context so that it may be restored later.  The jmp_buf necessarily 
- * contains signal information, namely the signal mask to restore.  Both
- * longjmp and the return of a signal handler must trap to the operating
- * system to restore the previous signal mask.  Finally, the jmp_buf
- * and the sigcontext structure contain the registers to restore.
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  *
- * Some compilers, namely ACK, will not enregister any variables inside a
- * function containing a call to setjmp, even if those variables are
- * explicitly declared as register variables.  Thus for ACK, the
- * identification of the jmp_buf with a sigcontext structure would cause
- * unnecessary overhead: the jmp_buf has room for all the registers, but
- * the only registers that need to be saved are the stack pointer, 
- * frame pointer, and program counter.
- *
- * So, for ACK a jmp_buf is much smaller than a sigcontext structure, and
- * longjmp does not directly call sigreturn.  Instead, longjmp calls a
- * front-end function which initializes the appropriate fields of a
- * sigcontext structure, marks this structure as containing no valid
- * general purpose registers, and then calls sigreturn.
- *
- * The POSIX sigjmp_buf is identical to the jmp_buf in all cases.
- *
- * Different compilers have different symbols that they recognize as
- * setjmp symbols.  ACK recognizes __setjmp, the GNU C compiler
- * recognizes setjmp and _setjmp, and BCC recognizes all three.
- * When these symbols occur within a function, the compiler may keep 
- * all local variables on the stack, avoid certain optimizations, or
- * pass hidden arguments to the setjmp function.
- *  
- * Thus, setjmp implementations vary in two independent ways which may
- * be identified through the following preprocessor tokens:
- *
- * _SETJMP_SYMBOL -- If 0, this means the compiler treats setjmp and _setjmp
- * specially.  If 1, this means the compiler treats __setjmp specially.
- *
- * _SETJMP_SAVES_REGS -- If 1, this means setjmp/longjmp must explicitly
- * save and restore all registers.  This also implies that a jmp_buf is
- * different than a sigcontext structure.  If 0, this means that the compiler
- * will not use register variables within a function that calls one of 
- * its SETJMP_SYMBOLs. 
- * 
- * When _SETJMP_SYMBOL = 1, the implementation has a few dozen bytes of
- * unnecessary overhead.  This happens in the following manner:  a program uses
- * _setjmp/_longjmp because it is not interested in saving and restoring the
- * signal mask. Nevertheless, because _setjmp expands to the general purpose
- * function __setjmp, code for sigprocmask(2) is linked into the program.  
+ *	@(#)setjmp.h	5.5 (Berkeley) 6/8/91
  */
 
-#ifndef _SETJMP_H
-#define _SETJMP_H
+#ifndef _SETJMP_H_
+#define _SETJMP_H_
 
-#ifndef _ANSI_H
-#include <ansi.h>
+#if defined(hp300) || defined(__hp300__)
+#define _JBLEN	17
 #endif
 
-#if !defined(__ACK__) && !defined(__BCC__) && !defined(__GNUC__)
-#define __ACK__
+#if defined(i386) || defined(__i386__)
+#define _JBLEN	10
 #endif
 
-#ifdef __ACK__
-#define _SETJMP_SYMBOL 1
-#define _SETJMP_SAVES_REGS 0
-#endif
-#ifdef __BCC__
-#define _SETJMP_SYMBOL 0
-#define _SETJMP_SAVES_REGS 1
-#endif
-#ifdef __GNUC__
-#define _SETJMP_SYMBOL 0
-#define _SETJMP_SAVES_REGS 1
+#if defined(tahoe) || defined(__tahoe__)
+#define _JBLEN	10
 #endif
 
-/* The jmp_buf data type.  Do not change the order of these fields -- some
- * C library code refers to these fields by name.  When _SETJMP_SAVES_REGS
- * is 1, the file <sys/jmp_buf.h> gives the usage of the sixteen registers.
- */
-typedef struct {
-  int __flags;			/* XXX - long might give better alignment */
-  long __mask;			/* must have size >= sizeof(sigset_t) */
-#if (_SETJMP_SAVES_REGS == 0)
-  _PROTOTYPE(void (*__pc),(void));	/* program counter */
-  void *__sp;			/* stack pointer */
-  void *__lb;			/* local base (ACKspeak for frame pointer) */
-#else
-  void *__regs[16];		/* size is machine dependent */
-#endif
-} jmp_buf[1];
-
-#if (_SETJMP_SYMBOL == 1)
-
-_PROTOTYPE( int __setjmp, (jmp_buf _env, int _savemask)			);
-_PROTOTYPE( void longjmp, (jmp_buf _env, int _val)			);
-_PROTOTYPE(int sigjmp, (jmp_buf _jb, int _retval)			);
-
-#define setjmp(env)	__setjmp((env), 1)
-
-#ifdef _MINIX
-#define _setjmp(env)	__setjmp((env), 0)
-_PROTOTYPE(void _longjmp, (jmp_buf _env, int _val)			);
+#if defined(vax) || defined(__vax__)
+#define _JBLEN	10
 #endif
 
-#ifdef _POSIX_SOURCE
-typedef jmp_buf sigjmp_buf;
-_PROTOTYPE( void siglongjmp, (sigjmp_buf _env, int _val)		);
+typedef int jmp_buf[_JBLEN];
 
-#define sigsetjmp(env, savemask) __setjmp((env), (savemask))
-#endif /* _POSIX_SOURCE */
+#ifndef _ANSI_SOURCE
+typedef int sigjmp_buf[_JBLEN + 1];
+#endif /* not ANSI */
 
-#endif /* _SETJMP_SYMBOL == 1 */
+#include <sys/cdefs.h>
 
-#if (_SETJMP_SYMBOL == 0)
+__BEGIN_DECLS
+int	setjmp __P((jmp_buf));
+void	longjmp __P((jmp_buf, int));
 
-_PROTOTYPE( int setjmp, (jmp_buf _env)					);
-_PROTOTYPE( void longjmp, (jmp_buf _env, int _val)			);
+#ifndef _ANSI_SOURCE
+int	sigsetjmp __P((sigjmp_buf, int));
+void	siglongjmp __P((sigjmp_buf, int));
+#endif /* not ANSI */
 
-#ifdef _MINIX
-_PROTOTYPE( int _setjmp, (jmp_buf _env)					);
-_PROTOTYPE( void _longjmp, (jmp_buf _env, int _val)			);
-#endif
+#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
+int	_setjmp __P((jmp_buf));
+void	_longjmp __P((jmp_buf, int));
+void	longjmperror __P((void));
+#endif /* neither ANSI nor POSIX */
+__END_DECLS
 
-#ifdef _POSIX_SOURCE
-#define sigjmp_buf jmp_buf
-_PROTOTYPE( void siglongjmp, (sigjmp_buf _env, int _val)		);
-/* XXX - the name _setjmp is no good - that's why ACK used __setjmp. */
-#define sigsetjmp(env, savemask) ((savemask) ? setjmp(env) : _setjmp(env))
-#endif /* _POSIX_SOURCE */
-
-#endif /* _SETJMP_SYMBOL == 0 */
-
-#endif /* _SETJMP_H */
+#endif /* !_SETJMP_H_ */

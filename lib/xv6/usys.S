@@ -1,8 +1,8 @@
 #include <xv6/syscall.h>
 #include <xv6/traps.h>
 
-.globl _Exit;
-_Exit:
+.globl _exit;
+_exit:
     movl $SYS_exit, %eax;
     int $T_SYSCALL;
     ret

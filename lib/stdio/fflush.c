@@ -1,76 +1,96 @@
-/*
- * fflush.c - flush stream(s)
+/*-
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * PATCHES MAGIC                LEVEL   PATCH THAT GOT US HERE
+ * --------------------         -----   ----------------------
+ * CURRENT PATCH LEVEL:         1       00047
+ * --------------------         -----   ----------------------
+ *
+ * 27 Nov 1992	Dave Rivers		Fixed fflush() to use correct flags.
  */
 
-#include	<sys/types.h>
-#include	<stdio.h>
-#include	<unistd.h>
-#include	"loc_incl.h"
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)fflush.c	5.1 (Berkeley) 1/20/91";
+#endif /* LIBC_SCCS and not lint */
 
-int
-fflush(FILE *stream)
+#include <sys/errno.h>
+#include <stdio.h>
+#include "local.h"
+
+/* Flush a single file, or (if fp is NULL) all files.  */
+fflush(fp)
+	register FILE *fp;
 {
-	int count, c1, i, retval = 0;
+	if (fp == NULL)
+		return (_fwalk(__sflush));
 
-	if (!stream) {
-	    for(i= 0; i < FOPEN_MAX; i++)
-		if (__iotab[i] && fflush(__iotab[i]))
-			retval = EOF;
-	    return retval;
+	if ((fp->_flags & (__SWR | __SRW)) == 0) {
+		errno = EBADF;
+		return (EOF);
 	}
-
-	if (!stream->_buf
-	    || (!io_testflag(stream, _IOREADING)
-		&& !io_testflag(stream, _IOWRITING)))
-		return 0;
-	if (io_testflag(stream, _IOREADING)) {
-		/* (void) fseek(stream, 0L, SEEK_CUR); */
-		int adjust = 0;
-		if (stream->_buf && !io_testflag(stream,_IONBF))
-			adjust = -stream->_count;
-		stream->_count = 0;
-		if (lseek(fileno(stream), (off_t) adjust, SEEK_CUR) == -1) {
-			stream->_flags |= _IOERR;
-			return EOF;
-		}
-		if (io_testflag(stream, _IOWRITE))
-			stream->_flags &= ~(_IOREADING | _IOWRITING);
-		stream->_ptr = stream->_buf;
-		return 0;
-	} else if (io_testflag(stream, _IONBF)) return 0;
-
-	if (io_testflag(stream, _IOREAD))		/* "a" or "+" mode */
-		stream->_flags &= ~_IOWRITING;
-
-	count = stream->_ptr - stream->_buf;
-	stream->_ptr = stream->_buf;
-
-	if ( count <= 0 )
-		return 0;
-
-	if (io_testflag(stream, _IOAPPEND)) {
-		if (lseek(fileno(stream), 0L, SEEK_END) == -1) {
-			stream->_flags |= _IOERR;
-			return EOF;
-		}
-	}
-	c1 = write(stream->_fd, (char *)stream->_buf, count);
-
-	stream->_count = 0;
-
-	if ( count == c1 )
-		return 0;
-
-	stream->_flags |= _IOERR;
-	return EOF; 
+	return (__sflush(fp));
 }
 
-void
-__cleanup(void)
+__sflush(fp)
+	register FILE *fp;
 {
-	int i;
+	register unsigned char *p;
+	register int n, t;
 
-	for(i= 0; i < FOPEN_MAX; i++)
-		if (__iotab[i] && io_testflag(__iotab[i], _IOWRITING))
-			(void) fflush(__iotab[i]);
+	t = fp->_flags;
+	if ((t & __SWR) == 0)
+		return (0);
+
+	if ((p = fp->_bf._base) == NULL)
+		return (0);
+
+	n = fp->_p - p;		/* write this much */
+
+	/*
+	 * Set these immediately to avoid problems with longjmp and to allow
+	 * exchange buffering (via setvbuf) in user write function.
+	 */
+	fp->_p = p;
+	fp->_w = t & (__SLBF|__SNBF) ? 0 : fp->_bf._size;
+
+	for (; n > 0; n -= t, p += t) {
+		t = (*fp->_write)(fp->_cookie, (char *)p, n);
+		if (t <= 0) {
+			fp->_flags |= __SERR;
+			return (EOF);
+		}
+	}
+	return (0);
 }

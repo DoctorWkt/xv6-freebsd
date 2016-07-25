@@ -5,7 +5,7 @@
 
 // xv6 has no signals
 
-sighandler_t signal(int sig, sighandler_t func)
+__sighandler_t signal(int sig, __sighandler_t func)
 {
  return(SIG_DFL);
 }
