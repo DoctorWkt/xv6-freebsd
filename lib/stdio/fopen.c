@@ -1,120 +1,84 @@
-/*
- * fopen.c - open a stream
- */
-
-#if	defined(_POSIX_SOURCE)
-#include	<sys/types.h>
-#endif
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<fcntl.h>
-#include	<unistd.h>
-#include	"loc_incl.h"
-
-#define	PMODE		0666
-
-#if 0
-/* The next 3 defines are true in all UNIX systems known to me.
- */
-#define	O_RDONLY	0
-#define	O_WRONLY	1
-#define	O_RDWR		2
-
-/* Since the O_CREAT flag is not available on all systems, we can't get it
- * from the standard library. Furthermore, even if we know that <fcntl.h>
- * contains such a flag, it's not sure whether it can be used, since we
- * might be cross-compiling for another system, which may use an entirely
- * different value for O_CREAT (or not support such a mode). The safest
- * thing is to just use the Version 7 semantics for open, and use creat()
- * whenever necessary.
+/*-
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
  *
- * Another problem is O_APPEND, for which the same holds. When "a"
- * open-mode is used, an lseek() to the end is done before every write()
- * system-call.
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
- * The O_CREAT, O_TRUNC and O_APPEND given here, are only for convenience.
- * They are not passed to open(), so the values don't have to match a value
- * from the real world. It is enough when they are unique.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  */
-#define	O_CREAT		0x010
-#define	O_TRUNC		0x020
-#define	O_APPEND	0x040
-#endif
 
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)fopen.c	5.5 (Berkeley) 2/5/91";
+#endif /* LIBC_SCCS and not lint */
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+#include "local.h"
 
 FILE *
-fopen(const char *name, const char *mode)
+fopen(file, mode)
+	const char *file;
+	const char *mode;
 {
-	register int i;
-	int rwmode = 0, rwflags = 0;
-	FILE *stream;
-	int fd, flags = 0;
+	register FILE *fp;
+	register int f;
+	int flags, oflags;
 
-	for (i = 0; __iotab[i] != 0 ; i++) 
-		if ( i >= FOPEN_MAX-1 )
-			return (FILE *)NULL;
-
-	switch(*mode++) {
-	case 'r':
-		flags |= _IOREAD | _IOREADING;	
-		rwmode = O_RDONLY;
-		break;
-	case 'w':
-		flags |= _IOWRITE | _IOWRITING;
-		rwmode = O_WRONLY;
-		rwflags = O_CREAT | O_TRUNC;
-		break;
-	case 'a': 
-		flags |= _IOWRITE | _IOWRITING | _IOAPPEND;
-		rwmode = O_WRONLY;
-		rwflags |= O_APPEND | O_CREAT;
-		break;         
-	default:
-		return (FILE *)NULL;
+	if ((flags = __sflags(mode, &oflags)) == 0)
+		return (NULL);
+	if ((fp = __sfp()) == NULL)
+		return (NULL);
+	if ((f = open(file, oflags, DEFFILEMODE)) < 0) {
+		fp->_flags = 0;			/* release */
+		return (NULL);
 	}
+	fp->_file = f;
+	fp->_flags = flags;
+	fp->_cookie = fp;
+	fp->_read = __sread;
+	fp->_write = __swrite;
+	fp->_seek = __sseek;
+	fp->_close = __sclose;
 
-	while (*mode) {
-		switch(*mode++) {
-		case 'b':
-			continue;
-		case '+':
-			rwmode = O_RDWR;
-			flags |= _IOREAD | _IOWRITE;
-			continue;
-		/* The sequence may be followed by additional characters */
-		default:
-			break;
-		}
-		break;
-	}
-
-	/* Perform a creat() when the file should be truncated or when
-	 * the file is opened for writing and the open() failed.
+	/*
+	 * When opening in append mode, even though we use O_APPEND,
+	 * we need to seek to the end so that ftell() gets the right
+	 * answer.  If the user then alters the seek pointer, or
+	 * the file extends, this will fail, but there is not much
+	 * we can do about this.  (We could set __SAPP and check in
+	 * fseek and ftell.)
 	 */
-	if ((rwflags & O_TRUNC)
-	    || (((fd = open(name, rwmode)) < 0)
-		    && (rwflags & O_CREAT))) {
-		if (((fd = creat(name, PMODE)) > 0) && flags  | _IOREAD) {
-			(void) close(fd);
-			fd = open(name, rwmode);
-		}
-			
-	}
-
-	if (fd < 0) return (FILE *)NULL;
-
-	if (( stream = (FILE *) malloc(sizeof(FILE))) == NULL ) {
-		close(fd);
-		return (FILE *)NULL;
-	}
-
-	if ((flags & (_IOREAD | _IOWRITE))  == (_IOREAD | _IOWRITE))
-		flags &= ~(_IOREADING | _IOWRITING);
-
-	stream->_count = 0;
-	stream->_fd = fd;
-	stream->_flags = flags;
-	stream->_buf = NULL;
-	__iotab[i] = stream;
-	return stream;
+	if (oflags & O_APPEND)
+		(void) __sseek((void *)fp, (fpos_t)0, SEEK_END);
+	return (fp);
 }

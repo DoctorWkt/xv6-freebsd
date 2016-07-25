@@ -1,117 +1,128 @@
-/* The <a.out> header file describes the format of executable files. */
+/*-
+ * Copyright (c) 1991 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ *	@(#)a.out.h	5.6 (Berkeley) 4/30/91
+ */
 
-#ifndef _AOUT_H
-#define _AOUT_H
+#ifndef	_AOUT_H_
+#define	_AOUT_H_
 
-struct	exec {			/* a.out header */
-  unsigned char	a_magic[2];	/* magic number */
-  unsigned char	a_flags;	/* flags, see below */
-  unsigned char	a_cpu;		/* cpu id */
-  unsigned char	a_hdrlen;	/* length of header */
-  unsigned char	a_unused;	/* reserved for future use */
-  unsigned short a_version;	/* version stamp (not used at present) */
-  long		a_text;		/* size of text segement in bytes */
-  long		a_data;		/* size of data segment in bytes */
-  long		a_bss;		/* size of bss segment in bytes */
-  long		a_entry;	/* entry point */
-  long		a_total;	/* total memory allocated */
-  long		a_syms;		/* size of symbol table */
+#include <sys/exec.h>
 
-  /* SHORT FORM ENDS HERE */
-  long		a_trsize;	/* text relocation size */
-  long		a_drsize;	/* data relocation size */
-  long		a_tbase;	/* text relocation base */
-  long		a_dbase;	/* data relocation base */
-};
-
-#define A_MAGIC0      (unsigned char) 0x01
-#define A_MAGIC1      (unsigned char) 0x03
-#define BADMAG(X)     ((X).a_magic[0] != A_MAGIC0 ||(X).a_magic[1] != A_MAGIC1)
-
-/* CPU Id of TARGET machine (byte order coded in low order two bits) */
-#define A_NONE	0x00	/* unknown */
-#define A_I8086	0x04	/* intel i8086/8088 */
-#define A_M68K	0x0B	/* motorola m68000 */
-#define A_NS16K	0x0C	/* national semiconductor 16032 */
-#define A_I80386 0x10	/* intel i80386 */
-#define A_SPARC	0x17	/* Sun SPARC */
-
-#define A_BLR(cputype)	((cputype&0x01)!=0) /* TRUE if bytes left-to-right */
-#define A_WLR(cputype)	((cputype&0x02)!=0) /* TRUE if words left-to-right */
-
-/* Flags. */
-#define A_UZP	0x01	/* unmapped zero page (pages) */
-#define A_PAL	0x02	/* page aligned executable */
-#define A_NSYM	0x04	/* new style symbol table */
-#define A_EXEC	0x10	/* executable */
-#define A_SEP	0x20	/* separate I/D */
-#define A_PURE	0x40	/* pure text */		/* not used */
-#define A_TOVLY	0x80	/* text overlay */	/* not used */
-
-/* Offsets of various things. */
-#define A_MINHDR	32
-#define	A_TEXTPOS(X)	((long)(X).a_hdrlen)
-#define A_DATAPOS(X)	(A_TEXTPOS(X) + (X).a_text)
-#define	A_HASRELS(X)	((X).a_hdrlen > (unsigned char) A_MINHDR)
-#define A_HASEXT(X)	((X).a_hdrlen > (unsigned char) (A_MINHDR +  8))
-#define A_HASLNS(X)	((X).a_hdrlen > (unsigned char) (A_MINHDR + 16))
-#define A_HASTOFF(X)	((X).a_hdrlen > (unsigned char) (A_MINHDR + 24))
-#define A_TRELPOS(X)	(A_DATAPOS(X) + (X).a_data)
-#define A_DRELPOS(X)	(A_TRELPOS(X) + (X).a_trsize)
-#define A_SYMPOS(X)	(A_TRELPOS(X) + (A_HASRELS(X) ? \
-  			((X).a_trsize + (X).a_drsize) : 0))
-
-struct reloc {
-  long r_vaddr;			/* virtual address of reference */
-  unsigned short r_symndx;	/* internal segnum or extern symbol num */
-  unsigned short r_type;	/* relocation type */
-};
-
-/* r_tyep values: */
-#define R_ABBS		0
-#define R_RELLBYTE	2
-#define R_PCRBYTE	3
-#define R_RELWORD	4
-#define R_PCRWORD	5
-#define R_RELLONG	6
-#define R_PCRLONG	7
-#define R_REL3BYTE	8
-#define R_KBRANCHE	9
-
-/* r_symndx for internal segments */
-#define S_ABS		((unsigned short)-1)
-#define S_TEXT		((unsigned short)-2)
-#define S_DATA		((unsigned short)-3)
-#define S_BSS		((unsigned short)-4)
-
-struct nlist {			/* symbol table entry */
-  char n_name[8];		/* symbol name */
-  long n_value;			/* value */
-  unsigned char	n_sclass;	/* storage class */
-  unsigned char	n_numaux;	/* number of auxiliary entries (not used) */
-  unsigned short n_type;	/* language base and derived type (not used) */
-};
-
-/* Low bits of storage class (section). */
-#define	N_SECT		  07	/* section mask */
-#define N_UNDF		  00	/* undefined */
-#define N_ABS		  01	/* absolute */
-#define N_TEXT		  02	/* text */
-#define N_DATA		  03	/* data */
-#define	N_BSS		  04	/* bss */
-#define N_COMM		  05	/* (common) */
-
-/* High bits of storage class. */
-#define N_CLASS		0370	/* storage class mask */
-#define C_NULL
-#define C_EXT		0020	/* external symbol */
-#define C_STAT		0030	/* static */
-
-/* Function prototypes. */
-#ifndef _ANSI_H
-#include <ansi.h>
+#if defined(hp300) || defined(i386)
+#define	__LDPGSZ	4096
+#endif
+#if defined(tahoe) || defined(vax)
+#define	__LDPGSZ	1024
 #endif
 
-_PROTOTYPE( int nlist, (char *_file, struct nlist *_nl)			);
+#define N_GETMAGIC(ex) \
+	( (ex).a_midmag & 0xffff )
+#define N_GETMID(ex) \
+	( (N_GETMAGIC_NET(ex) == ZMAGIC) ? N_GETMID_NET(ex) : \
+	((ex).a_midmag >> 16) & 0x03ff )
+#define N_GETFLAG(ex) \
+	( (N_GETMAGIC_NET(ex) == ZMAGIC) ? N_GETFLAG_NET(ex) : \
+	((ex).a_midmag >> 26) & 0x3f )
+#define N_SETMAGIC(ex,mag,mid,flag) \
+	( (ex).a_midmag = (((flag) & 0x3f) <<26) | (((mid) & 0x03ff) << 16) | \
+	((mag) & 0xffff) )
 
-#endif /* _AOUT_H */
+#define N_GETMAGIC_NET(ex) \
+	(ntohl((ex).a_midmag) & 0xffff)
+#define N_GETMID_NET(ex) \
+	((ntohl((ex).a_midmag) >> 16) & 0x03ff)
+#define N_GETFLAG_NET(ex) \
+	((ntohl((ex).a_midmag) >> 26) & 0x3f)
+#define N_SETMAGIC_NET(ex,mag,mid,flag) \
+	( (ex).a_midmag = htonl( (((flag)&0x3f)<<26) | (((mid)&0x03ff)<<16) | \
+	(((mag)&0xffff)) ) )
+
+#define N_ALIGN(ex,x) \
+	(N_GETMAGIC(ex) == ZMAGIC || N_GETMAGIC(ex) == QMAGIC || \
+	 N_GETMAGIC_NET(ex) == ZMAGIC || N_GETMAGIC_NET(ex) == QMAGIC ? \
+	 ((x) + __LDPGSZ - 1) & ~(__LDPGSZ - 1) : (x))
+
+/* Valid magic number check. */
+#define	N_BADMAG(ex) \
+	(N_GETMAGIC(ex) != OMAGIC && N_GETMAGIC(ex) != NMAGIC && \
+	 N_GETMAGIC(ex) != ZMAGIC && N_GETMAGIC(ex) != QMAGIC && \
+	 N_GETMAGIC_NET(ex) != OMAGIC && N_GETMAGIC_NET(ex) != NMAGIC && \
+	 N_GETMAGIC_NET(ex) != ZMAGIC && N_GETMAGIC_NET(ex) != QMAGIC)
+
+
+/* Address of the bottom of the text segment. */
+#define N_TXTADDR(ex) \
+	((N_GETMAGIC(ex) == OMAGIC || N_GETMAGIC(ex) == NMAGIC || \
+	N_GETMAGIC(ex) == ZMAGIC) ? 0 : __LDPGSZ)
+
+/* Address of the bottom of the data segment. */
+#define N_DATADDR(ex) \
+	N_ALIGN(ex, N_TXTADDR(ex) + (ex).a_text)
+
+/* Text segment offset. */
+#define	N_TXTOFF(ex) \
+	(N_GETMAGIC(ex) == ZMAGIC ? __LDPGSZ : (N_GETMAGIC(ex) == QMAGIC || \
+	N_GETMAGIC_NET(ex) == ZMAGIC) ? 0 : sizeof(struct exec)) 
+
+/* Data segment offset. */
+#define	N_DATOFF(ex) \
+	N_ALIGN(ex, N_TXTOFF(ex) + (ex).a_text)
+
+/* Relocation table offset. */
+#define N_RELOFF(ex) \
+	N_ALIGN(ex, N_DATOFF(ex) + (ex).a_data)
+
+/* Symbol table offset. */
+#define N_SYMOFF(ex) \
+	(N_RELOFF(ex) + (ex).a_trsize + (ex).a_drsize)
+
+/* String table offset. */
+#define	N_STROFF(ex) 	(N_SYMOFF(ex) + (ex).a_syms)
+
+/* Relocation format. */
+struct relocation_info {
+	int r_address;			  /* offset in text or data segment */
+	unsigned int   r_symbolnum : 24,  /* ordinal number of add symbol */
+			   r_pcrel :  1,  /* 1 if value should be pc-relative */
+			  r_length :  2,  /* log base 2 of value's width */
+			  r_extern :  1,  /* 1 if need to add symbol to value */
+			 r_baserel :  1,  /* linkage table relative */
+			r_jmptable :  1,  /* relocate to jump table */
+			r_relative :  1,  /* load address relative */
+			    r_copy :  1;  /* run time copy */
+};
+
+#define _AOUT_INCLUDE_
+#include <nlist.h>
+
+#endif /* !_AOUT_H_ */

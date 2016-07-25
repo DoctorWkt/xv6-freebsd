@@ -1,28 +1,73 @@
-/* The <grp.h> header is used for the getgrid() and getgrnam() calls. */
+/*
+ * Copyright (c) UNIX System Laboratories, Inc.  All or some portions
+ * of this file are derived from material licensed to the
+ * University of California by American Telephone and Telegraph Co.
+ * or UNIX System Laboratories, Inc. and are reproduced herein with
+ * the permission of UNIX System Laboratories, Inc.
+ *
+ *	$Id: grp.h,v 1.3 1994/05/04 08:08:29 rgrimes Exp $
+ */
+/*-
+ * Copyright (c) 1989 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ *	@(#)grp.h	5.4 (Berkeley) 4/3/91
+ */
 
-#ifndef _GRP_H
-#define _GRP_H
+#ifndef _GRP_H_
+#define	_GRP_H_
 
-#ifndef _TYPES_H
-#include <sys/types.h>
+#ifndef _POSIX_SOURCE
+#define	_PATH_GROUP		"/etc/group"
 #endif
 
-struct	group { 
-  char *gr_name;		/* the name of the group */
-  char *gr_passwd;		/* the group passwd */
-  gid_t gr_gid;			/* the numerical group ID */
-  char **gr_mem;		/* a vector of pointers to the members */
+struct group {
+	char	*gr_name;		/* group name */
+	char	*gr_passwd;		/* group password */
+	int	gr_gid;			/* group id */
+	char	**gr_mem;		/* group members */
 };
 
-/* Function Prototypes. */
-_PROTOTYPE( struct group *getgrgid, (Gid_t _gid)  			);
-_PROTOTYPE( struct group *getgrnam, (const char *_name)			);
+#include <sys/cdefs.h>
 
-#ifdef _MINIX
-_PROTOTYPE( void endgrent, (void)					);
-_PROTOTYPE( struct group *getgrent, (void)				);
-_PROTOTYPE( int setgrent, (void)					);
-_PROTOTYPE( void setgrfile, (const char *_file)				);
+__BEGIN_DECLS
+struct group *getgrgid __P((gid_t));
+struct group *getgrnam __P((const char *));
+#ifndef _POSIX_SOURCE
+struct group *getgrent __P((void));
+void setgrent __P((void));
+void endgrent __P((void));
+void setgrfile __P((const char *));
+int setgroupent __P((int));
 #endif
+__END_DECLS
 
-#endif /* _GRP_H */
+#endif /* !_GRP_H_ */

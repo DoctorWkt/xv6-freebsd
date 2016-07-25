@@ -1,33 +1,58 @@
-/*
- * vsprintf - print formatted output without ellipsis on an array
+/*-
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  */
 
-#include	<stdio.h>
-#include	<stdarg.h>
-#include	<limits.h>
-#include	"loc_incl.h"
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)vsprintf.c	5.5 (Berkeley) 2/5/91";
+#endif /* LIBC_SCCS and not lint */
 
-int
-vsnprintf(char *s, size_t n, const char *format, va_list arg)
+#include <stdio.h>
+#include <limits.h>
+
+vsprintf(str, fmt, ap)
+	char *str;
+	const char *fmt;
+	_VA_LIST_ ap;
 {
-	int retval;
-	FILE tmp_stream;
+	int ret;
+	FILE f;
 
-	tmp_stream._fd     = -1;
-	tmp_stream._flags  = _IOWRITE + _IONBF + _IOWRITING;
-	tmp_stream._buf    = (unsigned char *) s;
-	tmp_stream._ptr    = (unsigned char *) s;
-	tmp_stream._count  = n-1;
-
-	retval = _doprnt(format, arg, &tmp_stream);
-	tmp_stream._count  = 1;
-	putc('\0',&tmp_stream);
-
-	return retval;
-}
-
-int
-vsprintf(char *s, const char *format, va_list arg)
-{
-	return vsnprintf(s, INT_MAX, format, arg);
+	f._flags = __SWR | __SSTR;
+	f._bf._base = f._p = (unsigned char *)str;
+	f._bf._size = f._w = INT_MAX;
+	ret = vfprintf(&f, fmt, ap);
+	*f._p = 0;
+	return (ret);
 }
