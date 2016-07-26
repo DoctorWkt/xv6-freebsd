@@ -1,7 +1,7 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
 
-all: alarm.o assert.o clock.o crypt.o ctermid.o ctime.o ctype_.o difftime.o disklabel.o err.o errlst.o exec.o fnmatch.o fstab.o fts.o getcap.o getcwd.o getgrent.o getlogin.o getmntinfo.o getpass.o getpwent.o getsubopt.o getttyent.o getusershell.o glob.o infinity.o initgroups.o insque.o nice.o pause.o popen.o psignal.o raise.o scandir.o setjmperr.o setmode.o siginterrupt.o siglist.o signal.o sigsetops.o sleep.o syslog.o time.o times.o timezone.o ttyname.o ttyslot.o ualarm.o unvis.o usleep.o utime.o valloc.o vis.o wait.o wait3.o waitpid.o
+all: alarm.o assert.o clock.o crypt.o ctermid.o ctime.o ctype_.o difftime.o disklabel.o err.o errlst.o exec.o fnmatch.o fstab.o fts.o getcap.o getcwd.o getgrent.o getmntinfo.o getpass.o getpwent.o getsubopt.o getttyent.o getusershell.o glob.o infinity.o initgroups.o insque.o nice.o pause.o popen.o psignal.o raise.o scandir.o setjmperr.o setmode.o siginterrupt.o siglist.o signal.o sigsetops.o sleep.o time.o times.o timezone.o ttyname.o ttyslot.o ualarm.o unvis.o usleep.o utime.o valloc.o vis.o wait.o wait3.o waitpid.o
 
 clean:
 	rm -f *.o

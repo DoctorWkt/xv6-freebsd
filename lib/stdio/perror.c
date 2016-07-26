@@ -41,27 +41,17 @@ static char sccsid[] = "@(#)perror.c	5.11 (Berkeley) 2/24/91";
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+extern int errno;
 
 void
 perror(s)
 	const char *s;
 {
-	register struct iovec *v;
-	struct iovec iov[4];
-
-	v = iov;
-	if (s && *s) {
-		v->iov_base = (char *)s;
-		v->iov_len = strlen(s);
-		v++;
-		v->iov_base = ": ";
-		v->iov_len = 2;
-		v++;
+	char *err= strerror(errno);
+	if (s) {
+		printf("%s: %s\n", s, err);
+	} else {
+		printf("%s\n", err);
 	}
-	v->iov_base = strerror(errno);
-	v->iov_len = strlen(v->iov_base);
-	v++;
-	v->iov_base = "\n";
-	v->iov_len = 1;
-	(void)writev(STDERR_FILENO, iov, (v - iov) + 1);
 }
