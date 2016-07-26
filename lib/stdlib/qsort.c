@@ -39,7 +39,8 @@ static char sccsid[] = "@(#)qsort.c	5.9 (Berkeley) 2/23/91";
 #include <stdlib.h>
 
 
-static void quick_sort(register char bot, register int nmemb, register int size, int (*compar) __P((const void *, const void *)));
+static void quick_sort(register char *bot, register int nmemb, register int size, int (*compar) __P((const void *, const void *)));
+static void insertion_sort(register char *bot, register int nmemb, register int size, int (*compar) __P((const void *, const void *)));
 
 /*
  * MTHRESH is the smallest partition for which we compare for a median
@@ -59,7 +60,6 @@ qsort(bot, nmemb, size, compar)
 	size_t nmemb, size;
 	int (*compar) __P((const void *, const void *));
 {
-	static void insertion_sort(), quick_sort();
 
 	if (nmemb <= 1)
 		return;
@@ -121,7 +121,6 @@ quick_sort(bot, nmemb, size, compar)
 	register char *top, *mid, *t1, *t2;
 	register int n1, n2;
 	char *bsv;
-	static void insertion_sort();
 
 	/* bot and nmemb must already be set. */
 partition:

@@ -28,10 +28,10 @@ void cfmakeraw(struct termios *);
 int tcsetattr(int, int, const struct termios *);
 
 /* c_lflag bits */
-#define ECHO            0x0001  /* enable echoing of input characters */
-#define ICANON          0x0010  /* canonical input */
+#define ECHO            0x00000008  /* enable echoing of input characters */
+#define ICANON          0x00000100  /* canonical input */
 
 /* tcsetattr uses these */
-#define TCSANOW            1        /* changes take effect immediately */
+#define TCSANOW            0        /* changes take effect immediately */
 
 #endif
