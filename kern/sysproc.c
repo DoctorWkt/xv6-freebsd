@@ -6,6 +6,7 @@
 #include <xv6/memlayout.h>
 #include <xv6/mmu.h>
 #include <xv6/proc.h>
+#include <xv6/syscall.h>
 
 int
 sys_fork(void)
@@ -37,7 +38,7 @@ sys_kill(void)
   int pid;
 
   if(argint(0, &pid) < 0)
-    return -1;
+    return EINVAL;
   return kill(pid);
 }
 
@@ -54,10 +55,10 @@ sys_sbrk(void)
   int n;
 
   if(argint(0, &n) < 0)
-    return -1;
+    return EINVAL;
   addr = proc->sz;
   if(growproc(n) < 0)
-    return -1;
+    return ENOMEM;
   return addr;
 }
 
@@ -68,13 +69,13 @@ sys_sleep(void)
   uint ticks0;
   
   if(argint(0, &n) < 0)
-    return -1;
+    return EINVAL;
   acquire(&tickslock);
   ticks0 = ticks;
   while(ticks - ticks0 < n){
     if(proc->killed){
       release(&tickslock);
-      return -1;
+      return EINVAL;
     }
     sleep(&ticks, &tickslock);
   }
