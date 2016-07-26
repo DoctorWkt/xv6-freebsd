@@ -27,7 +27,6 @@ DIR *opendir(const char *dirname)
 
   if (dirname==NULL) return(NULL);
   dd_fd= open(dirname, O_RDONLY);
-printf("opendir on %s got %d\n", dirname, dd_fd);
   if (dd_fd==-1) return(NULL);
   dirp= (DIR *)malloc(sizeof(DIR));
   if (dirp==NULL) return(NULL);
