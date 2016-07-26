@@ -16,21 +16,19 @@ xv-minix2 FAQ
    tools/ holds mkfs
    doc/   holds the scripts to convert the kernel code into printed format
    misc/  holds stuff from xv6 which doesn't belong anywhere in particular
-   include/ holds the Minix header files. Same structure as Minix.
-   lib/   holds the library source. I've tried to retain the Minix layout.
+   include/ holds the FreeBSD header files. Same structure as FreeBSD.
+   lib/   holds the library source. I've tried to retain the FreeBSD layout.
           There is an xv6/ directory with the xv6-specific code.
-   cmd/   holds the commands. The old/ directory has the original xv6
-	  programs. Otherwise I'm using the Minix layout: simple/ for
-	  one-file programs, the other directories will hold the code
-  	  for multi-file programs.
+   cmd/   holds the commands. The old/ directory has the original xv6 programs.
+	  The simple/ directory holds one-file programs. The other directories
+	  will hold the code for multi-file programs.
    fs/    is a temporary staging area for the filesystem
 
 4. What's with all the CFLAGS?
    I've kept most of the CFLAGS from the original xv6 Makefile; I'm not sure
-   if we need all of them. We need POSIX_SOURCE for now as a lot of the Minix
-   libraries need this. Over time, we can factor POSIX_SOURCE out.
+   if we need all of them.
 
-5. Do you specifically want Minix code?
-   I'm not wedded to Minix code. It is covered under a BSD license and the
+5. Do you specifically want FreeBSD 1.1.5.1 code?
+   I'm not wedded to FreeBSD code. It is covered under a BSD license and the
    functions are reasonably small. I don't mind where code comes from as long
    as it's small and is covered by a BSD or MIT-compatible license.
