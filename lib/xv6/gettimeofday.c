@@ -4,6 +4,7 @@
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
   if (tv==NULL) { errno=EFAULT; return(-1); }
+  tv->tv_sec= _Time();
   tv->tv_usec= 0; return(0); 
 }
 
