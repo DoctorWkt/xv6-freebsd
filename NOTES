@@ -28,19 +28,12 @@ environment as possible without altering the kernel source code. Examples:
    or write dummy syscalls
  - port existing programs to provide a run-time environment
 
-So far I (Warren Toomey) have taken much of the Minix 2.0 header files,
-library code and a few commands and made them compile on the system.
+So far I (Warren Toomey) have taken much of the FreeBSD 1.1.5.1 header
+files, library code and a few commands and made them compile on the system.
 
 To Do
 -----
 In no particular order:
-
- - Get the xv6 kernel to compile with the Minix headers, to ensure that
-   the kernel and libraries use consistent values
-   ==> No, on second thoughts, we should not do this. The xv6 folk will
-   still want to print their book of code. We should align the xv6 files
-   and the library code, but not force the xv6 code to include the Minix
-   headers
 
  - Modify the library code to correctly use the xv6 system calls
 
@@ -48,40 +41,18 @@ In no particular order:
 
  - Write dummy library functions
 
- - Compile more of the Minix commands
+ - Compile more of the FreeBSD commands
 
  - Test everything to ensure that it works
 
  - DONE: Write a more functional mkfs so that a multi-level filesystem
    can be built, one that has /etc, /bin and friends
 
-Sunday 17 July  21:21:21 AEST 2016 - Warren
--------------------------------------------
-A reasonably successful weekend. I changed mkfs to create subdirs and got
-it to build a filesystem image by cloning a local directory and its
-subdirectories. Then I changed the shell to look in /bin for binaries. I
-changed init to live in /etc and to start /bin/sh. Now we have a filesystem
-which looks vaguely Unix-like.
+Tuesday 26 July  22:28:21 AEST 2016 - Warren
+--------------------------------------------
+I've decided to switch from the Minix userland to the FreeBSD userland.
+The main reason is that FreeBSD's userland is more coherent and complete
+compared to Minix.
 
-I wrote a new ls whose output better resembles a Unix ls, with -d, -a and -l
-flags. I got ed to compile and run. I finally got cp to work, and in doing
-so I'm using the stdio functions, so they seem to work as well.
-
-The next task is to bring in more of the simple Minix commands. I'm
-struggling with getting grep to compile and link against the regexp
-library functions.
-
-I also need to go back and remove some of my changes to kern/* and
-include/xv6/*, to get them back to a format which the MIT people can print.
-
-Monday 18 July  17:28:22 AEST 2016 - Warren
--------------------------------------------
-I have reverted some of the xv6 file changes, so the code can be printed
-again and it doesn't refer to any of the Minix header files.
-
-Sunday 24 July  10:30:13 AEST 2016 - Warren
--------------------------------------------
-I've got a few big programs up and running: less, levee (a vi clone) and
-my wish shell. I've written a few more system call replacements. I've
-increased the filesystem block size to 1K, and I've also added exit
-values to the kernel.
+So far I've got the main parts of libc.a up and running, and some simple
+commands.
