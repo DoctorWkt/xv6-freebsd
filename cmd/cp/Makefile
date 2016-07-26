@@ -1,7 +1,7 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
 
-UPROGS= cat ls tryreadwrite
+UPROGS= cp
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 
@@ -20,7 +20,7 @@ install: all
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
-%: %.o ../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
+$(UPROGS): cp.o path.o ../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip $@
 

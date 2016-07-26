@@ -1,10 +1,8 @@
 all: ../lib/ulib.a ../lib/libc.a
 	$(MAKE) -C old    all install
 	$(MAKE) -C simple all install
-	$(MAKE) -C less   all install
-	$(MAKE) -C levee  all install
-	$(MAKE) -C make   all install
-	$(MAKE) -C wish   all install
+	$(MAKE) -C cp     all install
+#	$(MAKE) -C ls     all install
 
 ../lib/libc.a:
 	$(MAKE) -C ../lib libc.a
@@ -15,9 +13,7 @@ all: ../lib/ulib.a ../lib/libc.a
 clean:
 	$(MAKE) -C old    clean
 	$(MAKE) -C simple clean
-	$(MAKE) -C less   clean
-	$(MAKE) -C levee  clean
-	$(MAKE) -C make   clean
-	$(MAKE) -C wish   clean
+	$(MAKE) -C cp     clean
+	$(MAKE) -C ls     clean
 	rm -f ../fs/bin/*
 	rm -f ../fs/etc/init

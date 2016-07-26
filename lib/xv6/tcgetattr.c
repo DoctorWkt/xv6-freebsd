@@ -27,3 +27,6 @@ int isatty(int fd)
 
   return(tcgetattr(fd, &dummy) == 0);
 }
+
+int tcsendbreak(int fd, int len)
+{ return(0); }
