@@ -60,6 +60,7 @@ fdopen(fd, mode)
 	if ((flags = __sflags(mode, &oflags)) == 0)
 		return (NULL);
 
+#if 0
 	/* Make sure the mode the user wants is a subset of the actual mode. */
 	if ((fdflags = fcntl(fd, F_GETFL, 0)) < 0)
 		return (NULL);
@@ -68,6 +69,9 @@ fdopen(fd, mode)
 		errno = EINVAL;
 		return (NULL);
 	}
+#else
+	fdflags= oflags; 	// for xv6
+#endif
 
 	if ((fp = __sfp()) == NULL)
 		return (NULL);

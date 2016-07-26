@@ -70,6 +70,7 @@ ifndef CPUS
 CPUS := 2
 endif
 #QEMUEXTRA= -rtc base=localtime
+QEMUEXTRA= -nographic
 QEMUOPTS = -hdb fs.img xv6.img -smp $(CPUS) -m 512 $(QEMUEXTRA)
 
 qemu: fs.img xv6.img
