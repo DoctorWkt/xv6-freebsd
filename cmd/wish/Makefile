@@ -46,7 +46,7 @@ O= o
 #CLIB=-ltermcap strtok.o strpbrk.o strspn.o strcspn.o	# OSX5_1_BSD maybe
 #CLIB=-ltermcap -lposix		# AUX2_01
 #CLIB= -lterm -lndir		# COHERENT
-CLIB=../../lib/libc.a
+CLIB=../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
 
 # On some systems (PC Minix, Coherent), we need to set the final stack size.
 #STACK= 30000
