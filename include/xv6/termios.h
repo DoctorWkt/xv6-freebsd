@@ -1,37 +1,27 @@
-#ifndef _UCC_TERMIOS_H
-#define _UCC_TERMIOS_H
+#ifndef _TERMIOS_H_
+#define _TERMIOS_H_
 
-typedef unsigned short tcflag_t;
-typedef unsigned char cc_t;
-typedef unsigned int speed_t;
-
-#define NCCS            20      /* size of cc_c array, some extra space
-                                 * for extensions. */
+#define ECHO            0x00000008      /* enable echoing */
+#define ICANON          0x00000100      /* canonicalize input lines */
 
 /* 0x54 is just a magic number to make these relatively unique ('T') */
 #define TCGETA          0x5405
 #define TCSETA          0x5406
 
-/* Primary terminal control structure. POSIX Table 7-1. */
+#define NCCS            20
+
+typedef unsigned long   tcflag_t;
+typedef unsigned char   cc_t;
+typedef long            speed_t;
+
 struct termios {
-  tcflag_t c_iflag;             /* input modes */
-  tcflag_t c_oflag;             /* output modes */
-  tcflag_t c_cflag;             /* control modes */
-  tcflag_t c_lflag;             /* local modes */
-  speed_t  c_ispeed;            /* input speed */
-  speed_t  c_ospeed;            /* output speed */
-  cc_t c_cc[NCCS];              /* control characters */
+        tcflag_t        c_iflag;        /* input flags */
+        tcflag_t        c_oflag;        /* output flags */
+        tcflag_t        c_cflag;        /* control flags */
+        tcflag_t        c_lflag;        /* local flags */
+        cc_t            c_cc[NCCS];     /* control chars */
+        long            c_ispeed;       /* input speed */
+        long            c_ospeed;       /* output speed */
 };
-
-int tcgetattr(int,  struct termios *);
-void cfmakeraw(struct termios *);
-int tcsetattr(int, int, const struct termios *);
-
-/* c_lflag bits */
-#define ECHO            0x00000008  /* enable echoing of input characters */
-#define ICANON          0x00000100  /* canonical input */
-
-/* tcsetattr uses these */
-#define TCSANOW            0        /* changes take effect immediately */
 
 #endif
