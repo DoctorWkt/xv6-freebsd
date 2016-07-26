@@ -1,7 +1,7 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
 
-UPROGS= cat ls tryreadwrite date recurse
+UPROGS= cat ls tryreadwrite date recurse tryraw
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 
