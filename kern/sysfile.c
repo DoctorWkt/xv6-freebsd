@@ -13,6 +13,7 @@
 #include <xv6/fs.h>
 #include <xv6/file.h>
 #include <xv6/fcntl.h>
+#include <xv6/syscall.h>
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -56,9 +57,9 @@ sys_dup(void)
   int fd;
   
   if(argfd(0, 0, &f) < 0)
-    return -1;
+    return EBADF;
   if((fd=fdalloc(f)) < 0)
-    return -1;
+    return EBADF;
   filedup(f);
   return fd;
 }
@@ -71,7 +72,7 @@ sys_read(void)
   char *p;
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
-    return -1;
+    return EINVAL;
   return fileread(f, p, n);
 }
 
@@ -83,7 +84,7 @@ sys_write(void)
   char *p;
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
-    return -1;
+    return EINVAL;
   return filewrite(f, p, n);
 }
 
@@ -94,7 +95,7 @@ sys_close(void)
   struct file *f;
   
   if(argfd(0, &fd, &f) < 0)
-    return -1;
+    return EBADF;
   proc->ofile[fd] = 0;
   fileclose(f);
   return 0;
@@ -107,7 +108,7 @@ sys_fstat(void)
   struct stat *st;
   
   if(argfd(0, 0, &f) < 0 || argptr(1, (void*)&st, sizeof(*st)) < 0)
-    return -1;
+    return EINVAL;
   return filestat(f, st);
 }
 
@@ -119,7 +120,7 @@ sys_link(void)
   struct inode *dp, *ip;
 
   if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
-    return -1;
+    return EINVAL;
 
   begin_op();
   if((ip = namei(old)) == 0){
@@ -131,7 +132,7 @@ sys_link(void)
   if(ip->type == T_DIR){
     iunlockput(ip);
     end_op();
-    return -1;
+    return ENOENT;
   }
 
   ip->nlink++;
@@ -158,7 +159,7 @@ bad:
   iupdate(ip);
   iunlockput(ip);
   end_op();
-  return -1;
+  return EEXIST;
 }
 
 // Is the directory dp empty except for "." and ".." ?
@@ -187,12 +188,12 @@ sys_unlink(void)
   uint off;
 
   if(argstr(0, &path) < 0)
-    return -1;
+    return EINVAL;
 
   begin_op();
   if((dp = nameiparent(path, name)) == 0){
     end_op();
-    return -1;
+    return ENOENT;
   }
 
   ilock(dp);
@@ -232,7 +233,7 @@ sys_unlink(void)
 bad:
   iunlockput(dp);
   end_op();
-  return -1;
+  return EPERM;
 }
 
 static struct inode*
@@ -289,7 +290,7 @@ sys_open(void)
   struct inode *ip;
 
   if(argstr(0, &path) < 0 || argint(1, &omode) < 0)
-    return -1;
+    return EINVAL;
 
   begin_op();
 
@@ -297,18 +298,18 @@ sys_open(void)
     ip = create(path, T_FILE, 0, 0);
     if(ip == 0){
       end_op();
-      return -1;
+      return EEXIST;
     }
   } else {
     if((ip = namei(path)) == 0){
       end_op();
-      return -1;
+      return ENOENT;
     }
     ilock(ip);
     if(ip->type == T_DIR && omode != O_RDONLY){
       iunlockput(ip);
       end_op();
-      return -1;
+      return EISDIR;
     }
   }
 
@@ -317,7 +318,7 @@ sys_open(void)
       fileclose(f);
     iunlockput(ip);
     end_op();
-    return -1;
+    return EACCES;
   }
   iunlock(ip);
   end_op();
@@ -339,7 +340,7 @@ sys_mkdir(void)
   begin_op();
   if(argstr(0, &path) < 0 || (ip = create(path, T_DIR, 0, 0)) == 0){
     end_op();
-    return -1;
+    return EEXIST;
   }
   iunlockput(ip);
   end_op();
@@ -360,7 +361,7 @@ sys_mknod(void)
      argint(2, &minor) < 0 ||
      (ip = create(path, T_DEV, major, minor)) == 0){
     end_op();
-    return -1;
+    return EINVAL;
   }
   iunlockput(ip);
   end_op();
@@ -376,13 +377,13 @@ sys_chdir(void)
   begin_op();
   if(argstr(0, &path) < 0 || (ip = namei(path)) == 0){
     end_op();
-    return -1;
+    return ENOENT;
   }
   ilock(ip);
   if(ip->type != T_DIR){
     iunlockput(ip);
     end_op();
-    return -1;
+    return ENOTDIR;
   }
   iunlock(ip);
   iput(proc->cwd);
@@ -399,20 +400,20 @@ sys_exec(void)
   uint uargv, uarg;
 
   if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0){
-    return -1;
+    return EINVAL;
   }
   memset(argv, 0, sizeof(argv));
   for(i=0;; i++){
     if(i >= NELEM(argv))
-      return -1;
+      return E2BIG;
     if(fetchint(uargv+4*i, (int*)&uarg) < 0)
-      return -1;
+      return EINVAL;
     if(uarg == 0){
       argv[i] = 0;
       break;
     }
     if(fetchstr(uarg, &argv[i]) < 0)
-      return -1;
+      return ENOENT;
   }
   return exec(path, argv);
 }
@@ -425,16 +426,16 @@ sys_pipe(void)
   int fd0, fd1;
 
   if(argptr(0, (void*)&fd, 2*sizeof(fd[0])) < 0)
-    return -1;
+    return EINVAL;
   if(pipealloc(&rf, &wf) < 0)
-    return -1;
+    return EMFILE;
   fd0 = -1;
   if((fd0 = fdalloc(rf)) < 0 || (fd1 = fdalloc(wf)) < 0){
     if(fd0 >= 0)
       proc->ofile[fd0] = 0;
     fileclose(rf);
     fileclose(wf);
-    return -1;
+    return ENFILE;
   }
   fd[0] = fd0;
   fd[1] = fd1;
@@ -443,7 +444,8 @@ sys_pipe(void)
 
 // lseek derived from https://github.com/hxp/xv6, written by Joel Heikkila
 
-int sys_lseek(void) {
+int sys_lseek(void)
+{
 	int fd;
 	int offset;
 	int base;
@@ -453,9 +455,9 @@ int sys_lseek(void) {
 
 	struct file *f;
 
-	argfd(0, &fd, &f);
-	argint(1, &offset);
-	argint(2, &base);
+	if ((argfd(0, &fd, &f)<0) ||
+		(argint(1, &offset)<0) || (argint(2, &base)<0))
+			return(EINVAL);
 
 	if( base == SEEK_SET) {
 		newoff = offset;
@@ -467,7 +469,7 @@ int sys_lseek(void) {
 	if (base == SEEK_END)
 		newoff = f->ip->size + offset;
 	if (newoff < f->ip->size)
-		return -1;
+		return EINVAL;
 
 	if (newoff > f->ip->size){
 		zerosize = newoff - f->ip->size;
@@ -494,11 +496,11 @@ sys_ioctl(void)
   int request;
   
   if(argfd(0, &fd, &f) < 0 || argint(1, &request) < 0)
-    return -1;
+    return EINVAL;
   if(f->ip->type != T_DEV)
-    return -1;
+    return ENOTTY;
 
   if(f->ip->major < 0 || f->ip->major >= NDEV || !devsw[f->ip->major].ioctl)
-    return -1;
+    return ENOTTY;
   return devsw[f->ip->major].ioctl(f->ip, request);
 }

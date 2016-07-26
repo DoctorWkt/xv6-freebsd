@@ -8,6 +8,7 @@
 #include <xv6/fs.h>
 #include <xv6/file.h>
 #include <xv6/spinlock.h>
+#include <xv6/syscall.h>
 
 struct devsw devsw[NDEV];
 struct {
@@ -88,7 +89,7 @@ filestat(struct file *f, struct stat *st)
     iunlock(f->ip);
     return 0;
   }
-  return -1;
+  return ENOENT;
 }
 
 // Read from file f.
@@ -98,7 +99,7 @@ fileread(struct file *f, char *addr, int n)
   int r;
 
   if(f->readable == 0)
-    return -1;
+    return EBADF;
   if(f->type == FD_PIPE)
     return piperead(f->pipe, addr, n);
   if(f->type == FD_INODE){
@@ -119,7 +120,7 @@ filewrite(struct file *f, char *addr, int n)
   int r;
 
   if(f->writable == 0)
-    return -1;
+    return EBADF;
   if(f->type == FD_PIPE)
     return pipewrite(f->pipe, addr, n);
   if(f->type == FD_INODE){
@@ -149,7 +150,7 @@ filewrite(struct file *f, char *addr, int n)
         panic("short filewrite");
       i += r;
     }
-    return i == n ? n : -1;
+    return i == n ? n : EFBIG;
   }
   panic("filewrite");
 }

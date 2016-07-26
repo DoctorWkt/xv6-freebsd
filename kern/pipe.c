@@ -6,6 +6,7 @@
 #include <xv6/fs.h>
 #include <xv6/file.h>
 #include <xv6/spinlock.h>
+#include <xv6/syscall.h>
 
 #define PIPESIZE 512
 
@@ -105,7 +106,7 @@ piperead(struct pipe *p, char *addr, int n)
   while(p->nread == p->nwrite && p->writeopen){  //DOC: pipe-empty
     if(proc->killed){
       release(&p->lock);
-      return -1;
+      return EPIPE;
     }
     sleep(&p->nread, &p->lock); //DOC: piperead-sleep
   }
