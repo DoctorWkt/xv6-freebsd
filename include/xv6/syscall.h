@@ -23,6 +23,7 @@
 #define SYS_lseek  22
 #define SYS_ioctl  23
 #define SYS_time   24
+#define SYS_fchdir 25
 
 // Error results
 #define EPERM		 -1		/* Operation not permitted */

@@ -47,7 +47,7 @@ static char sccsid[] = "@(#)err.c	5.2 (Berkeley) 3/19/93";
 #include <varargs.h>
 #endif
 
-extern char *__progname;		/* Program name, from crt0. */
+// extern char *__progname;		/* Program name, from crt0. */
 
 volatile void
 #ifdef __STDC__
@@ -78,7 +78,7 @@ verr(eval, fmt, ap)
 	int sverrno;
 
 	sverrno = errno;
-	(void)fprintf(stderr, "%s: ", __progname);
+	// (void)fprintf(stderr, "%s: ", __progname);
 	if (fmt != NULL) {
 		(void)vfprintf(stderr, fmt, ap);
 		(void)fprintf(stderr, ": ");
@@ -113,7 +113,7 @@ verrx(eval, fmt, ap)
 	const char *fmt;
 	_VA_LIST_ ap;
 {
-	(void)fprintf(stderr, "%s: ", __progname);
+	// (void)fprintf(stderr, "%s: ", __progname);
 	if (fmt != NULL)
 		(void)vfprintf(stderr, fmt, ap);
 	(void)fprintf(stderr, "\n");
@@ -148,7 +148,7 @@ vwarn(fmt, ap)
 	int sverrno;
 
 	sverrno = errno;
-	(void)fprintf(stderr, "%s: ", __progname);
+	// (void)fprintf(stderr, "%s: ", __progname);
 	if (fmt != NULL) {
 		(void)vfprintf(stderr, fmt, ap);
 		(void)fprintf(stderr, ": ");
@@ -181,7 +181,7 @@ vwarnx(fmt, ap)
 	const char *fmt;
 	_VA_LIST_ ap;
 {
-	(void)fprintf(stderr, "%s: ", __progname);
+	// (void)fprintf(stderr, "%s: ", __progname);
 	if (fmt != NULL)
 		(void)vfprintf(stderr, fmt, ap);
 	(void)fprintf(stderr, "\n");

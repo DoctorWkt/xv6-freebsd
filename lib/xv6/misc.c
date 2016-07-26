@@ -17,3 +17,7 @@ void syslog(void) { return; }
 void closelog(void) { return; }
 
 void vsyslog(void) { return; }
+
+char *user_from_uid(void) { return("root"); }
+
+char *group_from_gid(void) { return("root"); }

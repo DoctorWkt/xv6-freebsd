@@ -369,16 +369,8 @@ sys_mknod(void)
 }
 
 int
-sys_chdir(void)
+ichdir(struct inode *ip)
 {
-  char *path;
-  struct inode *ip;
-
-  begin_op();
-  if(argstr(0, &path) < 0 || (ip = namei(path)) == 0){
-    end_op();
-    return ENOENT;
-  }
   ilock(ip);
   if(ip->type != T_DIR){
     iunlockput(ip);
@@ -390,6 +382,30 @@ sys_chdir(void)
   end_op();
   proc->cwd = ip;
   return 0;
+}
+
+int
+sys_chdir(void)
+{
+  char *path;
+  struct inode *ip;
+
+  begin_op();
+  if(argstr(0, &path) < 0 || (ip = namei(path)) == 0){
+    end_op();
+    return ENOENT;
+  }
+  return(ichdir(ip));
+}
+
+int
+sys_fchdir(void)
+{
+  struct file *f;
+
+  if(argfd(0, 0, &f) < 0)
+    return EBADF;
+  return(ichdir(f->ip));
 }
 
 int
