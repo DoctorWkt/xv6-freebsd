@@ -22,6 +22,5 @@
 #include <fcntl.h>
 #include <string.h>
 #include <termios.h>
-#include <termcap.h>
 #include <dirent.h>
 #include <time.h>
