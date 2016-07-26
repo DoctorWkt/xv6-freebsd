@@ -1,7 +1,7 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
 
-UPROGS= cat ls tryreadwrite date
+UPROGS= cat ls tryreadwrite date recurse
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 
@@ -22,7 +22,7 @@ install: all
 
 %: %.o ../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
-	strip $@
+#	strip $@
 
 clean:
 	rm -f $(UPROGS) *.asm *.o *.sym *.d
