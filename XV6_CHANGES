@@ -7,7 +7,7 @@ This is a major Unix system call and is used by many programs
 and libraries, e.g. stdio.
 
 Files affected (lines):
-	syscall.c (+2), sysfile.c (+60), file.h (+4), syscall.h (+1)
+	syscall.c (2), sysfile.c (60), file.h (4), syscall.h (1)
 
 ioctl() system call
 -------------------
@@ -19,8 +19,8 @@ abomination, so alternatively tcgetattr() and tcsetattr() could
 be made into system calls.
 
 Files affected (lines):
-	console.c (+40), syscall.c (+2), sysfile.c (+16), file.h (+1),
-	syscall.h (+1)
+	console.c (40), syscall.c (2), sysfile.c (16), file.h (1),
+	syscall.h (1)
 
 time() system call and mtime in inodes
 --------------------------------------
@@ -28,17 +28,17 @@ This is crucial to programs like make, and users like to see
 timestamps on their files when they run ls.
 
 Files affected (lines):
-	fs.c (+6), main.c (+1), syscall.c (+2), defs,h (+1), 
-	file.h (+1), fs.h (+1), stat.h (+1), syscall.h (+1)
-	and a new kernel file: cmos.c (+121)
+	fs.c (6), main.c (1), syscall.c (2), defs,h (1), 
+	file.h (1), fs.h (1), stat.h (1), syscall.h (1)
+	and a new kernel file: cmos.c (121)
 
 exit() and wait() exchange values
 ---------------------------------
 This is crucial to programs like make and the change was minor.
 
 Files affected (lines):
-	proc.c (+7), sysproc.c (+4), trap.c (+2), defs,h (+2),
-	proc.h (+1)
+	proc.c (7), sysproc.c (4), trap.c (2), defs,h (2),
+	proc.h (1)
 
 Arbitrary filesystem block size
 -------------------------------
@@ -47,7 +47,32 @@ the wrong ATA commands were being sent to the hardware. The fix
 was minor.
 
 Files affected (lines):
-	ide.c (+4), fs.h (+1)
+	ide.c (4), fs.h (1)
+
+Larger process stack size
+-------------------------
+A one-page stack is too small for some BSD processes. I've changed
+exec.c to create a stack of USTACKPAGES pages, defined to be
+
+Files affected (lines):
+	exec.c (4), param.h (1)
+
+Kernel returns errno values now
+-------------------------------
+Rather than always returning -1 from the kernel, the kernel
+now returns several negative numbers. The sycall code then
+negates these, sets errno and returns -1.
+
+Files affected (lines):
+	Several kernel files (42), usys.S (6)
+
+open(2) has O_APPEND
+--------------------
+The open(2) syscall can now do O_APPEND.
+
+Files affected (lines):
+	sh.c (1), sysfile.c (2), fcntl.h (1)
+
 
 	
 Userland xv6 Changes
