@@ -254,6 +254,7 @@ EXTERN int _ctypech;
 #define myupper(x)  (isupper(_ctypech=(x)) ? _ctypech :toupper(_ctypech))
 
 /* Prototypes. */
+#define  _PROTOTYPE(function, params)    function params
 struct sgtbuf;
 
 /* check.c */
