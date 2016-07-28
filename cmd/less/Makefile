@@ -87,7 +87,7 @@ ONLY_RETURN = 0
 ##########################################################################
 
 # LIBS is the list of libraries needed.
-LIBS = -ltermcap
+#LIBS = -ltermcap
 
 # INSTALL_LESS is a list of the public versions of less.
 # INSTALL_HELP is a list of the public version of the help file.
@@ -112,8 +112,7 @@ SRC1 =	main.c option.c prim.c ch.c position.c input.c output.c
 SRC2 =	screen.c prompt.c line.c signal.c help.c ttyin.c command.c version.c
 SRC =	$(SRC1) $(SRC2)
 OBJ =	main.o option.o prim.o ch.o position.o input.o output.o screen.o \
-	prompt.o line.o signal.o help.o ttyin.o command.o version.o \
-	tinytcap.o
+	prompt.o line.o signal.o help.o ttyin.o command.o version.o
 
 
 ##########################################################################
@@ -137,7 +136,7 @@ CFLAGS += $(DEFS)
 
 all: less
 
-less: $(OBJ) ../../lib/libc.a
+less: $(OBJ) ../../lib/libtermcap.a ../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 
 install: less
