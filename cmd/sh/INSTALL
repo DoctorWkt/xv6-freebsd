@@ -1,0 +1,38 @@
+Try first
+	make
+	make tests
+The program tryreaddir check if the functions opendir/readdir
+uses malloc and write one line in mlib (see it with: cat mlib).  
+Then the shell is linked using the content of mlib file.
+
+If the file mlib is empty then may be your libc does _not_ use
+malloc/free/sbrk for opendir/readdir.  On some libc opendir/readdir
+uses mmap directly.
+
+The program mkfiles create 1024 random files with names Z_[a-z]*
+and start ./sh -c 'echo *; date; ps'
+Last check if the shell works correctly.
+
+If for some reason (may be opendir uses realloc/calloc) "make tests"
+above fails, then uncomment the lines WANT_REALLOC and WANT_CALLOC
+in shfeatures.h and rebuild all again.
+
+It is possible to link the shell using its internally build
+shalloc/shfree functions for malloc/free replacement.
+	make sh_sbrk
+
+See also shfeatures.h for some useful settings.
+It is possible to build shell using dietlibc library (http://www.fefe.de)
+	make CC='diet -Os gcc -W'
+You can download dietlibc and build sh using it with:
+	make dietbuild
+
+Nikola
+
+
+PS.  If you have a sh and it work then try
+	cp sh /tmp
+	make SHELL="env -i PATH=$PATH /tmp/sh" clean tests
+
+Last will try to rebuild sh using /tmp/sh instead of /bin/sh
+This is a real test and it shows that /tmp/sh works good.

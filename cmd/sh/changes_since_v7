@@ -1,0 +1,59 @@
+What I have done.
+
+I started with v7 sh straight off the tape, expanded the Algol-68
+syntax macros, ran all source files through `cb -sjl72', and did some
+light hand-editing to touch up the results.
+
+I ansitised the code by removing `register' keywords, adding function
+prototypes to quiet ken's compiler, and fixing a few errors found by
+use of prototypes.  I included more ANSI headers (in particular to get
+lseek() declared right).
+
+I then replaced the original catch-the-memory-faults-and-restart
+memory management with my v9 shell's (see `A Partial Tour Through the
+UNIX Shell') so that the result should run on virtually all
+processors.  I replaced the directory-reading code with my v9 shell's,
+which also implements its treatment of `*': matches all but `.' &
+`..'.  Thus the shell now expands wildcards successfully on file
+systems other than v7's.
+
+I then discovered that the v7 sh didn't implement `set -a' and
+remembered that it didn't implement `#' comments, so I reimplemented
+those, on the grounds that they are too fundamental to ignore.  I
+adapted the code to large pids.  I made sh quietly ignore functions in
+the environment instead of printing the enigmatic complaint `: is not
+an identifier', so that it can at least co-exist with functions in the
+environment.  To improve security a lot, the shell now renounces
+set-id privileges immediately at startup.  This cures a host of
+security problems resulting from use of system(), popen(), etc. in
+set-id programs.  To improve security a little, shells now do not
+inherit IFS (from the environment).
+
+All of this was several hours work, mostly with sam, over a weekend,
+and the result works under current Plan 9 APE and OpenBSD.
+
+I have not yet made sure that all the places outside of stak.c that
+need to use pushtak actually do so, but a BRKINCR of 1024 should paper
+over that need, at least for now.
+
+
+What I have not done.
+
+Upgrade the shell to SVR2, v8 or v9.  As a result, these features are
+missing:
+
+- functions
+- builtin commands (e.g., set) can't be redirected
+- whatis, and output that can be reused as input
+- cd spelling correction
+
+Some bugs, such as command hashing, are also absent.
+
+Also missing, but not fixed by any known variant of Bourne's shell is
+the ability to use character sets larger than ASCII.
+
+All of the above capabilities should be available using the Unix rc,
+if needed.
+
+
+Geoff Collyer, Mon Jun  9 14:31:39 PDT 2003
