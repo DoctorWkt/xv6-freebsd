@@ -21,7 +21,6 @@
 #include <xv6/file.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
-static void itrunc(struct inode*);
 struct superblock sb;   // there should be one per dev, but we run with one dev
 
 // Read the super block.
@@ -391,7 +390,7 @@ bmap(struct inode *ip, uint bn)
 // to it (no directory entries referring to it)
 // and has no in-memory reference to it (is
 // not an open file or current directory).
-static void
+void
 itrunc(struct inode *ip)
 {
   int i, j;

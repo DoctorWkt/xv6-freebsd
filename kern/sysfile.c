@@ -306,7 +306,7 @@ sys_open(void)
       return ENOENT;
     }
     ilock(ip);
-    if(ip->type == T_DIR && omode != O_RDONLY){
+    if(ip->type == T_DIR && (omode != O_RDONLY)) {
       iunlockput(ip);
       end_op();
       return EISDIR;
@@ -319,6 +319,16 @@ sys_open(void)
     iunlockput(ip);
     end_op();
     return EACCES;
+  }
+
+  if((omode & O_TRUNC)) {
+    // Not if someone else has this file open
+    if(ip->ref>1) {
+      iunlockput(ip);
+      end_op();
+      return EACCES;
+    }
+    itrunc(ip);
   }
   iunlock(ip);
   end_op();

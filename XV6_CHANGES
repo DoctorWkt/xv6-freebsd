@@ -28,9 +28,8 @@ This is crucial to programs like make, and users like to see
 timestamps on their files when they run ls.
 
 Files affected (lines):
-	fs.c (6), main.c (1), syscall.c (2), defs,h (1), 
-	file.h (1), fs.h (1), stat.h (1), syscall.h (1)
-	and a new kernel file: cmos.c (121)
+	lapic.c(40), fs.c (6), main.c (1), syscall.c (2),
+	defs,h (1), file.h (1), fs.h (1), stat.h (1), syscall.h (1)
 
 exit() and wait() exchange values
 ---------------------------------
@@ -72,6 +71,13 @@ The open(2) syscall can now do O_APPEND.
 
 Files affected (lines):
 	sh.c (1), sysfile.c (2), fcntl.h (1)
+
+open(2) has O_TRUNC
+-------------------
+The open(2) syscall can now do O_TRUNC.
+
+Files affected (lines):
+	sh.c (1), sysfile.c (9), fcntl.h (1), fs.c (1)
 
 
 	
