@@ -8,8 +8,8 @@ A Screen Oriented Editor.
 [\fI+address\fR] [\fIfile \fB...\fR]
 .SH DESCRIPTION
 Levee is a screen oriented  editor based on the  Unix editor
-"vi".  It provides a terse,  powerful way to enter and edit text
-(however,  if you want a word-processor,  you're better off with
+"vi".  It provides a terse,  powerful way to enter and edit text.
+(However,  if you want a word-processor,  you're better off with
 WordStar.)
 
 Levee is a moded editor.  It operates in 3 modes  -- visual,
@@ -22,8 +22,8 @@ editing at.  These addresses  are in the same  format as command
 mode addresses,  except that a naked + will put  you at the very
 end of the file.
 .PP
-Levee is copyright (c) 1982-1998 by David L. Parsons. (see
-the notice at the end of this document for distribution terms)
+Levee is copyright (c) 1982-2015 by David L. Parsons. (See
+the notice at the end of this document for distribution terms.)
 
 .SH "COMMAND MODE COMMANDS"
 
@@ -78,23 +78,23 @@ the first line in the range  and print all the lines in that
 range. "1,10" sets the current line to 1,  then prints lines
 1 to 10.
 
-If you specify a non-existent line in a range, the comm-
-and will abort and Levee will tell you "bad address".
+If you specify a non-existent line in a range, the command
+ will abort and Levee will tell you "bad address".
 
 .SS "Command mode commands"
 
 .TP
 .B    args
-show the current argument list, if one exists. The file that you
+Show the current argument list, if one exists. The file that you
 are currently editing will be framed by '[' and ']'.
 
 .TP
 .IB    (.,.) change
-delete lines, then enter insert mode.
+Delete lines, then enter insert mode.
 
 .TP
 .IB    (.,.) delete
-delete lines. Deleted lines are stored in a Yank Buffer for
+Delete lines. Deleted lines are stored in a Yank Buffer for
 later putback with "put".
 
 .TP
@@ -128,21 +128,21 @@ Levee will make that the current line, then insert above it.
 .SS "Insert mode commands"
 .TP
 .B ^W
-back over the last word you entered.
+Back over the last word you entered.
 .TP
 .B ^H
-back over one character.
+Back over one character.
 .TP
 .B ^U
-back over all input on this line.
+Back over all input on this line.
 .TP
 .B ^V
-escape the next character typed. (For example, 
+Escape the next character typed. (For example,
 .B ^V^H
 will put a ^H into the file.)
 .TP
 .B ESC
-exit insert mode.
+Exit insert mode.
 .TP
 .B ^D
 If at start of line, reduce indentation 'shiftwidth' columns.
@@ -213,7 +213,7 @@ Exit Levee. If you want to discard changes, use "quit!"
 
 .TP
 .IB    (.) read [file]
-put the contents of 'file' after the current line.
+Put the contents of 'file' after the current line.
 
 .TP
 .BI    rm file
@@ -225,12 +225,12 @@ Set a tunable variable. Levee has a dozen or so user-definable
 variables which you can twiddle via this command. There are boolean,
 integer, and string variables that you can set. A string or integer
 variable is set by 'set xxx=yyy', a boolean variable is set via
-'set xxx' or 'set noxxx'.
+\'set xxx' or 'set noxxx'.
 
 Here are the settable variables (and abbreviations):
 .TP
 .BI tabsize (ts)
-tab stop.
+tab stop
 .TP
 .BI shiftwidth (sw)
 columns to shift on ^D, ^T, >>, or <<
@@ -239,27 +239,27 @@ columns to shift on ^D, ^T, >>, or <<
 number of lines to scroll on ^D, ^U
 .TP
 .BI autoindent (ai)
-supply indentation during insert mode.
+Supply indentation during insert mode.
 .TP
 .BI autowrite (aw)
-write out changes before :next, :prev
+Write out changes before :next, :prev.
 .TP
 .BI autocopy (ac)
-make backup copies of before writing.
+Make backup copies before writing changes.
 .TP
 .B list
-display tabs as ^I, end of line as $.
+Display tabs as ^I, end of line as $.
 .TP
 .B magic
-use regular expressions in searches.
+Use regular expressions in searches.
 .TP
 .B suffix
-if the filename does not have a . in
-it, supply the suffix. (this is the
+If the filename does not have a . in
+it, supply the suffix. (This is the
 only string variable.)
 .TP
 .BI overwrite (ow)
-destroy old file first, then write.
+Destroy old file first, then write.
 .TP
 .BI beautify (be)
 When set, Levee will not allow insert
@@ -268,7 +268,7 @@ and return unless you escape it with
 ctrl-V.
 .TP
 .B wrapscan
-searches wrap around end of buffer.
+Searches wrap around end of buffer.
 .TP
 .BI ignorecase (ic)
 Ignore the case of alphabetic characters
@@ -370,17 +370,17 @@ substitute& redoes the last substitution.
 Options:
 .TP
 .B q,c
-before doing the substitute, display the affected
+Before doing the substitute, display the affected
 line and wait for you to type a character. If you
 type 'y', it will do the substitution. 'q' aborts
 the substitute,  'a'  does the rest of the change
 without prompting, and 'n' does not do it.
 .TP
 .B p
-print the affected lines after the change.
+Print the affected lines after the change.
 .TP
 .B g
-do the change globally. That is, do it for every
+Do the change globally. That is, do it for every
 occurence  of patt on a  line,  rather than just
 once.
 .PP
@@ -476,8 +476,7 @@ past the end of the file are denoted by ~ lines.
 If list is  set,  tabs  display as ^I, and the end of line
 displays as $.
 
-If a  line is too long for the screen,  it will  just dis-
-appear off the end of the screen.
+If a  line is too long for the screen,  it will  just disappear off the end of the screen.
 
 Levee will handle any screen resolution and any monospaced
 font you hand it ( if you are running in low resolution, Levee
@@ -560,14 +559,14 @@ example, 'c4l' will change the next 4 characters on the line to something
 else. (4cl does the same thing -- 4c4l changes the next 16 characters on
 this line.)
 
-'cc' will change whole lines.
+ 'cc' will change whole lines.
 
 When changing, deleting, or yanking a object, it will be placed into
 a yank buffer, where it can be retrieved by the 'p' or 'P' commands.
 
 .TP
 .B (#)d
-Delete an object. Like 'cc', 'dd' effects whole lines.
+Delete an object. Like 'cc', 'dd' affects whole lines.
 
 .TP
 .IB (*) (#)e
@@ -578,6 +577,10 @@ Move to the end of the current word.
 Find the next (count'th) occurance of a character on the current line.
 For example, if the cursor is sitting on the first character of the
 line 'abcdef', typing "ff" will put the cursor on the 'f'.
+
+.TP
+.B g
+Move to the start of the file.  Shorthand for 1G. (See below for G.)
 
 .TP
 .IB (*) (#)h
@@ -597,7 +600,7 @@ Move down one (count) lines. Exactly like ^J.
 Move up one (count) lines. Exactly like ^K.
 
 .TP
-,B (*) (#)l
+.IB (*) (#)l
 Move right one (count) character. Exactly like ^L.
 
 .TP
@@ -689,7 +692,8 @@ current line. If you are sitting at the end of the line 'abcdef', typing
 Goto line. If you specify a count, Levee will move to that line, and if
 there is no count, Levee moves to the absolute end of the file.
 
-To get to the start of the file, type "1G". To the end, just "G".
+To get to the start of the file, type "1G". To the end, just "G". As a
+convenience, "g" also moves to the start of the file.
 
 .TP
 .IB (*) H
@@ -772,6 +776,14 @@ Move to end of line. If you give a count, move to the end of the (count-1)
 line down (so 2$ moves you to the end of the next line.).
 
 .TP
+.B 0
+Move to the beginning of the current line.  Shorthand for 0|.
+
+.TP
+.B (#)!
+Pipe an object through an external program. Like 'cc', '!!' affects whole lines.
+
+.TP
 .IB (*) %
 Find matching bracket, parenthesis, or squiggly bracket. If you are not
 sitting on a '[]{}()', Levee will search forward for one of them on the
@@ -819,7 +831,7 @@ lowercase becomes uppercase.
 .TP
 .IB (*) `(x)
 Move to the exact position of mark (x). There is a special mark for some
-of the visual mode move ment commands -- '' will move you to where you
+of the visual mode movement commands -- '' will move you to where you
 were before the last (,),',`,G,/,?,n,N command.
 
 .TP
@@ -833,7 +845,7 @@ mode for one more command.
 .TP
 .B  (#)<(#)
 Shift one (count) objects left. If you specify a second count, Levee will
-shift the object left that many columns -- if you do not, they will be sh
+shift the object left that many columns -- if you do not, they will be
 shifted shiftwidth columns.
 
 This is a nondestructive shift. If the shift would carry past the left
@@ -923,13 +935,13 @@ Probably infinite.
 
 .SH AUTHOR
 .B "David L. Parsons"
-.I (orc@pell.chi.il.us)
+.I (orc@pell.portland.or.us)
 .br
 Testing, suggestions, and impractical design goals by:
 Jim Bolland. John Tainter. John Plocher.
 
 .SH COPYRIGHT
-Copyright (c) 1982-1997 David L Parsons
+Copyright (c) 1982-2015 David L. Parsons
 .br
 All rights reserved.
 .br
@@ -939,7 +951,7 @@ without modification, are permitted provided that the above
 copyright notice and this paragraph are duplicated in all such
 forms and that any documentation, advertising materials, and
 other materials related to such distribution and use acknowledge
-that the software was developed by David L Parsons (orc@pell.chi.il.us).
+that the software was developed by David L. Parsons (orc@pell.portland.or.us).
 My name may not be used to endorse or promote products derived
 from this software without specific prior written permission.
 THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR

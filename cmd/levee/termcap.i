@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-1997 David L Parsons
+ * Copyright (c) 1982-2007 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.chi.il.us).
+ * that the software was developed by David L Parsons (orc@pell.portland.or.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -30,10 +30,11 @@
  *  * -> internal routine.
  */
 
-		/* default to ANSI.SYS termcap */
+#if OS_RMX | OS_DOS		/* default to ANSI.SYS termcap */
 char termcap[200] = "Ansi subset:CM=\033[%d;%dH,Y,1,1:\
 CE=\033[K:CL=\033[H\033[J:LINES=24:COLS=79:HO=\033[H:FkL=\033:\
 CurR=C:CurL=D:CurU=A:CurD=B";
+#endif
 
 char *
 parseit(ptr,savearea)
@@ -129,20 +130,25 @@ tc_init()
 /* get the termcap stuff and go berserk parsing it */
 /* if anything horrid goes wrong, levee will crash */
 {
+#if OS_RMX
     char *p = termcap;
+#else
+    char *getenv();
+    char *p = getenv("TERMCAP");
+#endif
     char *lp, *ptr;
 
-#if MSDOS
+#if OS_DOS
     if (!p)
 	p = termcap;
 #endif
-#if !(RMX|MSDOS)
+#if !(OS_RMX|OS_DOS)
     if (!p) {
 	puts("lv: no termcap\n");
 	exit(1);
     }
 #endif
-    lp = malloc(strlen(p)+1);
+    lp = Malloc(strlen(p)+1);
     if (!lp) {
 	puts("lv: out of memory\n");
 	exit(1);
@@ -212,6 +218,7 @@ tc_init()
 #include <stdlib.h>
 #include <termcap.h>
 #include <string.h>
+#include <sys/ioctl.h>
 
 void
 tc_init()
@@ -247,6 +254,26 @@ tc_init()
 
 	LINES = tgetnum("li");
 	COLS  = tgetnum("co");
+
+	/* don't trust li & co, because we might actually
+	 * be on a console or gui instead of the tinned
+	 * tty that termcap expects
+	 */
+#if defined(TIOCGSIZE)
+	{   struct ttysize tty;
+	    if (ioctl(0, TIOCGSIZE, &tty) == 0) {
+		if (tty.ts_lines) LINES=tty.ts_lines;
+		if (tty.ts_cols)  COLS=tty.ts_cols;
+	    }
+	}
+#elif defined(TIOCGWINSZ)
+	{   struct winsize tty;
+	    if (ioctl(0, TIOCGWINSZ, &tty) == 0) {
+		if (tty.ws_row) LINES=tty.ws_row;
+		if (tty.ws_col) COLS=tty.ws_col;
+	    }
+	}
+#endif
 
 	dofscroll = LINES/2;
 

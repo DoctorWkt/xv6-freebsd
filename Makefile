@@ -21,6 +21,7 @@ fs/cat:
 	mkdir -p fs/bin
 	mkdir -p fs/etc
 	mkdir -p fs/dev
+	$(MAKE) -C lib all
 	$(MAKE) -C cmd all
 
 kern/kernel:

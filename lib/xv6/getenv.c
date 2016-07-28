@@ -45,8 +45,8 @@ char *getenv(const char *key)
   }
 
   fclose(in);
-  if (!found) valptr=NULL;
-  return(valptr);
+  if (!found) return(NULL);
+  return(strdup(valptr));
 }
 
 int setenv(name, value, rewrite)

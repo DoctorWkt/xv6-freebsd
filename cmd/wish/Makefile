@@ -46,7 +46,7 @@ O= o
 #CLIB=-ltermcap strtok.o strpbrk.o strspn.o strcspn.o	# OSX5_1_BSD maybe
 #CLIB=-ltermcap -lposix		# AUX2_01
 #CLIB= -lterm -lndir		# COHERENT
-CLIB=../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
+CLIB=../../lib/libc.a ../../lib/libtermcap.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
 
 # On some systems (PC Minix, Coherent), we need to set the final stack size.
 #STACK= 30000
@@ -61,7 +61,7 @@ FINAL_TOUCHES= @echo 'All done'
 
 SRCS=   alias.c bind.c builtin.c clebuf.c clex.c comlined.c exec.c file.c \
 	hist.c job.c main.c malloc.c meta.c parse.c prints.c \
-	signal.c term.c val.c var.c tinytcap.c tinytcap.o
+	signal.c term.c val.c var.c
 
 PSRCS=  alias.c bind.c builtin.c clebuf.c clex.c comlined.c exec.c file.c \
 	hist.c job.c posixjob.c main.c malloc.c meta.c parse.c \
@@ -70,7 +70,7 @@ PSRCS=  alias.c bind.c builtin.c clebuf.c clex.c comlined.c exec.c file.c \
 OBJS=   alias.$(O) bind.$(O) builtin.$(O) clebuf.$(O) clex.$(O) comlined.$(O) \
 	exec.$(O) file.$(O) hist.$(O) job.$(O) main.$(O) malloc.$(O) \
 	meta.$(O) parse.$(O) prints.$(O) signal.$(O) term.$(O) val.$(O) \
-	var.$(O) tinytcap.$(O)
+	var.$(O)
 
 all: wish
 
