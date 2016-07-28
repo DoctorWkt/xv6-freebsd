@@ -1,0 +1,9 @@
+
+You are here.  It's not too bad!  Try the following:
+
+-- First attempt:	make 'AFLAGS=-DWANT_CALLOC'
+
+-- Second attempt:	make 'AFLAGS=-DWANT_REALLOC'
+
+-- Last attempt:	make 'AFLAGS=-DWANT_CALLOC -DWANT_REALLOC'
+

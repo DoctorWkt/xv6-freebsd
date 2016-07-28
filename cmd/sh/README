@@ -1,0 +1,30 @@
+http://minnie.tuhs.org/UnixTree/V7/usr/src/cmd/sh/
+http://www.collyer.net/who/geoff/
+http://www.computerworld.com.au/article/279011/-z_programming_languages_bourne_shell_sh
+
+http://www.in-ulm.de/~mascheck/bourne/
+http://heirloom.sourceforge.net/sh.html
+http://cvs.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/cmd/sh/
+
+This is a port of original Steve Bourne shell from 1978.
+I tried to make it the same as original as possible!
+It uses sbrk for memory management.  On some C libraries
+opendir uses malloc and last uses sbrk.  The program
+tryreaddir.c check if opendir(3) uses sbrk(2).
+
+If any library function uses malloc/free and last
+calls sbrk we include also in sh malloc/free which
+are independent of the C library.  See the files
+mmapalloc.c and sbrkalloc.c files.  It is possible
+to link also using:
+	echo sbrkalloc.o > mlib
+	rm sh; make
+See also the file shfeatures.h
+
+One can also link with stak.c written by Geoff Collyer.
+This work is based on the Geoff port cited above.
+
+The source is available on:
+http://riemann.fmi.uni-sofia.bg/sh/
+
+Nikola

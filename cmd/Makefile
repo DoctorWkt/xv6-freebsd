@@ -7,6 +7,7 @@ all: ../lib/ulib.a ../lib/libc.a
 	$(MAKE) -C cp     all install
 	$(MAKE) -C md5    all install
 	$(MAKE) -C less   all install
+	$(MAKE) -C sh     all install
 
 ../lib/libc.a:
 	$(MAKE) -C ../lib libc.a
@@ -23,5 +24,6 @@ clean:
 	$(MAKE) -C cp     clean
 	$(MAKE) -C md5    clean
 	$(MAKE) -C less   clean
+	$(MAKE) -C sh     clean
 	rm -f ../fs/bin/*
 	rm -f ../fs/etc/init

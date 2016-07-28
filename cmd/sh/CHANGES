@@ -1,0 +1,57 @@
+I started with Bourne and Collyer source listed in README.
+Then I replaced stak.c and stak.h.  They are more
+similar to the original form 1978.
+
+I changed setbrk using 12*sizeof(void *) offset.  This allow
+easy to use zerostak() save.  I make pushstak a function.
+This make the executable smaller.  Afer that the shell
+work OK on systems on wich sbrk is never used.
+
+Then I wrote sbrkalloc.c.  This replaces malloc/free
+and shell can work also on systems which uses malloc
+and malloc uses sbrk.  Also a simple variant of malloc
+which uses mmap(2) is included.  If you want better malloc look at: 
+http://riemann.fmi.uni-sofia.bg/programs/diet/alloc.tar.gz
+Shell uses malloc only one time by opendir.  So the simple
+malloc included here is a good solution.
+
+I fixed lots of warnings.  Most important is in
+execexp(STRING s, /*UFD*/ pth_ret f).  See the union pth_ret
+in defs.h.  In string.c itos() and stoi() are repleced with
+shorter routines.  Also I included two other sorting programs.
+One is very short, the other is very fast.  See the file
+shfeatures.h
+
+Temporary files are open with O_NOFOLLOW flag in io.c.
+The mode is 600.  The other files have mode 644.
+By append (echo xxx >> X) we open X with flag O_APPEND.
+
+These are the most important changes.  There is a lot
+of small fixes -- they are mainly to avoid compiler warnings.
+
+
+In my opinion sh now works on the same way (also internally) as
+in 1978.  The only important difference is that it does not
+use SYGSEGV for memory allocation.  I use it in real scripts!
+I have copied it in "/bin/bsh".  If you have already "/bin/bsh"
+then use "/bin/Bsh" or something other.
+
+Enjoy,  Nikola
+
+If you have comments/suggestions they are welcome!
+
+--
+serial is static (see io.c)
+definitions of stak[bas|top|bot|end] are moved in stak.c
+more debugging in blok.c (start sh with: ./sh 61>xx)
+WANT_PUSHSTAK_MACRO (shfeatures.h)
+WANT_INT_IN_CTYPE_H (shfeatures.h, ctype.h)
+
+SHELL_NAME, dietbuild (Makefile)
+note about dietbuild in INSTALL
+duperr (msg.c)
+
+fixed signal names:  signames.c, service.c, msg.c
+WANT_MAXTRAP (defs.h, shfeatures.h)
+moved all files I wrote in Memory/  
+modifications on Makefile.
