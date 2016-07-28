@@ -3,7 +3,6 @@
 # with a # symbol, each line has the form NAME=value where there are
 # no spaces on either side of the = sign.
 TERMCAP=/etc/termcap
-TERM=xterm
-#TERM=vt100-80
+TERM=xterms
 PATH=/bin:/usr/bin
 HOME=/
