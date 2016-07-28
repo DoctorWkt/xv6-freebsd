@@ -66,6 +66,7 @@ void            iderw(struct buf*);
 void            ioapicenable(int irq, int cpu);
 extern uchar    ioapicid;
 void            ioapicinit(void);
+int		sys_time(void);
 
 // kalloc.c
 char*           kalloc(void);
