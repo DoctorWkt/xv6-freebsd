@@ -2,6 +2,11 @@ xv-minix2 FAQ
 -------------
 
 1. How do I compile it?
+
+   Firstly, you need a 32-bit libgcc.a somewhere on your system. On Ubuntu,
+   I've installed the libgcc-5-dev:i386 package. Now edit Makefile.common
+   and set LIBGCC to the location of libgcc.a.
+
    Hopefully, on an x86 Linux or FreeBSD environment you can say 'make'. That's
    after you have done git clone https://github.com/DoctorWkt/xv6-minix2
 
