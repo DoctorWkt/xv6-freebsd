@@ -1,6 +1,6 @@
 include ../Makefile.common
 
-all: ulib.a libc.a libtermcap.a
+all: ulib.a libc.a libtermcap.a libcurses.a
 
 ulib.a:
 	$(MAKE) -C ulib all
@@ -23,6 +23,11 @@ libtermcap.a:
 	$(AR) vr libtermcap.a libterm/*.o
 	$(RANLIB) libtermcap.a
 
+libcurses.a:
+	$(MAKE) -C libcurses all
+	$(AR) vr libcurses.a libcurses/*.o
+	$(RANLIB) libcurses.a
+
 clean:
 	$(MAKE) -C gen clean
 	$(MAKE) -C i386 clean
@@ -35,4 +40,5 @@ clean:
 	$(MAKE) -C ulib clean
 	$(MAKE) -C xv6 clean
 	$(MAKE) -C libterm clean
+	$(MAKE) -C libcurses clean
 	rm -f *.d *.o */*.o *.a
