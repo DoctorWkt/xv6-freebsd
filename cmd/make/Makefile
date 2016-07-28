@@ -2,7 +2,7 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
 
-CFLAGS += -Dunix -D_MINIX -D_POSIX_SOURCE
+CFLAGS += -Dunix
 
 OBJ =	check.o input.o macro.o main.o make.o reader.o rules.o archive.o
 
