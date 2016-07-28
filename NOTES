@@ -48,11 +48,13 @@ In no particular order:
  - DONE: Write a more functional mkfs so that a multi-level filesystem
    can be built, one that has /etc, /bin and friends
 
-Tuesday 26 July  22:28:21 AEST 2016 - Warren
---------------------------------------------
-I've decided to switch from the Minix userland to the FreeBSD userland.
-The main reason is that FreeBSD's userland is more coherent and complete
-compared to Minix.
+Thursday 28 July  16:35:51 AEST 2016 - Warren
+---------------------------------------------
+Well, I've moved on from the Minix libc/runtime and switched to
+FreeBSD 1.1.5.1. It's been easier this time around, with a few
+obstacles. We now have a reasonably full set of C libraries
+and many of the simpler commands from FreeBSD. I've got levee
+and less to run, as well as my wish shell.
 
-So far I've got the main parts of libc.a up and running, and some simple
-commands.
+Now I'm trying to find a suitable Bourne compatible shell and a
+simple nroff.
