@@ -1,8 +1,7 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
 
-UPROGS= cat ls tryreadwrite date recurse tryraw sleep rmdir rm mv ln \
-	hostname
+UPROGS= cat ls date sleep rmdir rm mv ln hostname
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 

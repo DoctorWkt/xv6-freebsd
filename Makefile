@@ -43,7 +43,7 @@ clean:
 	$(MAKE) -C cmd clean
 	$(MAKE) -C kern clean
 	$(MAKE) -C tools clean
-	rm -rf *.img fs/bin/*
+	rm -rf *.img fs/bin/* fs/README
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)
