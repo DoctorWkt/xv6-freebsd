@@ -72,7 +72,6 @@ trap(struct trapframe *tf)
     lapiceoi();
     break;
   case T_IRQ0 + IRQ_RTC:
-    rtcintr();
     lapiceoi();
     break;
   case T_IRQ0 + 7:

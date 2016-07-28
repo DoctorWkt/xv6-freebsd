@@ -20,8 +20,6 @@
 #include <xv6/buf.h>
 #include <xv6/file.h>
 
-extern int unixtime;	// Current time in seconds
-
 #define min(a, b) ((a) < (b) ? (a) : (b))
 static void itrunc(struct inode*);
 struct superblock sb;   // there should be one per dev, but we run with one dev
@@ -188,7 +186,7 @@ ialloc(uint dev, short type)
     if(dip->type == 0){  // a free inode
       memset(dip, 0, sizeof(*dip));
       dip->type = type;
-      dip->mtime = unixtime;
+      dip->mtime = sys_time();
       log_write(bp);   // mark it allocated on the disk
       brelse(bp);
       return iget(dev, inum);
@@ -493,7 +491,7 @@ writei(struct inode *ip, char *src, uint off, uint n)
   if(n > 0 && off > ip->size){
     ip->size = off;
   }
-  ip->mtime= unixtime;
+  ip->mtime= sys_time();
   iupdate(ip);
   return n;
 }

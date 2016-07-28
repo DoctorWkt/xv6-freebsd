@@ -232,6 +232,61 @@ void cmostime(struct rtcdate *r)
 #undef     CONV
   }
 
-  *r = t1;
+  memmove(r, &t1, sizeof(t1));
   r->year += 2000;
+}
+
+// Because 2000 is a leap year and we won't have to deal with 2100,
+// we can get away with a simpler isleap() function
+#define isleap(yr) ((yr % 4)==0)
+
+#define S_INDAY 86400                           // # seconds in a day
+#define S_INHOUR 3600                           // # seconds in an hour
+#define S_INMIN    60                           // # seconds in a minute
+
+// Number of seconds to midnight
+// on the 1st day of the month
+static int secs_to_mon[]= {
+  0,
+  0,                                                    //  1: Jan
+  (31*S_INDAY),                                         //  2: Feb
+  ((31+28)*S_INDAY),                                    //  3: Mar
+  ((31+28+31)*S_INDAY),                                 //  4: Apr
+  ((31+28+31+30)*S_INDAY),                              //  5: May
+  ((31+28+31+30+31)*S_INDAY),                           //  6: Jun
+  ((31+28+31+30+31+30)*S_INDAY),                        //  7: Jul
+  ((31+28+31+30+31+30+31)*S_INDAY),                     //  8: Aug
+  ((31+28+31+30+31+30+31+31)*S_INDAY),                  //  9: Sep
+  ((31+28+31+30+31+30+31+31+30)*S_INDAY),               // 10: Oct
+  ((31+28+31+30+31+30+31+31+30+31)*S_INDAY),            // 11: Nov
+  ((31+28+31+30+31+30+31+31+30+31+30)*S_INDAY)          // 12: Dec
+};
+
+int mktime(struct rtcdate *gmt)
+{
+  int tval=0;
+  int i;
+
+  // Work out the number of seconds in each year up to the present year
+  for (int i=1970; i < (gmt->year); i++)
+    tval+= isleap(i) ? 366 * S_INDAY : 365 * S_INDAY;
+
+  // Add on another day if this is a leap year and it's past Feb
+  if ( isleap(i) && (gmt->month>2)) tval += S_INDAY;
+
+  // Add on the number of seconds up to the month
+  tval += secs_to_mon[ gmt->month ];
+
+  // Add on the days, the hours, the minutes and the seconds
+  tval += (gmt->day) * S_INDAY;
+  tval += gmt->hour * S_INHOUR;
+  tval += gmt->minute * S_INMIN;
+  tval += gmt->second;
+  return(tval);
+}
+
+int sys_time () {
+  struct rtcdate r;
+  cmostime(&r);
+  return(mktime(&r));
 }
