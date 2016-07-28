@@ -20,7 +20,7 @@ install: all
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
-$(UPROGS): mddriver.o md5c.o ../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
+$(UPROGS): mddriver.o md5c.o ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip $@
 

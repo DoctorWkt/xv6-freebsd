@@ -8,7 +8,7 @@ OBJ =	check.o input.o macro.o main.o make.o reader.o rules.o archive.o
 
 all:	make
 
-make: $(OBJ) ../../lib/libc.a
+make: $(OBJ) ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip $@
 

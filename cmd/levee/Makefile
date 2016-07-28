@@ -9,7 +9,7 @@ OBJS = blockio.o display.o editcor.o exec.o find.o \
 
 all: lev
 
-lev: $(OBJS) ../../lib/libc.a ../../lib/libtermcap.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
+lev: $(OBJS) ../../lib/libc.a ../../lib/libtermcap.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip lev
 
