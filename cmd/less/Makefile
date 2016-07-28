@@ -136,7 +136,7 @@ CFLAGS += $(DEFS)
 
 all: less
 
-less: $(OBJ) ../../lib/libtermcap.a ../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
+less: $(OBJ) ../../lib/libtermcap.a ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 
 install: less

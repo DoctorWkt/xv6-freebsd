@@ -1,3 +1,6 @@
+# Location of the 32-bit libgcc.a file
+LIBGCC=/usr/lib/gcc/i686-linux-gnu/5/libgcc.a
+
 # Header include directory
 INCLDIR=$(TOP_SRCDIR)/include
 

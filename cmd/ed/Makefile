@@ -20,7 +20,8 @@ install: all
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
-$(UPROGS): buf.o cbc.o glbl.o io.o main.o re.o sub.o undo.o ../../lib/libc.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
+$(UPROGS): buf.o cbc.o glbl.o io.o main.o re.o sub.o undo.o \
+	../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip $@
 

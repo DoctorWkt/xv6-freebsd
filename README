@@ -38,12 +38,23 @@ Eldar Sehayek, Yongming Shen, Stephen Tu, and Zouchangwei.
 The code in the files that constitute xv6 is
 Copyright 2006-2014 Frans Kaashoek, Robert Morris, and Russ Cox.
 
+The code in the non-xv6 commands and libraries are
+Copyright the Regents of the University of California.
+
 ERROR REPORTS
 
-If you spot errors or have suggestions for improvement, please send
-email to Frans Kaashoek and Robert Morris (kaashoek,rtm@csail.mit.edu). 
+If you spot errors in the kernel or have suggestions for kernel improvement,
+please send email to Frans Kaashoek and Robert Morris
+(kaashoek,rtm@csail.mit.edu). 
 
-BUILDING AND RUNNING XV6
+If you spot errors in the libraries or the commands, please send email
+to Warren Toomey (wkt@tuhs.org)
+
+BUILDING AND RUNNING XV6 WITH THE FREEBSD CHANGES
+
+Firstly, you need a 32-bit libgcc.a somewhere on your system. On Ubuntu,
+I've installed the libgcc-5-dev:i386 package. Now edit Makefile.common
+and set LIBGCC to the location of libgcc.a.
 
 To build xv6 on an x86 ELF machine (like Linux or FreeBSD), run "make".
 On non-x86 or non-ELF machines (like OS X, even on x86), you will
@@ -52,6 +63,3 @@ binaries.  See http://pdos.csail.mit.edu/6.828/2014/tools.html.
 Then run "make TOOLPREFIX=i386-jos-elf-".
 
 To run xv6, install the QEMU PC simulators.  To run in QEMU, run "make qemu".
-
-To create a typeset version of the code, run "make xv6.pdf".  This
-requires the "mpage" utility.  See http://www.mesa.nl/pub/mpage/.
