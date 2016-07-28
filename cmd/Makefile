@@ -3,6 +3,7 @@ all: ../lib/ulib.a ../lib/libc.a
 	$(MAKE) -C ed     all install
 	$(MAKE) -C simple all install
 	$(MAKE) -C wish   all install
+	$(MAKE) -C levee  all install
 	$(MAKE) -C cp     all install
 	$(MAKE) -C md5    all install
 
@@ -17,6 +18,7 @@ clean:
 	$(MAKE) -C ed     clean
 	$(MAKE) -C simple clean
 	$(MAKE) -C wish   clean
+	$(MAKE) -C levee  clean
 	$(MAKE) -C cp     clean
 	$(MAKE) -C md5    clean
 	rm -f ../fs/bin/*

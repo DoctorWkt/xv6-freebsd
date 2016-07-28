@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-1997 David L Parsons
+ * Copyright (c) 1982-2008 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.chi.il.us).
+ * that the software was developed by David L Parsons (orc@pell.portland.or.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -62,7 +62,7 @@ struct undostack undo;			/* To undo a command */
 
 		/* R A N D O M   S T R I N G S */
 
-char instring[80],	/* Latest input */
+char instring[200],	/* Latest input */
      filenm[80] = "",	/* Filename */
      altnm[80] = "";	/* Alternate filename */
 char gcb[16];		/* Command buffer for mutations of insert */
@@ -86,11 +86,11 @@ struct ybuf yank;	/* last deleted/yanked text */
 
 /* ttydef stuff */
 
-#if ST | TERMCAP
+#if OS_ATARI | USE_TERMCAP
 int LINES, COLS;
 #endif
 
-#if ZTERM
+#if TTY_ZTERM
 char *TERMNAME = "zterm",
      *HO  = "\001",	/* goto top of screen */
      *UP  = "\002",	/* move up 1 line? */
@@ -104,8 +104,8 @@ char *TERMNAME = "zterm",
      *CURon;
 #endif /*ZTERM*/
 
-#if ANSI
-#if MSDOS
+#if TTY_ANSI
+#if OS_DOS
 char *TERMNAME = "braindamaged ansi",
 #else
 char *TERMNAME = "hardwired ansi",
@@ -114,7 +114,7 @@ char *TERMNAME = "hardwired ansi",
      *UP  = "\033[A",
      *CE  = "\033[K",
      *CL  = "\033[H\033[J",
-#if MSDOS
+#if OS_DOS
      *OL  = NULL,
      *UpS = NULL,
 #else
@@ -125,18 +125,18 @@ char *TERMNAME = "hardwired ansi",
      *CM  = "\033[%d;%dH",
      *CURoff,
      *CURon;
-#endif /*ANSI*/
+#endif /*TTY_ANSI*/
 
-#if VT52
-#if ST
+#if TTY_VT52
+#if OS_ATARI
 char *TERMNAME = "Atari ST",
 #else
-#if FLEXOS
+#if OS_FLEXOS
 char *TERMNAME = "Flexos console",
 #else
 char *TERMNAME = "hardwired vt52",
-#endif /*FLEXOS*/
-#endif /*ST*/
+#endif /*OS_FLEXOS*/
+#endif /*OS_ATARI*/
      *HO  = "\033H",
      *UP  = "\033A",
      *CE  = "\033K",
@@ -144,16 +144,16 @@ char *TERMNAME = "hardwired vt52",
      *OL  = "\033L",
      *BELL= "\007",
      *CM  = "\033Y??",
-#if FLEXOS
+#if OS_FLEXOS
      *UpS = NULL,	/* Reverse scrolling is painfully slow */
 #else
      *UpS = "\033I",
 #endif
      *CURoff= "\033f",
      *CURon = "\033e";
-#endif /*VT52*/
+#endif /*TTY_VT52*/
 
-#if TERMCAP
+#if USE_TERMCAP
 bool CA, canUPSCROLL;
 char FkL, CurRT, CurLT, CurUP, CurDN;
 
@@ -168,14 +168,12 @@ char *TERMNAME,		/* will be set in termcap handling */
      *UpS,
      *CURoff,
      *CURon;
-#endif /*TERMCAP*/
+#endif /*USE_TERMCAP*/
 
 char Erasechar = ERASE,			/* our erase character */
      eraseline = 'X'-'@';		/* and line-kill character */
 
-char ED_NOTICE[]  = "(c)3.4",		/* Editor version */
-     ED_REVISION = 'o',			/* Small revisions & corrections */
-     fismod[] = "File is modified",	/* File is modified message */
+char fismod[] = "File is modified",	/* File is modified message */
      fisro[] = "File is readonly";	/* when you can't write the file */
 
 char *excmds[] = {
@@ -216,7 +214,7 @@ char wordset[] = "0123456789$_#ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 char spaces[] = { TAB,EOL,' ',0 };
 
 int shiftwidth = 4,
-#if TERMCAP | ST
+#if USE_TERMCAP | OS_ATARI
     dofscroll,
 #else
     dofscroll  = LINES/2,
@@ -231,7 +229,7 @@ int autoindent = YES,
     list       = NO,
     magic      = YES,
     bell       = YES,
-#if ST
+#if OS_ATARI
     mapslash,
 #endif
     ignorecase = NO;
@@ -251,7 +249,7 @@ struct variable vars[]={
     {"magic",	  "",	VBOOL,	0,		(void*)&magic      },
     {"ignorecase","ic",	VBOOL,	0,		(void*)&ignorecase },
     {"bell",      "",	VBOOL,	0,		(void*)&bell       },
-#if ST
+#if OS_ATARI
     {"mapslash",  "ms", VBOOL,	0,		(void*)&mapslash   },
 #endif
     {NULL}
@@ -323,7 +321,7 @@ cmdtype movemap[256]={
     /*^^*/ BAD_COMMAND,
     /*^_*/ BAD_COMMAND,
     /*  */ GO_RIGHT,
-    /*! */ BAD_COMMAND,
+    /*! */ EXEC_C,
     /*" */ BAD_COMMAND,
     /*# */ BAD_COMMAND,
     /*$ */ TO_EOL,
@@ -338,7 +336,7 @@ cmdtype movemap[256]={
     /*- */ CR_BACK,
     /*. */ REDO_C,
     /*/ */ PATT_FWD,
-    /*0 */ BAD_COMMAND,
+    /*0 */ TO_COL,
     /*1 */ BAD_COMMAND,
     /*2 */ BAD_COMMAND,
     /*3 */ BAD_COMMAND,
@@ -393,7 +391,7 @@ cmdtype movemap[256]={
     /*d */ DELETE_C,
     /*e */ FORWD,
     /*f */ TO_CHAR,
-    /*g */ BAD_COMMAND,
+    /*g */ HARDMACRO,
     /*h */ GO_LEFT,
     /*i */ INSERT_C,
     /*j */ GO_DOWN,

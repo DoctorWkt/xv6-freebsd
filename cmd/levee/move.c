@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-1997 David L Parsons
+ * Copyright (c) 1982-2007 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.chi.il.us).
+ * that the software was developed by David L Parsons (orc@pell.portland.or.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -142,7 +142,7 @@ cmdtype cmd;
 
     case TO_MARK:
     case TO_MARK_LINE:
-	*newpos = getcontext((char)tolower(readchar()), cmd==TO_MARK_LINE);
+	*newpos = lvgetcontext((char)tolower(readchar()), cmd==TO_MARK_LINE);
 	break;
 
     case CR_FWD:
@@ -160,7 +160,7 @@ cmdtype cmd;
 	clrprompt();
 	if (cmd == PATT_FWD || cmd == PATT_BACK) {
 	    printch(tsearch = instring[0] = chars[cmd-PATT_FWD]);
-	    if (!getline(&instring[1]))
+	    if (!lvgetline(&instring[1]))
 		return ESCAPED;	/* needs to skip later tests */
 	}
 	else {

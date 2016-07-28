@@ -1,7 +1,7 @@
 /*
  * LEVEE, or Captain Video;  A vi clone
  *
- * Copyright (c) 1982-1997 David L Parsons
+ * Copyright (c) 1982-2007 David L Parsons
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, without or
@@ -9,7 +9,7 @@
  * copyright notice and this paragraph are duplicated in all such
  * forms and that any documentation, advertising materials, and
  * other materials related to such distribution and use acknowledge
- * that the software was developed by David L Parsons (orc@pell.chi.il.us).
+ * that the software was developed by David L Parsons (orc@pell.portland.or.us).
  * My name may not be used to endorse or promote products derived
  * from this software without specific prior written permission.
  * THIS SOFTWARE IS PROVIDED AS IS'' AND WITHOUT ANY EXPRESS OR
@@ -21,7 +21,7 @@
 #include "extern.h"
 
 bool PROC
-getline(str)
+lvgetline(str)
 char *str;
 {
     int len;
@@ -31,7 +31,7 @@ char *str;
     str[len] = 0;
     strput(CE);
     return (flag == EOL);
-} /* getline */
+} /* lvgetline */
 
 
 char PROC
@@ -179,7 +179,7 @@ int *a,*b;
 
 
 int PROC
-#if ST
+#if OS_ATARI
 cclass(c)
 register int c;
 {
@@ -199,7 +199,7 @@ register unsigned char c;
 	return 2;
     if (c == '' || c < ' ')
 	return 1;
-#if MSDOS==0
+#if !OS_DOS
     if (c & 0x80)
 	return 3;
 #endif
@@ -207,7 +207,7 @@ register unsigned char c;
 } /* cclass */
 #endif
 
-#if ST
+#if OS_ATARI
 /*
  * wildly machine-dependent code to make a beep
  */
@@ -233,7 +233,7 @@ beeper()
 	(*SOUND)[2] = sound[i];
     }
 } /* beeper */
-#endif /*ST*/
+#endif /*OS_ATARI*/
 
 
 VOID PROC
@@ -244,12 +244,12 @@ error()
     if (xerox)
 	rcb[0] = 0;
     xerox = FALSE;
-#if ST
+#if OS_ATARI
     Supexec(beeper);
 #else
     if (bell)
 	strput(BELL);
-#endif /*ST*/
+#endif /*OS_ATARI*/
 } /* error */
 
 
@@ -388,12 +388,13 @@ int start, endd, *size;
 		return(0);
 	    }
 	}
-	else if (c=='\r' || c=='\n' || c==ESC) {
+	else if (c=='\r' || c==ESC) {
 	    *size = (ip-start);
             return (c==ESC) ? ESC : EOL;
 	}
 	else if ((!beautify) || c == TAB || c == ''
-			     || (c >= ' ' && c <= '~')) {
+			     || (c >= ' ' && c <= '~')
+			     || (c & 0x80) ) {
 	    if (ip < endd) {
 		if (c == '')
 		    c = readchar();

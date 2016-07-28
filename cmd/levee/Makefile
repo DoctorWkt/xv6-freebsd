@@ -1,16 +1,15 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
-CFLAGS += -D_POSIX_SOURCE
 
 # makefile for Levee
 
 OBJS = blockio.o display.o editcor.o exec.o find.o \
     unixcall.o globals.o insert.o main.o misc.o \
-    modify.o move.o ucsd.o undo.o wildargs.o
+    modify.o move.o ucsd.o undo.o wildargs.o version.o
 
 all: lev
 
-lev: $(OBJS) ../../lib/libc.a
+lev: $(OBJS) ../../lib/libc.a ../../lib/libtermcap.a /usr/lib/gcc/i686-linux-gnu/5/libgcc.a
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 	strip lev
 

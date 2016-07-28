@@ -2,6 +2,8 @@
 # will read from this file. Apart from the comment lines that start
 # with a # symbol, each line has the form NAME=value where there are
 # no spaces on either side of the = sign.
-TERM=vt100-80
+TERMCAP=/etc/termcap
+TERM=xterm
+#TERM=vt100-80
 PATH=/bin:/usr/bin
 HOME=/

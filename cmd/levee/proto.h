@@ -53,7 +53,7 @@ int  PROC doyank(int  low,int  high);
 int  PROC editfile(void);
 int  PROC errmsg(char  *msg);
 int  PROC error(void);
-int  PROC exec(char  *cmd,char  *mode,int  *noquit);
+int  PROC doexec(char  *cmd,char  *mode,int  *noquit);
 int  PROC execmode(char  emode);
 int  PROC exmacro(void);
 int  PROC expandargs(char  *name,int  *argcp,char  * * *argvp);
