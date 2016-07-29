@@ -1,0 +1,231 @@
+Mn1	../common_source/n1.c	/^main(argc,argv)$/
+PAIR	ntab.c	/^#define PAIR(A,B) (A|(B<<BYTE))$/
+SPACETEST	../common_source/n3.c	/^#define SPACETEST(base, size) while ((enda - (size/
+abc	../common_source/n4.c	/^abc(i,f)$/
+abc0	../common_source/n4.c	/^abc0(i,f)$/
+acctg	../common_source/n1.c	/^acctg() {$/
+alloc	../common_source/n3.c	/^filep alloc()$/
+alph	../common_source/n8.c	/^alph(i)$/
+atoi	../common_source/n4.c	/^atoi(){$/
+atoi0	../common_source/n4.c	/^long atoi0()$/
+atoi1	../common_source/n4.c	/^long atoi1()$/
+blisti	../common_source/n3.c	/^blisti(i)$/
+boff	../common_source/n3.c	/^filep boff(i)$/
+callsp	../common_source/n7.c	/^callsp(){$/
+caseab	../common_source/n5.c	/^caseab(){$/
+casead	../common_source/n5.c	/^casead(){$/
+caseaf	../common_source/n4.c	/^caseaf(){$/
+caseam	../common_source/n3.c	/^caseam(){$/
+caseas	../common_source/n3.c	/^caseas(){$/
+casebd	n6.c	/^casebd(){}$/
+casebp	../common_source/n5.c	/^casebp(){$/
+casec2	../common_source/n5.c	/^casec2(){$/
+casecc	../common_source/n5.c	/^casecc(){$/
+casece	../common_source/n5.c	/^casece(){$/
+casecf	../common_source/n1.c	/^casecf(){	\/* copy file without change *\/$/
+casech	../common_source/n5.c	/^casech(){$/
+casecs	n6.c	/^casecs(){}$/
+casecu	../common_source/n5.c	/^casecu(){$/
+caseda	../common_source/n3.c	/^caseda(){$/
+casede	../common_source/n3.c	/^casede(){$/
+casedi	../common_source/n3.c	/^casedi(){$/
+caseds	../common_source/n3.c	/^caseds(){$/
+casedt	../common_source/n3.c	/^casedt(){$/
+caseec	../common_source/n5.c	/^caseec(){$/
+caseel	../common_source/n5.c	/^caseel(){$/
+caseem	../common_source/n5.c	/^caseem(){$/
+caseeo	../common_source/n5.c	/^caseeo(){$/
+caseev	../common_source/n5.c	/^caseev(){$/
+casefc	../common_source/n9.c	/^casefc(){$/
+casefi	../common_source/n5.c	/^casefi(){$/
+casefl	../common_source/n5.c	/^casefl(){$/
+casefp	n6.c	/^casefp(){$/
+caseft	n6.c	/^caseft(){$/
+casefz	n6.c	/^casefz(){}$/
+casehc	../common_source/n5.c	/^casehc(){$/
+caseht	../common_source/n8.c	/^caseht()$/
+casehw	../common_source/n8.c	/^casehw()$/
+casehy	../common_source/n5.c	/^casehy(){$/
+caseie	../common_source/n5.c	/^caseie(){$/
+caseif	../common_source/n5.c	/^caseif(x)$/
+caseig	../common_source/n3.c	/^caseig(){$/
+casein	../common_source/n5.c	/^casein(){$/
+caseit	../common_source/n5.c	/^caseit(){$/
+caselc	../common_source/n5.c	/^caselc(){$/
+caselg	n6.c	/^caselg(){}$/
+caseli	../common_source/n5.c	/^caseli(){$/
+casell	../common_source/n5.c	/^casell(){$/
+casels	../common_source/n5.c	/^casels(){$/
+caselt	../common_source/n5.c	/^caselt(){$/
+casemc	../common_source/n5.c	/^casemc(){$/
+casemk	../common_source/n5.c	/^casemk(){$/
+casena	../common_source/n5.c	/^casena(){$/
+casene	../common_source/n5.c	/^casene(){$/
+casenf	../common_source/n5.c	/^casenf(){$/
+casenh	../common_source/n5.c	/^casenh(){$/
+casenm	../common_source/n5.c	/^casenm(){$/
+casenn	../common_source/n5.c	/^casenn(){$/
+casenr	../common_source/n4.c	/^casenr(){$/
+casens	../common_source/n5.c	/^casens(){$/
+casenx	../common_source/n1.c	/^casenx(){$/
+caseos	../common_source/n5.c	/^caseos(){$/
+casepc	../common_source/n3.c	/^casepc(){$/
+casepi	../common_source/n2.c	/^casepi(){$/
+casepl	../common_source/n5.c	/^casepl(){$/
+casepm	../common_source/n3.c	/^casepm(){$/
+casepn	../common_source/n5.c	/^casepn(){$/
+casepo	../common_source/n5.c	/^casepo(){$/
+caseps	n6.c	/^caseps(){}$/
+caserd	../common_source/n5.c	/^caserd(){$/
+caserm	../common_source/n3.c	/^caserm(){$/
+casern	../common_source/n3.c	/^casern(){$/
+caserr	../common_source/n4.c	/^caserr(){$/
+casers	../common_source/n5.c	/^casers(){$/
+casert	../common_source/n5.c	/^casert(){$/
+caseso	../common_source/n1.c	/^caseso(){$/
+casesp	../common_source/n5.c	/^casesp(a)$/
+casess	n6.c	/^casess(){}$/
+casesv	../common_source/n5.c	/^casesv(){$/
+caseta	../common_source/n5.c	/^caseta(){$/
+casetc	../common_source/n5.c	/^casetc(){$/
+caseti	../common_source/n5.c	/^caseti(){$/
+casetl	../common_source/n3.c	/^casetl(){$/
+casetm	../common_source/n5.c	/^casetm(x) int x;{$/
+casetr	../common_source/n5.c	/^casetr(){$/
+caseuf	../common_source/n5.c	/^caseuf(){$/
+caseul	../common_source/n5.c	/^caseul(){$/
+casevs	n6.c	/^casevs(){$/
+casewh	../common_source/n5.c	/^casewh(){$/
+catch	../common_source/n1.c	/^catch(){$/
+cbits	../common_source/n3.c	/^#define	cbits(x)	((x) & CMASK)$/
+chget	../common_source/n5.c	/^chget(c)$/
+chkpn	../common_source/n7.c	/^chkpn(){$/
+chkvow	../common_source/n8.c	/^int *chkvow(w)$/
+ckph	../common_source/n4.c	/^long ckph(){$/
+ckul	../common_source/n7.c	/^ckul(){$/
+clrmn	../common_source/n3.c	/^clrmn(i)$/
+cmpstr	../common_source/n5.c	/^cmpstr(delim)$/
+cnum	../common_source/n1.c	/^cnum(a)$/
+collect	../common_source/n3.c	/^collect()$/
+control	../common_source/n1.c	/^control(a,b)$/
+copyb	../common_source/n3.c	/^copyb()$/
+copys	../common_source/n3.c	/^copys()$/
+cvtime	../common_source/n1.c	/^cvtime()$/
+decml	../common_source/n4.c	/^decml(i,f)$/
+digram	../common_source/n8.c	/^digram() {$/
+dilook	../common_source/n8.c	/^dilook(a,b,t)$/
+done	../common_source/n2.c	/^done(x) int x;{$/
+done1	../common_source/n2.c	/^done1(x) int x; {$/
+done2	../common_source/n2.c	/^done2(x) int x; {$/
+done3	../common_source/n2.c	/^done3(x) int x;{$/
+donum	../common_source/n7.c	/^donum(){$/
+dostop	n10.c	/^dostop(){$/
+dummy	../common_source/n3.c	/^dummy(){}$/
+eat	../common_source/n9.c	/^eat(c)$/
+eatblk	../common_source/n5.c	/^eatblk(right,left)$/
+edone	../common_source/n2.c	/^edone(x) int x;{$/
+eject	../common_source/n7.c	/^eject(a)$/
+exword	../common_source/n8.c	/^exword()$/
+ffree	../common_source/n3.c	/^ffree(i)$/
+find	n6.c	/^find(i,j)$/
+findmn	../common_source/n3.c	/^findmn(i)$/
+findn	../common_source/n5.c	/^findn(i)$/
+findn1	../common_source/n7.c	/^findn1(a)$/
+findr	../common_source/n4.c	/^findr(i)$/
+finds	../common_source/n3.c	/^filep finds(mn)$/
+findt	../common_source/n7.c	/^findt(a)$/
+findt1	../common_source/n7.c	/^findt1(){$/
+flushi	../common_source/n1.c	/^flushi(){$/
+flusho	../common_source/n2.c	/^flusho(){$/
+fnumb	../common_source/n4.c	/^fnumb(i,f)$/
+fpecatch	../common_source/n1.c	/^fpecatch(){$/
+getach	../common_source/n1.c	/^getach(){$/
+getch	../common_source/n1.c	/^getch(){$/
+getch0	../common_source/n1.c	/^getch0(){$/
+getlg	n6.c	/^getlg(i)$/
+getname	../common_source/n1.c	/^getname(){$/
+getnm	../common_source/n5.c	/^getnm(p,min)$/
+getpn	../common_source/n1.c	/^getpn(a)$/
+getrq	../common_source/n1.c	/^getrq(){$/
+getsn	../common_source/n3.c	/^getsn()$/
+gettch	../common_source/n7.c	/^gettch(){$/
+getword	../common_source/n7.c	/^getword(x)$/
+hmot	n6.c	/^hmot(){$/
+hnumb	../common_source/n4.c	/^hnumb(i)$/
+horiz	../common_source/n7.c	/^horiz(i)$/
+hseg	../common_source/n3.c	/^hseg(f,p)$/
+hyphen	../common_source/n8.c	/^hyphen(wp)$/
+incoff	../common_source/n3.c	/^filep incoff(p)$/
+init1	../common_source/n1.c	/^init1(a)$/
+init2	../common_source/n1.c	/^init2()$/
+inumb	../common_source/n4.c	/^inumb(n)$/
+kcatch	../common_source/n1.c	/^kcatch(){$/
+kvt	../common_source/n3.c	/^char *kvt(k,p)$/
+makem	n6.c	/^makem(i)$/
+maplow	../common_source/n8.c	/^maplow(i)$/
+max	../common_source/n5.c	/^max(aa,bb)$/
+mchbits	n6.c	/^mchbits(){$/
+mesg	../common_source/n1.c	/^mesg(f)$/
+mot	n6.c	/^mot(){$/
+move	n10.c	/^move(){$/
+movword	../common_source/n7.c	/^movword(){$/
+newline	../common_source/n7.c	/^newline(a)$/
+nextfile	../common_source/n1.c	/^nextfile(){$/
+nofill	../common_source/n7.c	/^nofill(){$/
+oput	../common_source/n2.c	/^oput(i)$/
+oputs	../common_source/n2.c	/^oputs(i)$/
+pchar	../common_source/n2.c	/^pchar(c)$/
+pchar1	../common_source/n2.c	/^pchar1(c)$/
+plot	n10.c	/^char *plot(x)$/
+popf	../common_source/n1.c	/^popf(){$/
+popi	../common_source/n3.c	/^popi(){$/
+prstr	../common_source/n1.c	/^prstr(s)$/
+prstrfl	../common_source/n1.c	/^prstrfl(s)$/
+ptinit	n10.c	/^ptinit(){$/
+ptlead	n10.c	/^ptlead(){move();}$/
+ptout	n10.c	/^ptout(i)$/
+ptout1	n10.c	/^ptout1()$/
+punct	../common_source/n8.c	/^punct(i)$/
+pushi	../common_source/n3.c	/^pushi(newip)$/
+quant	../common_source/n4.c	/^quant(n,m)$/
+rbf	../common_source/n3.c	/^rbf(){$/
+rbf0	../common_source/n3.c	/^rbf0(p)$/
+rdtty	../common_source/n5.c	/^rdtty(){$/
+report	../common_source/n2.c	/^report(){$/
+roman	../common_source/n4.c	/^roman(i,f)$/
+roman0	../common_source/n4.c	/^roman0(i,f,onesp,fivesp)$/
+seta	../common_source/n3.c	/^seta()$/
+setbra	../common_source/n9.c	/^setbra(){$/
+setbrk	../common_source/n3.c	/^char	*setbrk(x)$/
+setch	n6.c	/^setch(){$/
+setfield	../common_source/n9.c	/^setfield(x)$/
+setfont	n6.c	/^setfont(a)$/
+sethl	n6.c	/^sethl(k)$/
+setline	../common_source/n9.c	/^setline(){$/
+setn	../common_source/n4.c	/^setn()$/
+setn1	../common_source/n4.c	/^setn1(i)$/
+setnel	../common_source/n7.c	/^setnel(){$/
+setov	../common_source/n9.c	/^setov(){$/
+setps	n6.c	/^setps(){$/
+setrpt	../common_source/n1.c	/^setrpt(){$/
+setstr	../common_source/n3.c	/^setstr()$/
+setvline	../common_source/n9.c	/^setvline(){$/
+setwd	n6.c	/^setwd(){$/
+setz	../common_source/n9.c	/^setz(){$/
+skip	../common_source/n3.c	/^skip(){$/
+storeline	../common_source/n7.c	/^storeline(c,w){$/
+storeword	../common_source/n7.c	/^storeword(c,w)$/
+suffix	../common_source/n8.c	/^suffix()$/
+sumhp	../common_source/n1.c	/^sumhp()	\/* XXX - add up widths in inchar array */
+tbreak	../common_source/n7.c	/^tbreak(){$/
+text	../common_source/n7.c	/^text(){$/
+twdone	n10.c	/^twdone(){$/
+vmot	n6.c	/^vmot(){$/
+vnumb	../common_source/n4.c	/^vnumb(i)$/
+vowel	../common_source/n8.c	/^vowel(i)$/
+wbf	../common_source/n3.c	/^wbf(i)$/
+wbfl	../common_source/n3.c	/^wbfl(){$/
+wbt	../common_source/n3.c	/^wbt(i)$/
+width	n6.c	/^width(c)$/
+wrc	../common_source/n4.c	/^wrc(i)$/
+xlss	n6.c	/^xlss(){$/
