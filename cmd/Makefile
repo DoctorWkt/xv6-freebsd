@@ -6,6 +6,7 @@ all: ../lib/ulib.a ../lib/libc.a
 	$(MAKE) -C levee  all install
 	$(MAKE) -C cp     all install
 	$(MAKE) -C md5    all install
+	$(MAKE) -C sed    all install
 	$(MAKE) -C less   all install
 	$(MAKE) -C make   all install
 	$(MAKE) -C sh     all install
@@ -25,6 +26,7 @@ clean:
 	$(MAKE) -C levee  clean
 	$(MAKE) -C cp     clean
 	$(MAKE) -C md5    clean
+	$(MAKE) -C sed    clean
 	$(MAKE) -C less   clean
 	$(MAKE) -C make   clean
 	$(MAKE) -C sh     clean
