@@ -1,6 +1,6 @@
 all: ../lib/ulib.a ../lib/libc.a
 	$(MAKE) -C old    all install
-	$(MAKE) -C ed     all install
+#	$(MAKE) -C ed     all install
 	$(MAKE) -C simple all install
 	$(MAKE) -C wish   all install
 	$(MAKE) -C levee  all install
@@ -20,7 +20,7 @@ all: ../lib/ulib.a ../lib/libc.a
 
 clean:
 	$(MAKE) -C old    clean
-	$(MAKE) -C ed     clean
+#	$(MAKE) -C ed     clean
 	$(MAKE) -C simple clean
 	$(MAKE) -C wish   clean
 	$(MAKE) -C levee  clean
