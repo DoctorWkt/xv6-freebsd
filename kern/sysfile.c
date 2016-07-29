@@ -496,24 +496,25 @@ int sys_lseek(void)
 
 	if (base == SEEK_END)
 		newoff = f->ip->size + offset;
-	if (newoff < f->ip->size)
+
+	if (newoff < 0)
 		return EINVAL;
 
 	if (newoff > f->ip->size){
 		zerosize = newoff - f->ip->size;
 		zeroed = kalloc();
 		z = zeroed;
-		for (i = 0; i < 4096; i++)
+		for (i = 0; i < PGSIZE; i++)
 			*z++ = 0;
 		while (zerosize > 0){
 			filewrite(f, zeroed, zerosize);
-			zerosize -= 4096;
+			zerosize -= PGSIZE;
 		}
 		kfree(zeroed);
 	}
 
 	f->off = newoff;
-	return 0;
+	return newoff;
 }
 
 int
