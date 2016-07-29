@@ -9,6 +9,7 @@ all: ../lib/ulib.a ../lib/libc.a
 	$(MAKE) -C less   all install
 	$(MAKE) -C make   all install
 	$(MAKE) -C sh     all install
+	$(MAKE) -C nroff  all install
 
 ../lib/libc.a:
 	$(MAKE) -C ../lib libc.a
@@ -27,5 +28,6 @@ clean:
 	$(MAKE) -C less   clean
 	$(MAKE) -C make   clean
 	$(MAKE) -C sh     clean
+	$(MAKE) -C nroff  clean
 	rm -f ../fs/bin/*
 	rm -f ../fs/etc/init
