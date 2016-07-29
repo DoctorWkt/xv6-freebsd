@@ -2,6 +2,7 @@
 
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
+#CFLAGS=-g
 
 # Cancel the .c -> output implicit rule
 %: %.c
@@ -20,9 +21,12 @@ all: nroff
 nroff: $(OBJS) ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 
+fred: $(OBJS)
+	cc -o fred $(CFLAGS) $(OBJS)
+
 install: nroff
 	strip nroff
 	cp nroff ../../fs/bin
 
 clean:
-	rm -f nroff $(OBJS)
+	rm -f nroff $(OBJS) fred
