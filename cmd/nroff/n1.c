@@ -23,6 +23,7 @@ static char sccsid[] = "@(#)n1.c	4.13 (Berkeley) 4/18/91";
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <errno.h>
 extern
 #include "d.h"
 extern
@@ -360,7 +361,6 @@ char a;
 	char *mktemp();
 	static char tempname[] = "/tmp/taXXXXXX";
 	int i;
-	extern int errno;
 
 #ifndef NROFF
 	acctg();/*open troff actg file while mode 4755*/
