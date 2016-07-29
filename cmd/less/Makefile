@@ -1,5 +1,3 @@
-# Revised 1996/1/28
-#
 # Makefile for "less"
 #
 # Invoked as:
@@ -15,10 +13,10 @@
 # Also provided:
 #	make lint	# Runs "lint" on all the sources.
 #	make clean	# Removes "less" and the .o files.
+#	make clobber	# Pretty much the same as make "clean".
 
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
-
 
 ##########################################################################
 # System-specific parameters
@@ -33,7 +31,7 @@ VOID = 1
 
 # off_t is the type which lseek() returns.
 # It is also the type of lseek()'s second argument.
-#off_t = long
+off_t = long
 
 # TERMIO is 1 if your system has /usr/include/termio.h.
 # This is normally the case for System 5.
@@ -66,7 +64,7 @@ SHELL_ESCAPE = 0
 # (This is possible only if your system supplies the system() function.)
 # EDIT_PGM is the name of the (default) editor to be invoked.
 EDITOR = 0
-EDIT_PGM = vi
+EDIT_PGM = 
 
 # GLOB is 1 if you wish to have shell metacharacters expanded in filenames.
 # This will generally work if your system provides the "popen" function
@@ -92,16 +90,16 @@ ONLY_RETURN = 0
 # INSTALL_LESS is a list of the public versions of less.
 # INSTALL_HELP is a list of the public version of the help file.
 # INSTALL_MAN is a list of the public versions of the manual page.
-INSTALL_LESS =	/usr/local/less
-INSTALL_HELP =	/usr/local/lib/less.help
-INSTALL_MAN =	/usr/local/man/cat1/less.0
+INSTALL_LESS =	/bin/less
+INSTALL_HELP =	/usr/share/doc/less/less.help
+INSTALL_MAN =	/usr/man/man1/less.1
 MANUAL =	less.nro
-HELPFILE =	/usr/local/lib/less.help
+HELPFILE =	/usr/share/doc/less/less.help
 
 
 # OPTIM is passed to the compiler and the loader.
 # It is normally "-O" but may be, for example, "-g".
-#OPTIM = -O -i
+#OPTIM = -O
 
 
 ##########################################################################
@@ -121,7 +119,7 @@ OBJ =	main.o option.o prim.o ch.o position.o input.o output.o screen.o \
 
 DEFS =	"-DTERMIO=$(TERMIO)" \
 	"-DSIGSETMASK=$(SIGSETMASK)" \
-	"-DVOID=$(VOID)" \
+	"-Doff_t=$(off_t)" "-DVOID=$(VOID)" \
 	"-DREGCMP=$(REGCMP)" "-DRECOMP=$(RECOMP)" \
 	"-DSHELL_ESCAPE=$(SHELL_ESCAPE)" \
 	"-DEDITOR=$(EDITOR)" "-DEDIT_PGM=\"$(EDIT_PGM)\"" \
@@ -131,7 +129,7 @@ DEFS =	"-DTERMIO=$(TERMIO)" \
 	"-DGLOB=$(GLOB)" \
 	"-DXENIX=$(XENIX)"
 
-CFLAGS += $(DEFS)
+CFLAGS += $(OPTIM) $(DEFS)
 
 
 all: less
@@ -143,7 +141,6 @@ install: less
 	cp less ../../fs/bin
 
 $(OBJ): less.h funcs.h
-
 
 clean:
 	rm -f $(OBJ) less
