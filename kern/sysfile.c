@@ -322,12 +322,12 @@ sys_open(void)
   }
 
   if((omode & O_TRUNC)) {
-    // Not if someone else has this file open
-    if(ip->ref>1) {
-      iunlockput(ip);
-      end_op();
-      return EACCES;
-    }
+    // Not if someone else has this file open. But ref > 1 when O_CREAT
+    // if(ip->ref>1) {
+    //  iunlockput(ip);
+    //  end_op();
+    //  return EACCES;
+    //}
     itrunc(ip);
   }
   iunlock(ip);
