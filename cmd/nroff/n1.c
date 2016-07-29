@@ -369,6 +369,7 @@ char a;
 	if(a == 'a')p = &p[5];
 	if ((i=creat(p, 0600))<0) {
 		printf("Cannot create temp file %s %d: %d\n", p, errno);
+		exit(-1);
  	}
 	if(close(i) < 0){
 		printf("Cannot close temp file %s %d: %d\n", p, i, errno);
