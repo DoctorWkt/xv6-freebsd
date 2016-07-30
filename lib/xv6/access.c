@@ -1,7 +1,9 @@
 #include <unistd.h>
 
-// Root can access anything
+// Root can access anything as long as it exists
 int access(const char *pathname, int mode)
 {
-  return(0);
+  int fd= open(pathname, mode);
+  close(fd);
+  return(fd);
 }
