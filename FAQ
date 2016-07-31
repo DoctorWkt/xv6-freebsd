@@ -7,18 +7,18 @@ xv-minix2 FAQ
    and set LIBGCC to the location of libgcc.a.
 
    Hopefully, on an x86 Linux or FreeBSD environment you can say 'make'. That's
-   after you have done git clone https://github.com/DoctorWkt/xv6-minix2
+   after you have done git clone https://github.com/DoctorWkt/xv6-freebsd
 
 2. Why do I need libgcc.a?
    Some of the libraries need floats, so I am using -msoft-float with the
-   library, and that needs libgcc.a. I'd love someone to show me how I can
+   compiler, and that needs libgcc.a. I'd love someone to show me how I can
    replace the "ld" linking line with a "gcc" line that can auto-find the
    location of libgcc.a
 
 3. How do I run it?
    Make sure that you have qemu installed and the qemu-system-i386 binary
-   exists. Then run 'make qemu' to build the kernel, commands, filesystem
-   and launch qemu to boot the system.
+   exists. Then run 'make qemu' to build the kernel, libraries, commands,
+   filesystem and launch qemu to boot the system.
 
 4. Any documentation?
    The man pages are in fs/usr/share/man/man1, and when you boot xv6
@@ -26,19 +26,22 @@ xv-minix2 FAQ
    slow, so it's better to go into fs/usr/share/man/man1 and do
    nroff -man ls.1 | less
 
+   Also read the NOTES and XV6_CHANGES files.
+
 5. Structure of the source code?
-   boot/  holds the bootstrap
-   kern/  holds the xv6 kernel code. We want this as untouched as possible
-   tools/ holds mkfs
-   doc/   holds the scripts to convert the kernel code into printed format
-   misc/  holds stuff from xv6 which doesn't belong anywhere in particular
+   boot/    holds the bootstrap
+   kern/    holds the xv6 kernel code. We want this as untouched as possible
+   tools/   holds mkfs
+   doc/     holds the scripts to convert the kernel code into printed format
+   misc/    holds stuff from xv6 which doesn't belong anywhere in particular
    include/ holds the FreeBSD header files. Same structure as FreeBSD.
-   lib/   holds the library source. I've tried to retain the FreeBSD layout.
-          There is an xv6/ directory with the xv6-specific code.
-   cmd/   holds the commands. The old/ directory has the original xv6 programs.
-	  The simple/ directory holds one-file programs. The other directories
-	  will hold the code for multi-file programs.
-   fs/    is a temporary staging area for the filesystem
+   lib/     holds the library source. There is an xv6/ directory with
+  	    the xv6-specific code.
+   cmd/     holds the commands. The old/ directory has the original xv6
+	    programs. The simple/ directory holds one-file programs. The other
+	    directories hold the code for multi-file programs.
+   fs/      holds the basic filesystem structure. fs/bin gets populated
+	    when you make and install the command binaries
 
 6. What's with all the CFLAGS?
    I've kept most of the CFLAGS from the original xv6 Makefile; I'm not sure
@@ -47,7 +50,9 @@ xv-minix2 FAQ
 7. Do you specifically want FreeBSD 1.1.5.1 code?
    I'm not wedded to FreeBSD code. It is covered under a BSD license and the
    functions are reasonably small. I don't mind where code comes from as long
-   as it's small and is covered by a BSD or MIT-compatible license.
+   as it's small and is covered by a BSD or MIT-compatible license. In fact,
+   I've also used code from Minix 1.2 and 4.4BSD-LITE, plus some real Unix
+   code (V7sh) which is now covered by a BSD license.
 
 8. What things did you have to simulate to get the BSD libraries to work?
    The xv6 kernel is missing a heap of things like users, signals, file
