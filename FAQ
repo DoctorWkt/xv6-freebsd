@@ -2,7 +2,6 @@ xv-minix2 FAQ
 -------------
 
 1. How do I compile it?
-
    Firstly, you need a 32-bit libgcc.a somewhere on your system. On Ubuntu,
    I've installed the libgcc-5-dev:i386 package. Now edit Makefile.common
    and set LIBGCC to the location of libgcc.a.
@@ -10,12 +9,24 @@ xv-minix2 FAQ
    Hopefully, on an x86 Linux or FreeBSD environment you can say 'make'. That's
    after you have done git clone https://github.com/DoctorWkt/xv6-minix2
 
-2. How do I run it?
+2. Why do I need libgcc.a?
+   Some of the libraries need floats, so I am using -msoft-float with the
+   library, and that needs libgcc.a. I'd love someone to show me how I can
+   replace the "ld" linking line with a "gcc" line that can auto-find the
+   location of libgcc.a
+
+3. How do I run it?
    Make sure that you have qemu installed and the qemu-system-i386 binary
    exists. Then run 'make qemu' to build the kernel, commands, filesystem
    and launch qemu to boot the system.
 
-3. Structure of the source code?
+4. Any documentation?
+   The man pages are in fs/usr/share/man/man1, and when you boot xv6
+   you can do "man ls", "man vi" etc. For some reason, nroff is very
+   slow, so it's better to go into fs/usr/share/man/man1 and do
+   nroff -man ls.1 | less
+
+5. Structure of the source code?
    boot/  holds the bootstrap
    kern/  holds the xv6 kernel code. We want this as untouched as possible
    tools/ holds mkfs
@@ -29,11 +40,25 @@ xv-minix2 FAQ
 	  will hold the code for multi-file programs.
    fs/    is a temporary staging area for the filesystem
 
-4. What's with all the CFLAGS?
+6. What's with all the CFLAGS?
    I've kept most of the CFLAGS from the original xv6 Makefile; I'm not sure
    if we need all of them.
 
-5. Do you specifically want FreeBSD 1.1.5.1 code?
+7. Do you specifically want FreeBSD 1.1.5.1 code?
    I'm not wedded to FreeBSD code. It is covered under a BSD license and the
    functions are reasonably small. I don't mind where code comes from as long
    as it's small and is covered by a BSD or MIT-compatible license.
+
+8. What things did you have to simulate to get the BSD libraries to work?
+   The xv6 kernel is missing a heap of things like users, signals, file
+   permissions, select(), fcntl() etc. In the lib/xv6 directory you will
+   find the things that I either simulate (e.g. dup2() ), or stub functions
+   that simply return a dummy value.
+
+9. What next?
+   I've got the BSD libraries up with only a few changes to the xv6 kernel,
+   so it is still useful as a teaching OS but it now has a decent runtime.
+   I should try to clean up the userland code to remove all the warnings
+   that the compiler spits out.
+
+last edit date: Sunday 31 July 2016
