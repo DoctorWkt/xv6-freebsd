@@ -51,7 +51,8 @@ Files affected (lines):
 Larger process stack size
 -------------------------
 A one-page stack is too small for some BSD processes. I've changed
-exec.c to create a stack of USTACKPAGES pages, defined to be
+exec.c to create a stack of USTACKPAGES pages, defined to be four
+pages, of which three are usable and one is the guard page.
 
 Files affected (lines):
 	exec.c (4), param.h (1)
