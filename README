@@ -1,4 +1,4 @@
-xv6-minix2 is a modification of MIT's xv6 operating system to improve
+xv6-freebsd is a modification of MIT's xv6 operating system to improve
 its C library and set of available programs. To do this, I am working
 on integrating the FreeBSD 1.1.5.1 library and programs to xv6.
 
