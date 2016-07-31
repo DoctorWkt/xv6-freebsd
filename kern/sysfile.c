@@ -470,8 +470,7 @@ sys_pipe(void)
   return 0;
 }
 
-// lseek derived from https://github.com/hxp/xv6, written by Joel Heikkila
-
+// lseek code derived from https://github.com/ctdk/xv6
 int sys_lseek(void)
 {
 	int fd;
