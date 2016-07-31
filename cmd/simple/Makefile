@@ -5,7 +5,7 @@ UPROGS= cat ls date sleep rmdir rm mv ln hostname cal \
 	basename cmp comm cut dirname expand bdes yes \
 	false true du head join printenv rev split \
 	strings tee uniq wc echo xargs yes egrep grep \
-	fgrep ed man
+	fgrep ed man tail tar
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 
@@ -16,6 +16,7 @@ fgrep: egrep
 	cp egrep fgrep
 
 install: all
+	strip $(UPROGS)
 	cp $(UPROGS) ../../fs/bin
 
 ../../fs/bin:
@@ -32,7 +33,6 @@ install: all
 
 %: %.o ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
-#	strip $@
 
 clean:
 	rm -f $(UPROGS) *.asm *.o *.sym *.d
