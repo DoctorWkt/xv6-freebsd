@@ -36,6 +36,7 @@ sh: main.o sh.a sbrkalloc.o
 	$(CC) -o $@ sbrkalloc.o main.o sh.a
 
 install: v7sh
+	strip v7sh
 	cp v7sh ../../fs/bin
 
 sh_sbrk: main.o sh.a mlib

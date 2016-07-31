@@ -11,12 +11,12 @@ all: lev
 
 lev: $(OBJS) ../../lib/libc.a ../../lib/libtermcap.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
-	strip lev
 
 ../../lib/libc.a:
 	$(MAKE) -C ../../lib all
 
 install: lev
+	strip lev
 	cp lev ../../fs/bin/vi
 
 clean:

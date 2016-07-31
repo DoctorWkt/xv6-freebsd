@@ -77,9 +77,9 @@ all: wish
 wish : $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o wish $(CLIB)
 	$(FINAL_TOUCHES)
-#	strip wish
 
 install: wish
+	strip wish
 	cp wish ../../fs/bin
 
 $(OBJS): Makefile header.h machine.h

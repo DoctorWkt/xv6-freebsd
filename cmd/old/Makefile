@@ -20,6 +20,7 @@ UPROGS= oldcat\
 all: ../../lib/ulib.a $(UPROGS)
 
 install: all
+	strip $(UPROGS)
 	cp $(UPROGS) ../../fs/bin
 
 ../../lib/ulib.a:
@@ -33,7 +34,6 @@ install: all
 
 %: %.o ../../lib/ulib.a
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
-	strip $@
 
 forktest: forktest.o ../../lib/ulib.a
 	# forktest has less library code linked in - needs to be small
