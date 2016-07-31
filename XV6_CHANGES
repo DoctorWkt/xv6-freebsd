@@ -79,6 +79,12 @@ The open(2) syscall can now do O_TRUNC.
 Files affected (lines):
 	sh.c (1), sysfile.c (9), fcntl.h (1), fs.c (1)
 
+fchdir system call
+------------------
+The fchdir(2) syscall was added, just a small change.
+
+Files affected (lines):
+	syscall.c (2), sysfile.c(8), syscall.h (1), usys.S (1)
 
 	
 Userland xv6 Changes
