@@ -1,3 +1,5 @@
+/* A simple man program.		Author: Warren Toomey */
+
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
