@@ -10,9 +10,9 @@ all:	make
 
 make: $(OBJ) ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
-	strip $@
 
 install: make
+	strip make
 	cp make ../../fs/bin
 
 $(OBJ): h.h

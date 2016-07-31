@@ -6,6 +6,7 @@ UPROGS= md5
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 
 install: all
+	strip $(UPROGS)
 	cp $(UPROGS) ../../fs/bin
 
 ../../fs/bin:
@@ -22,7 +23,6 @@ install: all
 
 $(UPROGS): mddriver.o md5c.o ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
-	strip $@
 
 clean:
 	rm -f $(UPROGS) *.asm *.o *.sym *.d

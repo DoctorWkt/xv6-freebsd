@@ -9,6 +9,7 @@ OBJS=	compile.o main.o misc.o process.o
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 
 install: all
+	strip $(UPROGS)
 	cp $(UPROGS) ../../fs/bin
 
 # Cancel the .c -> output implicit rule
@@ -19,7 +20,6 @@ install: all
 
 $(UPROGS): $(OBJS) ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
-	strip $@
 
 clean:
 	rm -f $(UPROGS) *.asm *.o *.sym *.d

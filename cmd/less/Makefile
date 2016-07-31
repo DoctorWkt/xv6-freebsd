@@ -138,6 +138,7 @@ less: $(OBJ) ../../lib/libtermcap.a ../../lib/libc.a $(LIBGCC)
 	$(LD) $(LDFLAGS) -N -Ttext 0 -o $@ $^
 
 install: less
+	strip less
 	cp less ../../fs/bin
 
 $(OBJ): less.h funcs.h
