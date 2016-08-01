@@ -145,7 +145,7 @@ rangematch(pattern, test, flags)
 	 * 3.13.2).  I have chosen to treat it like '!', for 
 	 * consistancy with regular expression syntax.
 	 */
-	if (negate = (*pattern == '!' || *pattern == '^')) {
+	if ((negate = (*pattern == '!' || *pattern == '^'))) {
 		pattern++;
 	}
 	

@@ -146,6 +146,6 @@ struct tzhead {
 ** that will probably do.
 */
 
-#define isleap(y) (((y) % 4) == 0 && ((y) % 100) != 0 || ((y) % 400) == 0)
+#define isleap(y) ((((y) % 4) == 0 && ((y) % 100) != 0) || (((y) % 400) == 0))
 
 #endif /* !_TZFILE_H_ */

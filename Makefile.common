@@ -52,6 +52,7 @@ OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
 CFLAGS = -fno-builtin -Wall -m32 -nostdinc -I$(INCLDIR)
 CFLAGS+=-msoft-float
+#CFLAGS+=-Werror
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 LDFLAGS = -m $(shell $(LD) -V | grep elf_i386 2>/dev/null)
 ASFLAGS = -m32 -gdwarf-2 -Wa,-divide -nostdinc -I$(INCLDIR)

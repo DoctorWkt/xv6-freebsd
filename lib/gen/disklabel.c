@@ -46,13 +46,13 @@ static char sccsid[] = "@(#)disklabel.c	5.17 (Berkeley) 2/23/91";
 #include <stdlib.h>
 #include <unistd.h>
 
-static	char *dgetstr();
-static	dgetent();
-static	dnamatch();
-static	dgetnum();
-static	dgetflag();
-static	gettype();
-static	error();
+//static	char *dgetstr();
+//static	dgetent();
+//static	dnamatch();
+//static	dgetnum();
+//static	dgetflag();
+//static	gettype();
+//static	error();
 
 struct disklabel *
 getdiskbyname(name)

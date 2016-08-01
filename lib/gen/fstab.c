@@ -44,9 +44,9 @@ static char sccsid[] = "@(#)fstab.c	5.15 (Berkeley) 2/23/91";
 
 static FILE *_fs_fp;
 static struct fstab _fs_fstab;
-static error();
+static void error();
 
-static
+static int
 fstabscan()
 {
 	register char *cp;
@@ -70,9 +70,9 @@ fstabscan()
 				_fs_fstab.fs_vfstype =
 				    strcmp(_fs_fstab.fs_type, FSTAB_SW) ?
 				    "ufs" : "swap";
-				if (cp = strtok((char *)NULL, ":\n")) {
+				if ((cp = strtok((char *)NULL, ":\n"))) {
 					_fs_fstab.fs_freq = atoi(cp);
-					if (cp = strtok((char *)NULL, ":\n")) {
+					if ((cp = strtok((char *)NULL, ":\n"))) {
 						_fs_fstab.fs_passno = atoi(cp);
 						return(1);
 					}
@@ -137,7 +137,7 @@ bad:		/* no way to distinguish between EOF and syntax error */
 struct fstab *
 getfsent()
 {
-	if (!_fs_fp && !setfsent() || !fstabscan())
+	if ((!_fs_fp && !setfsent()) || !fstabscan())
 		return((struct fstab *)NULL);
 	return(&_fs_fstab);
 }
@@ -164,13 +164,13 @@ getfsfile(name)
 	return((struct fstab *)NULL);
 }
 
-setfsent()
+int setfsent()
 {
 	if (_fs_fp) {
 		rewind(_fs_fp);
 		return(1);
 	}
-	if (_fs_fp = fopen(_PATH_FSTAB, "r"))
+	if ((_fs_fp = fopen(_PATH_FSTAB, "r")))
 		return(1);
 	error(errno);
 	return(0);
@@ -185,7 +185,7 @@ endfsent()
 	}
 }
 
-static
+static void
 error(err)
 	int err;
 {
