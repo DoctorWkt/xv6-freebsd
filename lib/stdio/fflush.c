@@ -50,7 +50,7 @@ static char sccsid[] = "@(#)fflush.c	5.1 (Berkeley) 1/20/91";
 #include "local.h"
 
 /* Flush a single file, or (if fp is NULL) all files.  */
-fflush(fp)
+int fflush(fp)
 	register FILE *fp;
 {
 	if (fp == NULL)
@@ -63,7 +63,7 @@ fflush(fp)
 	return (__sflush(fp));
 }
 
-__sflush(fp)
+int __sflush(fp)
 	register FILE *fp;
 {
 	register unsigned char *p;

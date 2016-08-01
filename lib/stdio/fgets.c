@@ -41,6 +41,8 @@ static char sccsid[] = "@(#)fgets.c	5.4 (Berkeley) 5/4/91";
 #include <stdio.h>
 #include <string.h>
 
+extern int __srefill(FILE *fp);
+
 /*
  * Read at most n-1 characters from the given file.
  * Stop when a newline has been read, or the count runs out.

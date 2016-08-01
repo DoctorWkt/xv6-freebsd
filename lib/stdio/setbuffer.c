@@ -53,7 +53,7 @@ setbuffer(fp, buf, size)
 /*
  * set line buffering
  */
-setlinebuf(fp)
+int setlinebuf(fp)
 	FILE *fp;
 {
 

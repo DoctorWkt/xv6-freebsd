@@ -40,7 +40,7 @@ static char sccsid[] = "@(#)bcmp.c	5.6 (Berkeley) 2/24/91";
 /*
  * bcmp -- vax cmpc3 instruction
  */
-bcmp(b1, b2, length)
+int bcmp(b1, b2, length)
 	const void *b1, *b2;
 	register size_t length;
 {

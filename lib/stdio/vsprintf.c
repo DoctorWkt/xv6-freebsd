@@ -41,7 +41,7 @@ static char sccsid[] = "@(#)vsprintf.c	5.5 (Berkeley) 2/5/91";
 #include <stdio.h>
 #include <limits.h>
 
-vsprintf(str, fmt, ap)
+int vsprintf(str, fmt, ap)
 	char *str;
 	const char *fmt;
 	_VA_LIST_ ap;

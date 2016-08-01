@@ -46,7 +46,7 @@ static char sccsid[] = "@(#)wbuf.c	5.6 (Berkeley) 1/20/91";
  * the given file.  Flush the buffer out if it is or becomes full,
  * or if c=='\n' and the file is line buffered.
  */
-__swbuf(c, fp)
+int __swbuf(c, fp)
 	register int c;
 	register FILE *fp;
 {

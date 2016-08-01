@@ -44,6 +44,7 @@ static char sccsid[] = "@(#)tmpfile.c	5.4 (Berkeley) 5/27/91";
 #include <errno.h>
 #include <stdio.h>
 #include <paths.h>
+#include <string.h>
 
 FILE *
 tmpfile()
@@ -57,7 +58,7 @@ tmpfile()
 	bcopy(_PATH_TMP, buf, sizeof(_PATH_TMP) - 1);
 	bcopy(TRAILER, buf + sizeof(_PATH_TMP) - 1, sizeof(TRAILER));
 
-	sigfillset(&set);
+	(void)sigfillset(&set);
 	(void)sigprocmask(SIG_BLOCK, &set, &oset);
 
 	fd = mkstemp(buf);

@@ -43,12 +43,12 @@ static char sccsid[] = "@(#)refill.c	5.3 (Berkeley) 2/24/91";
 #include <stdlib.h>
 #include "local.h"
 
-static
+static int
 lflush(fp)
 	FILE *fp;
 {
 
-	if ((fp->_flags & (__SLBF|__SWR)) == __SLBF|__SWR)
+	if ((fp->_flags & (__SLBF|__SWR)) == (__SLBF|__SWR))
 		return (__sflush(fp));
 	return (0);
 }
@@ -57,7 +57,7 @@ lflush(fp)
  * Refill a stdio buffer.
  * Return EOF on eof or error, 0 otherwise.
  */
-__srefill(fp)
+int __srefill(fp)
 	register FILE *fp;
 {
 

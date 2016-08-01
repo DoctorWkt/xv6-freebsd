@@ -39,13 +39,14 @@ static char sccsid[] = "@(#)rget.c	5.1 (Berkeley) 1/20/91";
 #endif /* LIBC_SCCS and not lint */
 
 #include <stdio.h>
+extern int __srefill(FILE *fp);
 
 /*
  * Handle getc() when the buffer ran out:
  * Refill, then return the first character
  * in the newly-filled buffer.
  */
-__srget(fp)
+int __srget(fp)
 	register FILE *fp;
 {
 	if (__srefill(fp) == 0) {

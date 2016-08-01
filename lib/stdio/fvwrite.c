@@ -49,7 +49,7 @@ static char sccsid[] = "@(#)fvwrite.c	5.3 (Berkeley) 5/4/91";
  * This routine is large and unsightly, but most of the ugliness due
  * to the three different kinds of output buffering is handled here.
  */
-__sfvwrite(fp, uio)
+int __sfvwrite(fp, uio)
 	register FILE *fp;
 	register struct __suio *uio;
 {

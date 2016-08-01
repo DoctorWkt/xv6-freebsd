@@ -52,12 +52,11 @@ eofread(cookie, buf, len)
 	return (0);
 }
 
-vsscanf(str, fmt, ap)
+int vsscanf(str, fmt, ap)
 	const char *str;
 	const char *fmt;
 	_VA_LIST_ ap;
 {
-	int ret;
 	FILE f;
 
 	f._flags = __SRD;

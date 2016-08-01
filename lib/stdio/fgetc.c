@@ -40,7 +40,7 @@ static char sccsid[] = "@(#)fgetc.c	5.3 (Berkeley) 1/20/91";
 
 #include <stdio.h>
 
-fgetc(fp)
+int fgetc(fp)
 	FILE *fp;
 {
 	return (__sgetc(fp));

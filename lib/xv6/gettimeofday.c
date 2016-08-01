@@ -1,6 +1,8 @@
 #include <sys/time.h>
 #include <errno.h>
 
+extern int _Time(void);
+
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
   if (tv==NULL) { errno=EFAULT; return(-1); }

@@ -40,7 +40,7 @@ static char sccsid[] = "@(#)vsnprintf.c	5.2 (Berkeley) 2/5/91";
 
 #include <stdio.h>
 
-vsnprintf(str, n, fmt, ap)
+int vsnprintf(str, n, fmt, ap)
 	char *str;
 	size_t n;
 	const char *fmt;

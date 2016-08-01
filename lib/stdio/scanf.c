@@ -46,9 +46,9 @@ static char sccsid[] = "@(#)scanf.c	5.3 (Berkeley) 1/20/91";
 #endif
 
 #if __STDC__
-scanf(char const *fmt, ...)
+int scanf(char const *fmt, ...)
 #else
-scanf(fmt, va_alist)
+int scanf(fmt, va_alist)
 	char *fmt;
 	va_dcl
 #endif
