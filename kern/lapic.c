@@ -268,7 +268,7 @@ int mktime(struct rtcdate *gmt)
   int i;
 
   // Work out the number of seconds in each year up to the present year
-  for (int i=1970; i < (gmt->year); i++)
+  for (i=1970; i < (gmt->year); i++)
     tval+= isleap(i) ? 366 * S_INDAY : 365 * S_INDAY;
 
   // Add on another day if this is a leap year and it's past Feb

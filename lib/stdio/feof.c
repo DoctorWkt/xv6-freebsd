@@ -45,7 +45,7 @@ static char sccsid[] = "@(#)feof.c	5.1 (Berkeley) 1/20/91";
  */
 #undef feof
 
-feof(fp)
+int feof(fp)
 	FILE *fp;
 {
 	return (__sfeof(fp));

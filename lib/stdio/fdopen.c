@@ -52,7 +52,7 @@ fdopen(fd, mode)
 {
 	register FILE *fp;
 	static int nofile;
-	int flags, oflags, fdflags, tmp;
+	int flags, oflags, fdflags;
 
 	if (nofile == 0)
 		nofile = getdtablesize();

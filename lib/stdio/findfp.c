@@ -126,7 +126,7 @@ found:
  * XXX.  Force immediate allocation of internal memory.  Not used by stdio,
  * but documented historically for certain applications.  Bad applications.
  */
-f_prealloc()
+void f_prealloc()
 {
 	int n = getdtablesize() - NSTATIC + 20;		/* 20 for slop */
 	register struct glue *g;

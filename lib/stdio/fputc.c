@@ -40,7 +40,7 @@ static char sccsid[] = "@(#)fputc.c	5.3 (Berkeley) 1/20/91";
 
 #include <stdio.h>
 
-fputc(c, fp)
+int fputc(c, fp)
 	int c;
 	register FILE *fp;
 {

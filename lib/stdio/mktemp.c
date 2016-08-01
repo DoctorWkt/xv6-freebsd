@@ -40,25 +40,10 @@ static char sccsid[] = "@(#)mktemp.c	5.10 (Berkeley) 2/24/91";
 #include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <ctype.h>
 
-static int _gettemp();
-
-mkstemp(path)
-	char *path;
-{
-	int fd;
-
-	return (_gettemp(path, &fd) ? fd : -1);
-}
-
-char *
-mktemp(path)
-	char *path;
-{
-	return(_gettemp(path, (int *)NULL) ? path : (char *)NULL);
-}
-
-static
+static int
 _gettemp(path, doopen)
 	char *path;
 	register int *doopen;
@@ -122,4 +107,19 @@ _gettemp(path, doopen)
 		}
 	}
 	/*NOTREACHED*/
+}
+
+char *
+mktemp(path)
+	char *path;
+{
+	return(_gettemp(path, (int *)NULL) ? path : (char *)NULL);
+}
+
+int mkstemp(path)
+	char *path;
+{
+	int fd;
+
+	return (_gettemp(path, &fd) ? fd : -1);
 }

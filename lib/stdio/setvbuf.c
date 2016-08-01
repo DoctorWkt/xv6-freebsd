@@ -46,7 +46,7 @@ static char sccsid[] = "@(#)setvbuf.c	5.5 (Berkeley) 5/6/93";
  * Set one of the three kinds of buffering, optionally including
  * a buffer.
  */
-setvbuf(fp, buf, mode, size)
+int setvbuf(fp, buf, mode, size)
 	register FILE *fp;
 	char *buf;
 	register int mode;

@@ -49,7 +49,7 @@ static char sccsid[] = "@(#)ungetc.c	5.6 (Berkeley) 5/4/91";
  * and move the bytes in the buffer around as necessary so that they
  * are all at the end (stack-style).
  */
-static
+static int
 __submore(fp)
 	register FILE *fp;
 {
@@ -81,7 +81,7 @@ __submore(fp)
 	return (0);
 }
 
-ungetc(c, fp)
+int ungetc(c, fp)
 	int c;
 	register FILE *fp;
 {

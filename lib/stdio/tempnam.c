@@ -41,6 +41,7 @@ static char sccsid[] = "@(#)tempnam.c	5.1 (Berkeley) 2/22/91";
 #include <stdlib.h>
 #include <unistd.h>
 #include <paths.h>
+#include <string.h>
 
 char *
 tempnam(dir, pfx)
@@ -62,31 +63,31 @@ tempnam(dir, pfx)
 	 * by mkstemp() anyway.
 	 */
 	idx = unique[0] < 'Z' ? 0 : unique[1] < 'Z' ? 1 : unique[2] < 'Z' ?
-	    2 : (int)strcpy(unique, "AAA"), 0;
+	    2 : (int)strcpy(unique, "AAA") ? 0 : 1;
 	++unique[idx];
 
-	if (f = getenv("TMPDIR")) {
+	if ((f = getenv("TMPDIR"))) {
 		(void)snprintf(name, MAXPATHLEN, "%s%s%s%sXXXXXX", f,
 			*(f + strlen(f) - 1) == '/'? "": "/", pfx, unique);
-		if (f = mktemp(name))
+		if ((f = mktemp(name)))
 			return(f);
 	}
 
-	if (f = (char *)dir) {
+	if ((f = (char *)dir)) {
 		(void)snprintf(name, MAXPATHLEN, "%s%s%s%sXXXXXX", f,
 			*(f + strlen(f) - 1) == '/'? "": "/", pfx, unique);
-		if (f = mktemp(name))
+		if ((f = mktemp(name)))
 			return(f);
 	}
 
 	f = P_tmpdir;
 	(void)snprintf(name, MAXPATHLEN, "%s%s%sXXXXXX", f, pfx, unique);
-	if (f = mktemp(name))
+	if ((f = mktemp(name)))
 		return(f);
 
 	f = _PATH_TMP;
 	(void)snprintf(name, MAXPATHLEN, "%s%s%sXXXXXX", f, pfx, unique);
-	if (f = mktemp(name))
+	if ((f = mktemp(name)))
 		return(f);
 
 	sverrno = errno;

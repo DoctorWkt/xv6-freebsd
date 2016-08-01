@@ -40,7 +40,7 @@ static char sccsid[] = "@(#)fgetpos.c	5.1 (Berkeley) 1/20/91";
 
 #include <stdio.h>
 
-fgetpos(fp, pos)
+int fgetpos(fp, pos)
 	FILE *fp;
 	fpos_t *pos;
 {

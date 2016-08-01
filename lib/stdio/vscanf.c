@@ -40,7 +40,7 @@ static char sccsid[] = "@(#)vscanf.c	5.1 (Berkeley) 4/15/91";
 
 #include <stdio.h>
 
-vscanf(fmt, ap)
+int vscanf(fmt, ap)
 	const char *fmt;
 	_VA_LIST_ ap;
 {

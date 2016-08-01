@@ -44,7 +44,7 @@ static char sccsid[] = "@(#)strcoll.c	5.2 (Berkeley) 1/26/91";
 /*
  * Compare strings according to LC_COLLATE category of current locale.
  */
-strcoll(s1, s2)
+int strcoll(s1, s2)
 	const char *s1, *s2;
 {
 	/* LC_COLLATE is unimplemented, hence always "C" */

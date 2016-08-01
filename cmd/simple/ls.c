@@ -69,7 +69,7 @@ void listmany(char *entry)
   DIR *D;
   struct dirent *dent;
   struct stat sb;
-  int count=0;
+  int i,count=0;
 
   // Ensure the entry exists
   if (stat(entry, &sb)==-1) {
@@ -125,7 +125,7 @@ void listmany(char *entry)
     qsort(namelist, count, sizeof(Namestat), namecmp);
 
     // Print each one out
-    for (int i=0; i < count; i++) 
+    for (i=0; i < count; i++) 
       listone(namelist[i].dent->d_name, &(namelist[i].sb));
 
     // Go back to where we came from. XXX: not always "..", so fix
@@ -136,7 +136,7 @@ void listmany(char *entry)
 
 int main(int argc, char *argv[])
 {
-  int opt;                      /* option letter from getopt() */
+  int i,opt;                      /* option letter from getopt() */
 
   /* Process any command line flags. */
   while ((opt = getopt(argc, argv, "ilad")) != EOF) {
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
   }
 
   // Otherwise, process the arguments left
-  for (int i=optind; i<argc; i++) 
+  for (i=optind; i<argc; i++) 
     listmany(argv[i]);
   exit(0);
 }
