@@ -49,7 +49,7 @@ static char sccsid[] = "@(#)err.c	5.2 (Berkeley) 3/19/93";
 
 // extern char *__progname;		/* Program name, from crt0. */
 
-volatile void
+void
 #ifdef __STDC__
 err(int eval, const char *fmt, ...)
 #else
@@ -69,7 +69,7 @@ err(eval, fmt, va_alist)
 	va_end(ap);
 }
 
-volatile void
+void
 verr(eval, fmt, ap)
 	int eval;
 	const char *fmt;
@@ -87,7 +87,7 @@ verr(eval, fmt, ap)
 	exit(eval);
 }
 
-volatile void
+void
 #if __STDC__
 errx(int eval, const char *fmt, ...)
 #else
@@ -107,7 +107,7 @@ errx(eval, fmt, va_alist)
 	va_end(ap);
 }
 
-volatile void
+void
 verrx(eval, fmt, ap)
 	int eval;
 	const char *fmt;

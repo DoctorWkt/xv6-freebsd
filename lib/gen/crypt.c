@@ -41,6 +41,7 @@ static char rcsid[] = "$Header: /home/cvs/386BSD/src/lib/libc/gen/crypt.c,v 1.6 
 
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 /*
  * UNIX password, and DES, encryption.
@@ -201,14 +202,14 @@ crypt(pw, salt)
 }
 #endif
 
-des_setkey(key)
+int des_setkey(key)
 	register const char *key;
 {
 	fprintf(stderr, "WARNING!  des_setkey(3) not present in the system!\n");
 	return (0);
 }
 
-des_cipher(in, out, salt, num_iter)
+int des_cipher(in, out, salt, num_iter)
 	const char     *in;
 	char           *out;
 	long            salt;
@@ -219,14 +220,14 @@ des_cipher(in, out, salt, num_iter)
 	return (0);
 }
 
-setkey(key)
+int setkey(key)
 	register const char *key;
 {
 	fprintf(stderr, "WARNING!  setkey(3) not present in the system!\n");
 	return (0);
 }
 
-encrypt(block, flag)
+int encrypt(block, flag)
 	register char  *block;
 	int             flag;
 {
