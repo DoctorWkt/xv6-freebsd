@@ -47,10 +47,11 @@ clean:
 	rm -rf *.img fs/bin/* fs/README
 
 # make a printout
-doc:
+doc: doc/xv6.pdf
+print: doc/xv6.pdf
+doc/xv6.pdf:
 	$(MAKE) -C doc all
 
-print: doc
 
 # run in emulators
 
