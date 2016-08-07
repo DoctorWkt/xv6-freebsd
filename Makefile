@@ -43,17 +43,14 @@ clean:
 	$(MAKE) -C cmd clean
 	$(MAKE) -C kern clean
 	$(MAKE) -C tools clean
+	$(MAKE) -C doc clean
 	rm -rf *.img fs/bin/* fs/README
 
 # make a printout
-FILES = $(shell grep -v '^\#' runoff.list)
-PRINT = runoff.list runoff.spec README toc.hdr toc.ftr $(FILES)
+doc:
+	$(MAKE) -C doc all
 
-xv6.pdf: $(PRINT)
-	./runoff
-	ls -l xv6.pdf
-
-print: xv6.pdf
+print: doc
 
 # run in emulators
 

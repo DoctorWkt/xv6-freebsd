@@ -15,11 +15,11 @@ mkdir -p fmt
 rm -f fmt/*
 cp ../README fmt
 files=`grep -v '^#' runoff.list | awk '{print $1}'`
+fmtfiles=`grep -v '^#' runoff.list | sed 's/.*\///'`
 n=99
 for i in $files
 do
 	j=`echo $i | sed 's/.*\///'`
-	echo "./runoff1 -n $n $i >fmt/$j"
 	./runoff1 -n $n $i >fmt/$j
 	nn=`tail -1 fmt/$j | sed 's/ .*//; s/^0*//'`
 	if [ "x$nn" != x ]; then
@@ -29,20 +29,21 @@ done
 
 # create table of contents
 cat toc.hdr >fmt/toc
-pr -e8 -t runoff.list | awk '
-/^[a-z0-9]/ {
-	s=$0
-	f="fmt/"$1
-	getline<f
-	close(f)
-	n=$1
-	printf("%02d %s\n", n/100, s);
-	printf("TOC: %04d %s\n", n, s) >"fmt/tocdata"
-	next
+pr -e8 -t runoff.list | perl -e '
+open($OUT, ">", "fmt/tocdata") || die;
+while (<>) {
+  chomp;
+  if (/.*\/([^\/].*)/) {
+    $file=$1;
+    $num=`head -1 fmt/$file`;
+    $num=~ s/\s.*//;
+    printf("%02d %s\n", int($num/100), $file);
+    printf($OUT "TOC: %04d %s\n", $num, $file);
+    next;
+  }
+  print("$_\n");
 }
-{
-	print
-}' | pr -3 -t >>fmt/toc
+close($OUT);' | pr -3 -t >>fmt/toc
 cat toc.ftr >>fmt/toc
 
 # check for bad alignments
@@ -164,9 +165,9 @@ perl -e '
 		}
 		# TODO: enum members
 	}
-' $files >defs
+' $fmtfiles >defs
 
-(for i in $files
+(for i in $fmtfiles
 do
 	case "$i" in
 	*.S)
@@ -217,7 +218,7 @@ awk '
 	pr -t -l50 -2 refs | ../pr.pl -h "cross-references" | pad
 	# pr.pl -h "definitions" -2 t.defs | pad
 	# pr.pl -h "cross-references" -2 refs | pad 
-	for i in $files
+	for i in $fmtfiles
 	do
 		../pr.pl -h "xv6/$i" $i
 	done
@@ -228,8 +229,10 @@ grep Pages: all.ps
 nicefont=LucidaSans-Typewriter83
 if [ ! -f ../$nicefont ]
 then
-	if git cat-file blob font:$nicefont > ../$nicefont~; then
-		mv ../$nicefont~ ../$nicefont
+	if git cat-file blob font:$nicefont > ../$nicefont~ 2> /dev/null; then
+	    mv ../$nicefont~ ../$nicefont
+	else
+	    rm -f ../$nicefont~
 	fi
 fi
 if [ -f ../$nicefont ]
