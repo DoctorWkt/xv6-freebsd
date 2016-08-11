@@ -73,5 +73,5 @@ uartgetc(void)
 void
 uartintr(void)
 {
-  consoleintr(uartgetc);
+  consoleintr(uartgetc, 0);	// Minor device 0
 }
