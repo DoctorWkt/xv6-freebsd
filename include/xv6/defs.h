@@ -18,7 +18,7 @@ void            bwrite(struct buf*);
 // console.c
 void            consoleinit(void);
 void            cprintf(char*, ...);
-void            consoleintr(int(*)(void));
+void            consoleintr(int(*)(void), int minor);
 void            panic(char*) __attribute__((noreturn));
 
 // cmos.c

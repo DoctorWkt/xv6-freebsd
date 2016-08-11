@@ -7,15 +7,11 @@
 
 char *argv[] = { "sh", 0 };
 
-int
-main(void)
+void spawnshell(char *devname)
 {
   int pid, wpid;
 
-  if(open("/dev/console", O_RDWR) < 0){
-    mknod("/dev/console", 1, 1);
-    open("/dev/console", O_RDWR);
-  }
+  open(devname, O_RDWR);
   dup(0);  // stdout
   dup(0);  // stderr
 
@@ -32,6 +28,22 @@ main(void)
       exit();
     }
     while((wpid=wait()) >= 0 && wpid != pid)
-      printf(1, "zombie!\n");
+      ; 		// Clean up zombies
+  }
+}
+
+int
+main(void)
+{
+
+  if(open("/dev/console", O_RDWR) < 0){
+    mknod("/dev/console", 1, 0);
+  }
+  if(open("/dev/serial", O_RDWR) < 0){
+    mknod("/dev/serial", 1, 1);
+  }
+  switch(fork()){
+    case 0:  spawnshell("/dev/console");
+    default: spawnshell("/dev/serial");
   }
 }

@@ -46,5 +46,5 @@ kbdgetc(void)
 void
 kbdintr(void)
 {
-  consoleintr(kbdgetc);
+  consoleintr(kbdgetc, 1);	// Minor device 1
 }
