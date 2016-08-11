@@ -30,14 +30,15 @@ struct inode {
 // table mapping major device number to
 // device functions
 struct devsw {
-  int (*read)(struct inode*, char*, int);
+  int (*read)(struct inode*, char*, uint, int);
   int (*write)(struct inode*, char*, int);
   int (*ioctl)(struct inode*, int);
 };
 
 extern struct devsw devsw[];
 
-#define CONSOLE 1
+#define CONSOLE 1	// /dev/console, /dev/serial
+#define DISK    2	// /dev/disk0, /dev/disk1
 
 // lseek defines
 #define SEEK_SET        0

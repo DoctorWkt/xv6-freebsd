@@ -11,6 +11,9 @@
 #include <xv6/spinlock.h>
 #include <xv6/fs.h>
 #include <xv6/buf.h>
+#include <xv6/file.h>
+
+#define min(a, b) ((a) < (b) ? (a) : (b))
 
 #define SECTOR_SIZE   512
 #define IDE_BSY       0x80
@@ -32,6 +35,7 @@ static struct buf *idequeue;
 
 static int havedisk1;
 static void idestart(struct buf*);
+static int ideread(struct inode *ip, char *dst, uint off, int n);
 
 // Wait for IDE disk to become ready.
 static int
@@ -67,6 +71,10 @@ ideinit(void)
   
   // Switch back to disk 0.
   outb(0x1f6, 0xe0 | (0<<4));
+
+  devsw[DISK].read = ideread;
+  devsw[DISK].write = 0;
+  devsw[DISK].ioctl = 0;
 }
 
 // Start the request for b.  Caller must hold idelock.
@@ -164,4 +172,24 @@ iderw(struct buf *b)
   }
 
   release(&idelock);
+}
+
+static int
+ideread(struct inode *ip, char *dst, uint off, int n)
+{
+  uint tot, m;
+  struct buf *bp;
+
+  if(off > (uint)FSSIZE*BSIZE)
+    return -1;
+  if(off + n > (uint)FSSIZE*BSIZE)
+    n = (uint)FSSIZE*BSIZE - off;
+
+  for(tot=0; tot<n; tot+=m, off+=m, dst+=m){
+    bp = bread(ip->minor, off/BSIZE);
+    m = min(n - tot, BSIZE - off%BSIZE);
+    memmove(dst, bp->data + off%BSIZE, m);
+    brelse(bp);
+  }
+  return n;
 }
