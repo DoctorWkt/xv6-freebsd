@@ -252,7 +252,7 @@ else {		// Not canonical input
 }
 
 int
-consoleread(struct inode *ip, char *dst, int n)
+consoleread(struct inode *ip, char *dst, uint off, int n)
 {
   uint target;
   int c;
