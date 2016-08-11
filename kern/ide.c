@@ -36,7 +36,6 @@ static struct buf *idequeue;
 static int havedisk1;
 static void idestart(struct buf*);
 static int ideread(struct inode *ip, char *dst, uint off, int n);
-static int idewrite(struct inode *ip, char *src, uint off, int n);
 
 // Wait for IDE disk to become ready.
 static int
@@ -74,7 +73,7 @@ ideinit(void)
   outb(0x1f6, 0xe0 | (0<<4));
 
   devsw[DISK].read = ideread;
-  devsw[DISK].write = idewrite;
+  devsw[DISK].write = 0;
   devsw[DISK].ioctl = 0;
 }
 
@@ -191,31 +190,6 @@ ideread(struct inode *ip, char *dst, uint off, int n)
     m = min(n - tot, BSIZE - off%BSIZE);
     memmove(dst, bp->data + off%BSIZE, m);
     brelse(bp);
-  }
-  return n;
-}
-
-static int
-idewrite(struct inode *ip, char *src, uint off, int n)
-{
-  uint tot, m;
-  struct buf *bp;
-
-  if(off > (uint)FSSIZE*BSIZE)
-    return -1;
-  if(off + n > (uint)FSSIZE*BSIZE)
-    return -1;
-
-  for(tot=0; tot<n; tot+=m, off+=m, src+=m){
-    bp = bread(ip->minor, off/BSIZE);
-    m = min(n - tot, BSIZE - off%BSIZE);
-    memmove(bp->data + off%BSIZE, src, m);
-    log_write(bp);
-    brelse(bp);
-  }
-
-  if(n > 0 && off > (uint)FSSIZE*BSIZE){
-    ip->size = (uint)FSSIZE*BSIZE;
   }
   return n;
 }
