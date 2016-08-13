@@ -169,6 +169,8 @@ cnt(file)
 		 * of inode.
 		 */
 		else if (dochar) {
+#if 0	// Because xv6 cannot fstat() on a pipe, I've commented
+	// out this code
 			int ifmt;
 
 			if (fstat(fd, &sbuf)) {
@@ -189,6 +191,15 @@ cnt(file)
 					}
 				}
 			}
+#else
+			while((len = read(fd, buf, MAXBSIZE)) > 0) {
+				charct += len;
+			}
+			if (len == -1) {
+				warn ("%s", file);
+				rval = 1;
+			}
+#endif
 		}
 	}
 	else

@@ -1,5 +1,6 @@
 TOP_SRCDIR = ..
 include $(TOP_SRCDIR)/Makefile.common
+CFLAGS+=-g
 
 OBJS = \
 	bio.o\
