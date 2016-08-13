@@ -294,7 +294,7 @@ consoleread(struct inode *ip, char *dst, uint off, int n)
 }
 
 int
-consolewrite(struct inode *ip, char *buf, int n)
+consolewrite(struct inode *ip, char *buf, uint off, int n)
 {
   int i;
 
