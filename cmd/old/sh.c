@@ -155,7 +155,7 @@ main(void)
   int fd;
   
   // Assumes three file descriptors open.
-  while((fd = open("console", O_RDWR)) >= 0){
+  while((fd = open("/dev/console", O_RDWR)) >= 0){
     if(fd >= 3){
       close(fd);
       break;

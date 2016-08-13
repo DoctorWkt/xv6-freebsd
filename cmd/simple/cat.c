@@ -236,9 +236,13 @@ raw_cat(rfd)
 
 	wfd = fileno(stdout);
 	if (!buf) {
+#if 0	// xv6 doesn't fstat() on pipes
 		if (fstat(wfd, &sbuf))
 			err(1, "%s: %s", filename, strerror(errno));
 		bsize = MAX(sbuf.st_blksize, 1024);
+#else
+		bsize = 1024;
+#endif
 		if (!(buf = malloc((u_int)bsize)))
 			err(1, "%s", strerror(errno));
 	}
