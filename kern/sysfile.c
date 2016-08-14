@@ -250,7 +250,7 @@ create(char *path, short type, short major, short minor)
   if((ip = dirlookup(dp, name, &off)) != 0){
     iunlockput(dp);
     ilock(ip);
-    if(type == T_FILE)
+    if((type == T_FILE) && (ip->type != T_DIR))
       return ip;
     iunlockput(ip);
     return 0;
@@ -525,7 +525,7 @@ sys_ioctl(void)
   
   if(argfd(0, &fd, &f) < 0 || argint(1, &request) < 0)
     return EINVAL;
-  if(f->ip->type != T_DEV)
+  if((f->type != FD_INODE) || (f->ip->type != T_DEV))
     return ENOTTY;
 
   if(f->ip->major < 0 || f->ip->major >= NDEV || !devsw[f->ip->major].ioctl)
