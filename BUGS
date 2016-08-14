@@ -1,9 +1,4 @@
-Incorrect ls output
--------------------
-$ ls -l /dev
-crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 console
-crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 disk0
-crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 disk1
-crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 serial
-$ ls -l /dev/console
-	<no output>
+Device writing not appearing in image file
+------------------------------------------
+The kernel now allows cat file > /dev/disk0, but the
+disk image xv6.img does not receive the changed blocks.
