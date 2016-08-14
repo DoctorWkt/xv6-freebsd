@@ -210,7 +210,8 @@ idewrite(struct inode *ip, char *src, uint off, int n)
     bp = bread(ip->minor, off/BSIZE);
     m = min(n - tot, BSIZE - off%BSIZE);
     memmove(bp->data + off%BSIZE, src, m);
-    log_write(bp);
+    bp->flags |= B_BUSY;
+    bwrite(bp);		// Force block to be written to disk
     brelse(bp);
   }
 
