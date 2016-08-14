@@ -104,6 +104,13 @@ can read and write raw disk device files
 Files affected (lines):
 	file.h (3), console.c (2), fs.c (2), ide.c (50), init.c (6)
 
+/dev/null and /dev/zero
+-----------------------
+Every Unix needs a /dev/null!
+
+Files affected (lines):
+	init.c (6), file.h (1), ide.c (20)
+
 	
 Userland xv6 Changes
 ====================

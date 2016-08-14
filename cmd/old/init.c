@@ -48,6 +48,12 @@ main(void)
   if(open("/dev/disk1", O_RDWR) < 0){
     mknod("/dev/disk1", 2, 1);
   }
+  if(open("/dev/null", O_RDWR) < 0){
+    mknod("/dev/null", 3, 0);
+  }
+  if(open("/dev/zero", O_RDWR) < 0){
+    mknod("/dev/zero", 3, 1);
+  }
   switch(fork()){
     case 0:  spawnshell("/dev/console");
     default: spawnshell("/dev/serial");

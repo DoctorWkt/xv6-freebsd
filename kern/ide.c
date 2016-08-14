@@ -37,6 +37,8 @@ static int havedisk1;
 static void idestart(struct buf*);
 static int ideread(struct inode *ip, char *dst, uint off, int n);
 static int idewrite(struct inode *ip, char *src, uint off, int n);
+static int nullread(struct inode *ip, char *dst, uint off, int n);
+static int nullwrite(struct inode *ip, char *src, uint off, int n);
 
 // Wait for IDE disk to become ready.
 static int
@@ -73,9 +75,14 @@ ideinit(void)
   // Switch back to disk 0.
   outb(0x1f6, 0xe0 | (0<<4));
 
-  devsw[DISK].read = ideread;
+  devsw[DISK].read =  ideread;
   devsw[DISK].write = idewrite;
   devsw[DISK].ioctl = 0;
+
+  // Should be in a separate file
+  devsw[DEVNULL].read =  nullread;
+  devsw[DEVNULL].write = nullwrite;
+  devsw[DEVNULL].ioctl = 0;
 }
 
 // Start the request for b.  Caller must hold idelock.
@@ -175,6 +182,7 @@ iderw(struct buf *b)
   release(&idelock);
 }
 
+// Read raw disk blocks
 static int
 ideread(struct inode *ip, char *dst, uint off, int n)
 {
@@ -195,6 +203,7 @@ ideread(struct inode *ip, char *dst, uint off, int n)
   return n;
 }
 
+// Write raw disk blocks
 static int
 idewrite(struct inode *ip, char *src, uint off, int n)
 {
@@ -219,4 +228,22 @@ idewrite(struct inode *ip, char *src, uint off, int n)
     ip->size = (uint)FSSIZE*BSIZE;
   }
   return n;
+}
+
+// Perform /dev/null and /dev/zero read operations
+static int
+nullread(struct inode *ip, char *dst, uint off, int n)
+{
+  // Minor 0 is null, no reading
+  if (ip->minor==0) return(0);
+
+  // Minor 1 is zero, fills buffer with zeroes
+  memset(dst, 0, n);
+  return(n);
+}
+
+static int
+nullwrite(struct inode *ip, char *src, uint off, int n)
+{
+  return(n);
 }
