@@ -1,0 +1,20 @@
+Incorrect ls output
+-------------------
+$ ls -l /dev
+crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 console
+crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 disk0
+crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 disk1
+crwxrwxrwx     1 root root      0 Mon Aug 15 01:44:12 serial
+$ ls -l /dev/console
+	<no output>
+
+less won't read stdin
+---------------------
+$ cat README | less
+Can't take input from a terminal	# Using oldsh at boot time
+
+But then 
+$ cat README | less		# Works fine
+
+Seems like there is an initialisation bug in oldsh. It's definitely oldsh,
+as when I set wish to be the shell spawned by init, this doesn't happen.
