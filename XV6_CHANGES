@@ -87,6 +87,23 @@ The fchdir(2) syscall was added, just a small change.
 Files affected (lines):
 	syscall.c (2), sysfile.c(8), syscall.h (1), usys.S (1)
 
+Separation of CGA and Serial Devices
+------------------------------------
+The CGA console device /dev/console and the serial device
+(now /dev/serial) have been separated. This allows two people
+to use the system at the same time.
+
+Files affected (lines):
+	init.c (23), defs.h (1), console.c (54), kbd.c (2)
+
+Addition of raw disk read/write functionality
+---------------------------------------------
+/dev/disk0 and /dev/disk1 have been created, so that processes
+can read and write raw disk device files
+
+Files affected (lines):
+	file.h (3), console.c (2), fs.c (2), ide.c (50), init.c (6)
+
 	
 Userland xv6 Changes
 ====================
