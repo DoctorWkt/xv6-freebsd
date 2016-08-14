@@ -77,14 +77,12 @@ void listmany(char *entry)
     return;
   }
 
-  // It's a file, just print it out
-  if (S_ISREG(sb.st_mode)) {
+  // It's not a directory, just print it out
+  if (!S_ISDIR(sb.st_mode)) {
     listone(entry, &sb);
     return;
-  }
-
-  // It's a directory, deal with all of it
-  if (S_ISDIR(sb.st_mode)) {
+  } else {
+    // It's a directory, deal with all of it
     // Only list the directory, not its contents
     if (dircontents==0) {
       listone(entry, &sb);
