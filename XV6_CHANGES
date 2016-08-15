@@ -111,6 +111,12 @@ Every Unix needs a /dev/null!
 Files affected (lines):
 	init.c (6), file.h (1), ide.c (20)
 
+fstat() changes
+---------------
+fstat() now returns something on pipe file descriptors. For
+device files, the st_dev field now contains the major and
+minor values as two byte values, as per BSD.
+
 	
 Userland xv6 Changes
 ====================
