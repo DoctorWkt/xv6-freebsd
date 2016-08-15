@@ -9,6 +9,7 @@
 #include <xv6/file.h>
 #include <xv6/spinlock.h>
 #include <xv6/syscall.h>
+#include <xv6/stat.h>
 
 struct devsw devsw[NDEV];
 struct {
@@ -87,6 +88,12 @@ filestat(struct file *f, struct stat *st)
     ilock(f->ip);
     stati(f->ip, st);
     iunlock(f->ip);
+    return 0;
+  }
+  if(f->type == FD_PIPE){
+    memset(st, 0, sizeof(*st));
+    st->type= T_PIPE;
+    st->size= PIPESIZE;
     return 0;
   }
   return ENOENT;
