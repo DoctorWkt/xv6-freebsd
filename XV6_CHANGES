@@ -117,6 +117,9 @@ fstat() now returns something on pipe file descriptors. For
 device files, the st_dev field now contains the major and
 minor values as two byte values, as per BSD.
 
+Files affected (lines):
+	param.h (1), stat.h (1), file.c (7), fs.c (6), pipe.c (1)
+
 	
 Userland xv6 Changes
 ====================
