@@ -8,8 +8,6 @@
 #include <xv6/spinlock.h>
 #include <xv6/syscall.h>
 
-#define PIPESIZE 512
-
 struct pipe {
   struct spinlock lock;
   char data[PIPESIZE];

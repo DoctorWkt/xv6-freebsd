@@ -424,12 +424,15 @@ itrunc(struct inode *ip)
 void
 stati(struct inode *ip, struct stat *st)
 {
-  st->dev = ip->dev;
   st->ino = ip->inum;
   st->type = ip->type;
   st->nlink = ip->nlink;
   st->mtime = ip->mtime;
   st->size = ip->size;
+  if(ip->type==T_DEV)
+    st->dev = (ip->major << 8) | (ip->minor & 0xff);
+  else
+    st->dev = ip->dev;
 }
 
 //PAGEBREAK!

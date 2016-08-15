@@ -20,11 +20,11 @@ int dircontents=1;		// Show the contents of a directory
 
 void listone(char *entry, struct stat *sbptr)
 {
+  char ftype;
+
   // Lose the year on the time string
   char *timestring= ctime(&(sbptr->st_mtime));
-  //char *timestring= "abc";
   timestring[ strlen(timestring) - 6 ]= '\0';
-  char ftype;
 
   if (longoutput) {
     // Print the type of entry as the first character
@@ -36,7 +36,12 @@ void listone(char *entry, struct stat *sbptr)
       default: ftype=' ';
     }
 
-    printf("%crwxrwxrwx %5d root root %6ld %s %s\n", 
+    if (ftype=='c')
+      printf("%crwxrwxrwx %5d root root %3d,%2d %s %s\n", 
+	ftype, (showinums ? sbptr->st_ino : sbptr->st_nlink),
+	major(sbptr->st_dev), minor(sbptr->st_dev), timestring, entry);
+    else
+      printf("%crwxrwxrwx %5d root root %6ld %s %s\n", 
 	ftype, (showinums ? sbptr->st_ino : sbptr->st_nlink),
 	sbptr->st_size, timestring, entry);
   } else {
