@@ -12,22 +12,15 @@
 #include <xv6/proc.h>
 
 struct cpu cpus[NCPU];
-static struct cpu *bcpu;
 int ismp;
 int ncpu;
 uchar ioapicid;
-
-int
-mpbcpu(void)
-{
-  return bcpu-cpus;
-}
 
 static uchar
 sum(uchar *addr, int len)
 {
   int i, sum;
-  
+
   sum = 0;
   for(i=0; i<len; i++)
     sum += addr[i];
@@ -40,7 +33,7 @@ mpsearch1(uint a, int len)
 {
   uchar *e, *p, *addr;
 
-  addr = p2v(a);
+  addr = P2V(a);
   e = addr+len;
   for(p = addr; p < e; p += sizeof(struct mp))
     if(memcmp(p, "_MP_", 4) == 0 && sum(p, sizeof(struct mp)) == 0)
@@ -85,7 +78,7 @@ mpconfig(struct mp **pmp)
 
   if((mp = mpsearch()) == 0 || mp->physaddr == 0)
     return 0;
-  conf = (struct mpconf*) p2v((uint) mp->physaddr);
+  conf = (struct mpconf*) P2V((uint) mp->physaddr);
   if(memcmp(conf, "PCMP", 4) != 0)
     return 0;
   if(conf->version != 1 && conf->version != 4)
@@ -105,7 +98,6 @@ mpinit(void)
   struct mpproc *proc;
   struct mpioapic *ioapic;
 
-  bcpu = &cpus[0];
   if((conf = mpconfig(&mp)) == 0)
     return;
   ismp = 1;
@@ -118,8 +110,6 @@ mpinit(void)
         cprintf("mpinit: ncpu=%d apicid=%d\n", ncpu, proc->apicid);
         ismp = 0;
       }
-      if(proc->flags & MPBOOT)
-        bcpu = &cpus[ncpu];
       cpus[ncpu].id = ncpu;
       ncpu++;
       p += sizeof(struct mpproc);

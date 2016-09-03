@@ -14,7 +14,7 @@ ACKNOWLEDGMENTS
 
 xv6 is inspired by John Lions's Commentary on UNIX 6th Edition (Peer
 to Peer Communications; ISBN: 1-57398-013-7; 1st edition (June 14,
-2000)). See also http://pdos.csail.mit.edu/6.828/2014/xv6.html, which
+2000)). See also http://pdos.csail.mit.edu/6.828/2016/xv6.html, which
 provides pointers to on-line resources for v6.
 
 xv6 borrows code from the following sources:
@@ -31,12 +31,15 @@ The following people have made contributions:
     Austin Clements
 
 In addition, we are grateful for the bug reports and patches contributed by
-Silas Boyd-Wickizer, Peter Froehlich, Shivam Handa, Anders Kaseorg, Eddie
-Kohler, Yandong Mao, Hitoshi Mitake, Carmi Merimovich, Joel Nider, Greg Price,
-Eldar Sehayek, Yongming Shen, Stephen Tu, and Zouchangwei.
+Silas Boyd-Wickizer, Mike CAT, Nelson Elhage, Nathaniel Filardo, Peter
+Froehlich, Yakir Goaran, Shivam Handa, Bryan Henry, Jim Huang, Anders Kaseorg,
+kehao95, Eddie Kohler, Imbar Marinescu, Yandong Mao, Hitoshi Mitake, Carmi
+Merimovich, Joel Nider, Greg Price, Ayan Shafqat, Eldar Sehayek, Yongming Shen,
+Cam Tenny, Rafael Ubal, Warren Toomey, Stephen Tu, Pablo Ventura, Keiichi
+Watanabe, Nicolas Wolovick, Jindong Zhang, and and Zou Chang Wei.
 
 The code in the files that constitute xv6 is
-Copyright 2006-2014 Frans Kaashoek, Robert Morris, and Russ Cox.
+Copyright 2006-2016 Frans Kaashoek, Robert Morris, and Russ Cox.
 
 The code in the non-xv6 commands and libraries are
 Copyright the Regents of the University of California.
@@ -45,7 +48,7 @@ ERROR REPORTS
 
 If you spot errors in the kernel or have suggestions for kernel improvement,
 please send email to Frans Kaashoek and Robert Morris
-(kaashoek,rtm@csail.mit.edu). 
+(kaashoek,rtm@csail.mit.edu).
 
 If you spot errors in the libraries or the commands, please send email
 to Warren Toomey (wkt@tuhs.org)

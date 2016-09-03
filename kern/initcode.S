@@ -1,4 +1,5 @@
 # Initial process execs /etc/init.
+# This code runs in user space.
 
 #include <xv6/syscall.h>
 #include <xv6/traps.h>
