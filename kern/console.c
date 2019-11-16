@@ -136,7 +136,7 @@ do_shutdown(const int status_code)
 {
   cprintf("\nShutting down with status code %d ...\n", status_code);
 
-  unsigned char sig[] = "QEMU";
+  unsigned char sig[] = "XXXX";
   
   struct {
     ushort limit;
@@ -149,7 +149,7 @@ do_shutdown(const int status_code)
   asm volatile("cli"); // Disable interrupts
 
   // Verify presence of QEMU by testing fw_cfg device signature
-  outw(0x00, 0x0510); // FW_CFG_SIGNATURE
+  outw(0x0510, 0x00); // FW_CFG_SIGNATURE
   for (unsigned int i = 0; i < sizeof(sig) - 1; i++) {
     sig[i] = inb(0x0511);
   }

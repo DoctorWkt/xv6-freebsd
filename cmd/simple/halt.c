@@ -4,6 +4,6 @@
 
 int
 main(void) {
-  halt(1);
+  halt(0);
   exit();
 }
