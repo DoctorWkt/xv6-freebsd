@@ -102,7 +102,14 @@ trap(struct trapframe *tf)
 
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
-  if(proc && proc->state == RUNNING && tf->trapno == T_IRQ0+IRQ_TIMER)
+  //
+  // When TPS is other than the MIT default, we can modify trap.c to invoke
+  // the scheduler (via yield()) at less than the TPS frequency. This makes
+  // MLFQ more realistic: "ticks % SCHED_INTERVAL == 0"
+  if(proc &&
+     proc->state == RUNNING &&
+     tf->trapno == T_IRQ0+IRQ_TIMER &&
+     ticks % SCHED_INTERVAL == 0) 
     yield();
 
   // Check if the process has been killed since we yielded

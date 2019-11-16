@@ -65,7 +65,8 @@ lapicinit(void)
   // TICR would be calibrated using an external time source.
   lapicw(TDCR, X1);
   lapicw(TIMER, PERIODIC | (T_IRQ0 + IRQ_TIMER));
-  lapicw(TICR, 10000000); 
+  // Interrupt 1000 times/sec.
+  lapicw(TICR, 1000000); 
 
   // Disable logical interrupt lines.
   lapicw(LINT0, MASKED);
