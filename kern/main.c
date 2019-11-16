@@ -9,7 +9,6 @@
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
 extern pde_t *kpgdir;
-extern char edata[];
 extern char end[]; // first address after kernel loaded from ELF file
 
 // Bootstrap processor starts running C code here.
@@ -18,7 +17,6 @@ extern char end[]; // first address after kernel loaded from ELF file
 int
 main(void)
 {
-  memset(edata, 0, end - edata);
   kinit1(end, P2V(4*1024*1024)); // phys page allocator
   kvmalloc();      // kernel page table
   mpinit();        // collect info about this machine
