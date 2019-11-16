@@ -6,13 +6,14 @@
 #include <xv6/proc.h>
 #include <xv6/x86.h>
 #include <xv6/traps.h>
-#include <xv6/spinlock.h>
 
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
-struct spinlock tickslock;
-uint ticks;
+// set alignment to 32-bit for ticks. See Intel® 64 and IA-32
+// Architectures Software Developer’s Manual, Vol 3A, 8.1.1 Guaranteed
+// Atomic Operations.
+uint ticks __attribute__ ((aligned (4)));
 
 void
 tvinit(void)
@@ -22,8 +23,6 @@ tvinit(void)
   for(i = 0; i < 256; i++)
     SETGATE(idt[i], 0, SEG_KCODE<<3, vectors[i], 0);
   SETGATE(idt[T_SYSCALL], 1, SEG_KCODE<<3, vectors[T_SYSCALL], DPL_USER);
-  
-  initlock(&tickslock, "time");
 }
 
 void
@@ -49,10 +48,8 @@ trap(struct trapframe *tf)
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
     if(cpu->id == 0){
-      acquire(&tickslock);
-      ticks++;
+      atom_inc((int *)&ticks);
       wakeup(&ticks);
-      release(&tickslock);
     }
     lapiceoi();
     break;

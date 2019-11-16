@@ -70,16 +70,13 @@ sys_sleep(void)
   
   if(argint(0, &n) < 0)
     return EINVAL;
-  acquire(&tickslock);
   ticks0 = ticks;
   while(ticks - ticks0 < n){
     if(proc->killed){
-      release(&tickslock);
       return EINVAL;
     }
-    sleep(&ticks, &tickslock);
+    sleep(&ticks, (struct spinlock *)0);
   }
-  release(&tickslock);
   return 0;
 }
 
@@ -89,9 +86,15 @@ int
 sys_uptime(void)
 {
   uint xticks;
-  
-  acquire(&tickslock);
-  xticks = ticks;
-  release(&tickslock);
+
+  xticks = ticks; // atomic read
   return xticks;
+}
+
+// shutdown QEMU
+int
+sys_halt(void)
+{
+  do_shutdown();  // never returns
+  return 0;
 }

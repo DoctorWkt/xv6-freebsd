@@ -102,6 +102,7 @@ extern int sys_lseek(void);
 extern int sys_ioctl(void);
 extern int sys_time(void);
 extern int sys_fchdir(void);
+extern int sys_halt(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -129,6 +130,7 @@ static int (*syscalls[])(void) = {
 [SYS_ioctl]   sys_ioctl,
 [SYS_time]    sys_time,
 [SYS_fchdir]  sys_fchdir,
+[SYS_halt]    sys_halt,
 };
 
 void

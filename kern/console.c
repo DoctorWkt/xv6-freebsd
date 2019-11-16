@@ -131,6 +131,14 @@ static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
 
 #define C(x)  ((x)-'@')  // Control-x
 
+void
+do_shutdown()
+{
+  cprintf("\nShutting down ...\n");
+  outw( 0x604, 0x0 | 0x2000);  // signal QEMU to shutdown
+  return;  // not reached
+}
+
 static void
 cgaputc(int c)
 {
@@ -202,6 +210,7 @@ void
 consoleintr(int (*getc)(void), int minor)
 {
   int c, doprocdump = 0;
+  int shutdown = 0;
 
   acquire(&cons.lock);
   while((c = getc()) >= 0){
@@ -209,6 +218,9 @@ consoleintr(int (*getc)(void), int minor)
     switch(c){
     case C('P'):  // Process listing.
       doprocdump = 1;   // procdump() locks cons.lock indirectly; invoke later
+      break;
+    case C('D'):
+      shutdown = 1;
       break;
     case C('U'):  // Kill line.
       while(input[minor].e != input[minor].w &&
@@ -246,6 +258,8 @@ else {		// Not canonical input
    }
   }
   release(&cons.lock);
+  if(shutdown)
+    do_shutdown();
   if(doprocdump) {
     procdump();  // now call procdump() wo. cons.lock held
   }

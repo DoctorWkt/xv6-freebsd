@@ -20,6 +20,7 @@ void            consoleinit(void);
 void            cprintf(char*, ...);
 void            consoleintr(int(*)(void), int minor);
 void            panic(char*) __attribute__((noreturn));
+void            do_shutdown(void);
 
 // cmos.c
 int		sys_time();

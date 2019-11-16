@@ -1,5 +1,11 @@
 // Routines to let C code use special x86 instructions.
 
+static inline void
+atom_inc(volatile int *num)
+{
+  asm volatile ( "lock incl %0" : "=m" (*num));
+}
+
 static inline uchar
 inb(ushort port)
 {

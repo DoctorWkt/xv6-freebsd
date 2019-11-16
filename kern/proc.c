@@ -360,9 +360,6 @@ sleep(void *chan, struct spinlock *lk)
   if(proc == 0)
     panic("sleep");
 
-  if(lk == 0)
-    panic("sleep without lk");
-
   // Must acquire ptable.lock in order to
   // change p->state and then call sched.
   // Once we hold ptable.lock, we can be
@@ -371,7 +368,7 @@ sleep(void *chan, struct spinlock *lk)
   // so it's okay to release lk.
   if(lk != &ptable.lock){  //DOC: sleeplock0
     acquire(&ptable.lock);  //DOC: sleeplock1
-    release(lk);
+    if (lk) release(lk);
   }
 
   // Go to sleep.
@@ -385,7 +382,7 @@ sleep(void *chan, struct spinlock *lk)
   // Reacquire original lock.
   if(lk != &ptable.lock){  //DOC: sleeplock2
     release(&ptable.lock);
-    acquire(lk);
+    if (lk) acquire(lk);
   }
 }
 
