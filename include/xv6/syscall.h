@@ -25,6 +25,7 @@
 #define SYS_time   24
 #define SYS_fchdir 25
 #define SYS_halt   26
+#define SYS_random 27
 
 // Error results
 #define EPERM		 -1		/* Operation not permitted */
