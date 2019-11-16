@@ -86,6 +86,9 @@ qemu-memfs: xv6memfs.img
 qemu-nox: fs.img xv6.img
 	$(QEMU) -nographic $(QEMUOPTS)
 
+gdb:
+	$(GDB) -n -x .gdbinit
+
 .gdbinit: .gdbinit.tmpl
 	sed "s/localhost:1234/localhost:$(GDBPORT)/" < $^ > $@
 

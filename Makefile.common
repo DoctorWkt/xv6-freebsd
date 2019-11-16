@@ -48,6 +48,7 @@ RANLIB = $(TOOLPREFIX)ranlib
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
+GDB = $(TOOLPREFIX)gdb
 CFLAGS = -fno-builtin -Wall -m32 -nostdinc -I$(INCLDIR)
 CFLAGS+=-msoft-float
 #CFLAGS+=-Werror
