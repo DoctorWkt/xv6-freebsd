@@ -38,13 +38,14 @@ char copyright[] =
 #endif /* not lint */
 
 #ifndef lint
-static char sccsid[] = "@(#)sleep.c	5.5 (Berkeley) 4/8/91";
+//static char sccsid[] = "@(#)sleep.c	5.5 (Berkeley) 4/8/91";
 #endif /* not lint */
 
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+int
 main(argc, argv)
 	int argc;
 	char **argv;

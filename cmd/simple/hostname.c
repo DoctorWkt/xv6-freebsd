@@ -38,12 +38,13 @@ char copyright[] =
 #endif /* not lint */
 
 #ifndef lint
-static char sccsid[] = "@(#)hostname.c	5.4 (Berkeley) 5/31/90";
+// static char sccsid[] = "@(#)hostname.c	5.4 (Berkeley) 5/31/90";
 #endif /* not lint */
 
 #include <stdio.h>
 #include <sys/param.h>
 
+int
 main(argc,argv)
 	int argc;
 	char **argv;
@@ -53,7 +54,7 @@ main(argc,argv)
 	char hostname[MAXHOSTNAMELEN], *p, *index();
 
 	sflag = 0;
-	while ((ch = getopt(argc, argv, "s")) != EOF)
+	while (((ch = getopt(argc, argv, "s")) != EOF))
 		switch((char)ch) {
 		case 's':
 			sflag = 1;

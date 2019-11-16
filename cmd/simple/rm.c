@@ -39,7 +39,7 @@ char copyright[] =
 
 #ifndef lint
 /*static char sccsid[] = "from: @(#)rm.c	4.26 (Berkeley) 3/10/91";*/
-static char rcsid[] = "$Id: rm.c,v 1.7 1994/03/05 16:12:06 ats Exp $";
+//static char rcsid[] = "$Id: rm.c,v 1.7 1994/03/05 16:12:06 ats Exp $";
 #endif /* not lint */
 
 #include <stdio.h>
@@ -198,7 +198,7 @@ rmtree(argv)
 			} else if (p->fts_info != FTS_DP && !fflag)
 				(void)fprintf(stderr,
 				    "rm: unable to read %s.\n", p->fts_path);
-		} else if (!unlink(p->fts_accpath) || fflag && errno == ENOENT)
+		} else if (!unlink(p->fts_accpath) || (fflag && errno == ENOENT))
 			continue;
 		error(p->fts_path, errno);
 	}
@@ -282,7 +282,7 @@ check(path, name, sp)
 	return(first == 'y' || first == 'Y');
 }
 
-#define ISDOT(a)	((a)[0] == '.' && (!(a)[1] || (a)[1] == '.' && !(a)[2]))
+#define ISDOT(a)	((a)[0] == '.' && (!(a)[1] || ((a)[1] == '.' && !(a)[2])))
 void
 checkdot(argv)
 	char **argv;
@@ -301,7 +301,7 @@ checkdot(argv)
 			    (void)fprintf(stderr,
 				"rm: \".\" and \"..\" may not be removed.\n");
 			retval = 1;
-			for (save = t; t[0] = t[1]; ++t);
+			for (save = t; (t[0] = t[1]); ++t);
 			t = save;
 		} else
 			++t;

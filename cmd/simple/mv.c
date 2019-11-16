@@ -42,7 +42,7 @@ char copyright[] =
 
 #ifndef lint
 /*static char sccsid[] = "from: @(#)mv.c	5.11 (Berkeley) 4/3/91";*/
-static char rcsid[] = "$Id: mv.c,v 1.3 1994/04/16 00:51:13 davidg Exp $";
+// static char rcsid[] = "$Id: mv.c,v 1.3 1994/04/16 00:51:13 davidg Exp $";
 #endif /* not lint */
 
 #include <sys/param.h>
@@ -62,11 +62,20 @@ static char rcsid[] = "$Id: mv.c,v 1.3 1994/04/16 00:51:13 davidg Exp $";
 int fflg, iflg;
 int stdin_ok;
 
+usage()
+{
+	(void)fprintf(stderr, 
+		"usage: mv [-fi] source_file target_file\n"
+		"       mv [-fi] source_file ... target_dir\n");
+	exit(1);
+}
+
+int
 main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern char *optarg;
+    //extern char *optarg;
 	extern int optind;
 	register int baselen, exitval, len;
 	register char *p, *endp;
@@ -128,6 +137,56 @@ main(argc, argv)
 	exit(exitval);
 }
 
+
+fastcopy(from, to, sbp)
+	char *from, *to;
+	struct stat *sbp;
+{
+	struct timeval tval[2];
+	static u_int blen;
+	static char *bp;
+	register int nread, from_fd, to_fd;
+
+	if ((from_fd = open(from, O_RDONLY, 0)) < 0) {
+		error(from);
+		return(1);
+	}
+	if ((to_fd = open(to, O_CREAT|O_TRUNC|O_WRONLY, sbp->st_mode)) < 0) {
+		error(to);
+		(void)close(from_fd);
+		return(1);
+	}
+	if (!blen && !(bp = malloc(blen = sbp->st_blksize * 4))) {
+		error(NULL);
+		return(1);
+	}
+	while ((nread = read(from_fd, bp, blen)) > 0)
+		if (write(to_fd, bp, nread) != nread) {
+			error(to);
+			goto err;
+		}
+	if (nread < 0) {
+		error(from);
+err:		(void)unlink(to);
+		(void)close(from_fd);
+		(void)close(to_fd);
+		return(1);
+	}
+	(void)fchown(to_fd, sbp->st_uid, sbp->st_gid);
+	(void)fchmod(to_fd, sbp->st_mode);
+
+	(void)close(from_fd);
+	(void)close(to_fd);
+
+	tval[0].tv_sec = sbp->st_atime;
+	tval[1].tv_sec = sbp->st_mtime;
+	tval[0].tv_usec = tval[1].tv_usec = 0;
+	(void)utimes(to, tval);
+	(void)unlink(from);
+	return(0);
+}
+
+int
 do_move(from, to)
 	char *from, *to;
 {
@@ -213,54 +272,7 @@ do_move(from, to)
 	    fastcopy(from, to, &sb) : copy(from, to));
 }
 
-fastcopy(from, to, sbp)
-	char *from, *to;
-	struct stat *sbp;
-{
-	struct timeval tval[2];
-	static u_int blen;
-	static char *bp;
-	register int nread, from_fd, to_fd;
-
-	if ((from_fd = open(from, O_RDONLY, 0)) < 0) {
-		error(from);
-		return(1);
-	}
-	if ((to_fd = open(to, O_CREAT|O_TRUNC|O_WRONLY, sbp->st_mode)) < 0) {
-		error(to);
-		(void)close(from_fd);
-		return(1);
-	}
-	if (!blen && !(bp = malloc(blen = sbp->st_blksize * 4))) {
-		error(NULL);
-		return(1);
-	}
-	while ((nread = read(from_fd, bp, blen)) > 0)
-		if (write(to_fd, bp, nread) != nread) {
-			error(to);
-			goto err;
-		}
-	if (nread < 0) {
-		error(from);
-err:		(void)unlink(to);
-		(void)close(from_fd);
-		(void)close(to_fd);
-		return(1);
-	}
-	(void)fchown(to_fd, sbp->st_uid, sbp->st_gid);
-	(void)fchmod(to_fd, sbp->st_mode);
-
-	(void)close(from_fd);
-	(void)close(to_fd);
-
-	tval[0].tv_sec = sbp->st_atime;
-	tval[1].tv_sec = sbp->st_mtime;
-	tval[0].tv_usec = tval[1].tv_usec = 0;
-	(void)utimes(to, tval);
-	(void)unlink(from);
-	return(0);
-}
-
+int
 copy(from, to)
 	char *from, *to;
 {
@@ -283,6 +295,7 @@ copy(from, to)
 	return(!WIFEXITED(status) || WEXITSTATUS(status));
 }
 
+int
 error(s)
 	char *s;
 {
@@ -290,12 +303,6 @@ error(s)
 		(void)fprintf(stderr, "mv: %s: %s\n", s, strerror(errno));
 	else
 		(void)fprintf(stderr, "mv: %s\n", strerror(errno));
-}
 
-usage()
-{
-	(void)fprintf(stderr, 
-		"usage: mv [-fi] source_file target_file\n"
-		"       mv [-fi] source_file ... target_dir\n");
-	exit(1);
+    return 0;
 }

@@ -49,6 +49,14 @@ static char sccsid[] = "@(#)cal.c	5.2 (Berkeley) 4/19/91";
 #include <stdio.h>
 #include <ctype.h>
 
+int
+usage()
+{
+	(void)fprintf(stderr, "usage: cal [-jy] [[month] year]\n");
+	exit(1);
+    return 0;
+}
+
 #define	THURSDAY		4		/* for reformation */
 #define	SATURDAY 		6		/* 1 Jan 1 was a Saturday */
 
@@ -113,18 +121,19 @@ char *j_day_headings = "  S   M  Tu   W  Th   F   S";
 
 int julian;
 
+int
 main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern char *optarg;
+    // extern char *optarg;
 	extern int optind;
 	struct tm *local_time;
 	time_t now, time();
 	int ch, month, year, yflag;
 
 	yflag = 0;
-	while ((ch = getopt(argc, argv, "jy")) != EOF)
+	while (((ch = getopt(argc, argv, "jy")) != EOF))
 		switch(ch) {
 		case 'j':
 			julian = 1;
@@ -398,10 +407,4 @@ center(str, len, separate)
 	(void)printf("%*s%s%*s", len / 2, "", str, len / 2 + len % 2, "");
 	if (separate)
 		(void)printf("%*s", separate, "");
-}
-
-usage()
-{
-	(void)fprintf(stderr, "usage: cal [-jy] [[month] year]\n");
-	exit(1);
 }

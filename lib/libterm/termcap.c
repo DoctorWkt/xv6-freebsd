@@ -313,7 +313,7 @@ tskip(bp)
  */
 int
 tgetnum(id)
-	char *id;
+	const char *id;
 {
 	register int i, base;
 	register char *bp = tbuf;
@@ -347,7 +347,7 @@ tgetnum(id)
  */
 int
 tgetflag(id)
-	char *id;
+	const char *id;
 {
 	register char *bp = tbuf;
 

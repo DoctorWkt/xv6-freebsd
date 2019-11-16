@@ -38,7 +38,7 @@ char copyright[] =
 #endif /* not lint */
 
 #ifndef lint
-static char sccsid[] = "@(#)ln.c	4.15 (Berkeley) 2/24/91";
+//static char sccsid[] = "@(#)ln.c	4.15 (Berkeley) 2/24/91";
 #endif /* not lint */
 
 #include <sys/param.h>
@@ -52,8 +52,10 @@ static char sccsid[] = "@(#)ln.c	4.15 (Berkeley) 2/24/91";
 static int	dirflag,			/* undocumented force flag */
 		sflag,				/* symbolic, not hard, link */
 		(*linkf)();			/* system link call */
-static linkit(), usage();
+static int linkit();
+static int usage();
 
+int
 main(argc, argv)
 	int argc;
 	char **argv;
@@ -104,7 +106,7 @@ main(argc, argv)
 	/* NOTREACHED */
 }
 
-static
+static int
 linkit(target, source, isdir)
 	char *target, *source;
 	int isdir;
@@ -127,7 +129,7 @@ linkit(target, source, isdir)
 	}
 
 	/* if the source is a directory, append the target's name */
-	if (isdir || !stat(source, &buf) && (buf.st_mode & S_IFMT) == S_IFDIR) {
+	if (isdir || (!stat(source, &buf) && (buf.st_mode & S_IFMT) == S_IFDIR)) {
 		if (!(cp = rindex(target, '/')))
 			cp = target;
 		else
@@ -143,10 +145,11 @@ linkit(target, source, isdir)
 	return(0);
 }
 
-static
+static int
 usage()
 {
 	(void)fprintf(stderr,
 	    "usage:\tln [-s] file1 file2\n\tln [-s] file ... directory\n");
 	exit(1);
+    return 0;
 }
