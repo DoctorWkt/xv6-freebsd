@@ -182,7 +182,7 @@ setterm(type)
 	if (!NS && SC && RC && CS && (sr || SR))
 		__usecs = 1;
 
-	if (((!AL && !al) || ((!DL && !dl)) && !__usecs))
+	if (((!AL && !al) || ((!DL && !dl) && !__usecs)))
 		__noqch = 1;
 
 	return (unknown ? ERR : OK);

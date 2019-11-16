@@ -62,128 +62,26 @@ char copyright[] =
 int fflg, iflg;
 int stdin_ok;
 
+int
 usage()
 {
 	(void)fprintf(stderr, 
 		"usage: mv [-fi] source_file target_file\n"
 		"       mv [-fi] source_file ... target_dir\n");
 	exit(1);
+    return 0;
 }
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
+error(s)
+	char *s;
 {
-    //extern char *optarg;
-	extern int optind;
-	register int baselen, exitval, len;
-	register char *p, *endp;
-	struct stat sb;
-	int ch;
-	char path[MAXPATHLEN + 1];
+	if (s)
+		(void)fprintf(stderr, "mv: %s: %s\n", s, strerror(errno));
+	else
+		(void)fprintf(stderr, "mv: %s\n", strerror(errno));
 
-	while (((ch = getopt(argc, argv, "if")) != -1))
-		switch((char)ch) {
-		case 'i':
-			fflg = 0;
-			iflg = 1;
-			break;
-		case 'f':
-			iflg = 0;
-			fflg = 1;
-			break;
-		case '?':
-		default:
-			usage();
-		}
-	argc -= optind;
-	argv += optind;
-
-	if (argc < 2)
-		usage();
-
-	stdin_ok = isatty(STDIN_FILENO);
-
-	/*
-	 * If the stat on the target fails or the target isn't a directory,
-	 * try the move.  More than 2 arguments is an error in this case.
-	 */
-	if (stat(argv[argc - 1], &sb) || !S_ISDIR(sb.st_mode)) {
-		if (argc > 2)
-			usage();
-		exit(do_move(argv[0], argv[1]));
-	}
-
-	/* It's a directory, move each file into it. */
-	(void)strcpy(path, argv[argc - 1]);
-	baselen = strlen(path);
-	endp = &path[baselen];
-	*endp++ = '/';
-	++baselen;
-	for (exitval = 0; --argc; ++argv) {
-		if ((p = rindex(*argv, '/')) == NULL)
-			p = *argv;
-		else
-			++p;
-		if ((baselen + (len = strlen(p))) >= MAXPATHLEN)
-			(void)fprintf(stderr,
-			    "mv: %s: destination pathname too long\n", *argv);
-		else {
-			bcopy(p, endp, len + 1);
-			exitval |= do_move(*argv, path);
-		}
-	}
-	exit(exitval);
-}
-
-
-fastcopy(from, to, sbp)
-	char *from, *to;
-	struct stat *sbp;
-{
-	struct timeval tval[2];
-	static u_int blen;
-	static char *bp;
-	register int nread, from_fd, to_fd;
-
-	if ((from_fd = open(from, O_RDONLY, 0)) < 0) {
-		error(from);
-		return(1);
-	}
-	if ((to_fd = open(to, O_CREAT|O_TRUNC|O_WRONLY, sbp->st_mode)) < 0) {
-		error(to);
-		(void)close(from_fd);
-		return(1);
-	}
-	if (!blen && !(bp = malloc(blen = sbp->st_blksize * 4))) {
-		error(NULL);
-		return(1);
-	}
-	while ((nread = read(from_fd, bp, blen)) > 0)
-		if (write(to_fd, bp, nread) != nread) {
-			error(to);
-			goto err;
-		}
-	if (nread < 0) {
-		error(from);
-err:		(void)unlink(to);
-		(void)close(from_fd);
-		(void)close(to_fd);
-		return(1);
-	}
-	(void)fchown(to_fd, sbp->st_uid, sbp->st_gid);
-	(void)fchmod(to_fd, sbp->st_mode);
-
-	(void)close(from_fd);
-	(void)close(to_fd);
-
-	tval[0].tv_sec = sbp->st_atime;
-	tval[1].tv_sec = sbp->st_mtime;
-	tval[0].tv_usec = tval[1].tv_usec = 0;
-	(void)utimes(to, tval);
-	(void)unlink(from);
-	return(0);
+    return 0;
 }
 
 int
@@ -271,6 +169,121 @@ do_move(from, to)
 	return(S_ISREG(sb.st_mode) ?
 	    fastcopy(from, to, &sb) : copy(from, to));
 }
+int
+main(argc, argv)
+	int argc;
+	char **argv;
+{
+    //extern char *optarg;
+	extern int optind;
+	register int baselen, exitval, len;
+	register char *p, *endp;
+	struct stat sb;
+	int ch;
+	char path[MAXPATHLEN + 1];
+
+	while (((ch = getopt(argc, argv, "if")) != -1))
+		switch((char)ch) {
+		case 'i':
+			fflg = 0;
+			iflg = 1;
+			break;
+		case 'f':
+			iflg = 0;
+			fflg = 1;
+			break;
+		case '?':
+		default:
+			usage();
+		}
+	argc -= optind;
+	argv += optind;
+
+	if (argc < 2)
+		usage();
+
+	stdin_ok = isatty(STDIN_FILENO);
+
+	/*
+	 * If the stat on the target fails or the target isn't a directory,
+	 * try the move.  More than 2 arguments is an error in this case.
+	 */
+	if (stat(argv[argc - 1], &sb) || !S_ISDIR(sb.st_mode)) {
+		if (argc > 2)
+			usage();
+		exit(do_move(argv[0], argv[1]));
+	}
+
+	/* It's a directory, move each file into it. */
+	(void)strcpy(path, argv[argc - 1]);
+	baselen = strlen(path);
+	endp = &path[baselen];
+	*endp++ = '/';
+	++baselen;
+	for (exitval = 0; --argc; ++argv) {
+		if ((p = rindex(*argv, '/')) == NULL)
+			p = *argv;
+		else
+			++p;
+		if ((baselen + (len = strlen(p))) >= MAXPATHLEN)
+			(void)fprintf(stderr,
+			    "mv: %s: destination pathname too long\n", *argv);
+		else {
+			bcopy(p, endp, len + 1);
+			exitval |= do_move(*argv, path);
+		}
+	}
+	exit(exitval);
+}
+
+int
+fastcopy(from, to, sbp)
+	char *from, *to;
+	struct stat *sbp;
+{
+	struct timeval tval[2];
+	static u_int blen;
+	static char *bp;
+	register int nread, from_fd, to_fd;
+
+	if ((from_fd = open(from, O_RDONLY, 0)) < 0) {
+		error(from);
+		return(1);
+	}
+	if ((to_fd = open(to, O_CREAT|O_TRUNC|O_WRONLY, sbp->st_mode)) < 0) {
+		error(to);
+		(void)close(from_fd);
+		return(1);
+	}
+	if (!blen && !(bp = malloc(blen = sbp->st_blksize * 4))) {
+		error(NULL);
+		return(1);
+	}
+	while ((nread = read(from_fd, bp, blen)) > 0)
+		if (write(to_fd, bp, nread) != nread) {
+			error(to);
+			goto err;
+		}
+	if (nread < 0) {
+		error(from);
+err:		(void)unlink(to);
+		(void)close(from_fd);
+		(void)close(to_fd);
+		return(1);
+	}
+	(void)fchown(to_fd, sbp->st_uid, sbp->st_gid);
+	(void)fchmod(to_fd, sbp->st_mode);
+
+	(void)close(from_fd);
+	(void)close(to_fd);
+
+	tval[0].tv_sec = sbp->st_atime;
+	tval[1].tv_sec = sbp->st_mtime;
+	tval[0].tv_usec = tval[1].tv_usec = 0;
+	(void)utimes(to, tval);
+	(void)unlink(from);
+	return(0);
+}
 
 int
 copy(from, to)
@@ -293,16 +306,4 @@ copy(from, to)
 	}
 	(void)waitpid(pid, &status, 0);
 	return(!WIFEXITED(status) || WEXITSTATUS(status));
-}
-
-int
-error(s)
-	char *s;
-{
-	if (s)
-		(void)fprintf(stderr, "mv: %s: %s\n", s, strerror(errno));
-	else
-		(void)fprintf(stderr, "mv: %s\n", strerror(errno));
-
-    return 0;
 }
