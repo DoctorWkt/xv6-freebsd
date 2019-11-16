@@ -1,11 +1,10 @@
-# Location of the 32-bit libgcc.a file
-LIBGCC=/usr/lib/gcc/i686-linux-gnu/5/libgcc.a
-
 # Header include directory
 INCLDIR=$(TOP_SRCDIR)/include
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX = 
+# Using cross compiler
+TOOLPREFIX=i686-elf-
 
 # Try to infer the correct TOOLPREFIX if not set
 ifndef TOOLPREFIX
@@ -22,7 +21,6 @@ TOOLPREFIX := $(shell if i386-jos-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >/d
         echo "*** To turn off this error, run 'gmake TOOLPREFIX= ...'." 1>&2; \
         echo "***" 1>&2; exit 1; fi)
 endif
-
 
 # If the makefile can't find QEMU, specify its path here
 # QEMU = qemu-system-i386
@@ -56,3 +54,7 @@ CFLAGS+=-msoft-float
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 LDFLAGS = -m $(shell $(LD) -V | grep elf_i386 2>/dev/null)
 ASFLAGS = -m32 -gdwarf-2 -Wa,-divide -nostdinc -I$(INCLDIR)
+# Location of the 32-bit libgcc.a file
+LIBGCC=$(shell $(CC) $(CFLAGS) -print-libgcc-file-name)
+#LIBGCC=/usr/lib/gcc/x86_64-linux-gnu/9/32/libgcc.a
+#LIBGCC=/usr/lib/gcc/i686-linux-gnu/5/libgcc.a

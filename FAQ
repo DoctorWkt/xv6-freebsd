@@ -11,9 +11,9 @@ xv-minix2 FAQ
 
 2. Why do I need libgcc.a?
    Some of the libraries need floats, so I am using -msoft-float with the
-   compiler, and that needs libgcc.a. I'd love someone to show me how I can
-   replace the "ld" linking line with a "gcc" line that can auto-find the
-   location of libgcc.a
+   compiler, and ld needs to be linked with libgcc.a.
+   
+   See in Makefile.common: LIBGCC=.. .
 
 3. How do I run it?
    Make sure that you have qemu installed and the qemu-system-i386 binary

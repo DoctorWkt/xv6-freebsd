@@ -1,6 +1,8 @@
 TOP_SRCDIR = .
 include $(TOP_SRCDIR)/Makefile.common
 
+all: xv6.img
+
 xv6.img: boot/bootblock kern/kernel fs.img
 	dd if=/dev/zero of=xv6.img count=10000
 	dd if=boot/bootblock of=xv6.img conv=notrunc
