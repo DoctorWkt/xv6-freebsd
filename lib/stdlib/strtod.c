@@ -917,7 +917,7 @@ b2d
 	if (k < Ebits) {
       d0 = Exp_1 | y >> (Ebits - k);
 		w = xa > xa0 ? *--xa : 0;
-		d1 = y << (32-Ebits) + k | w >> (Ebits - k);
+		d1 = y << ((32-Ebits) + k) | w >> (Ebits - k);
 		goto ret_d;
 		}
 	z = xa > xa0 ? *--xa : 0;
