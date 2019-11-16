@@ -19,3 +19,4 @@ RCS
 include/minix
 include/net
 cmd/test
+cscope.*

@@ -26,6 +26,7 @@ fs/cat:
 	$(MAKE) -C lib all
 	$(MAKE) -C cmd all
 
+.PHONY: kern/kernel
 kern/kernel:
 	$(MAKE) -C kern kernel
 
@@ -46,7 +47,7 @@ clean:
 	$(MAKE) -C kern clean
 	$(MAKE) -C tools clean
 	$(MAKE) -C doc clean
-	rm -rf *.img fs/bin/* fs/README
+	rm -rf *.img fs/bin/* cscope.* fs/README
 
 # make a printout
 doc: doc/xv6.pdf
