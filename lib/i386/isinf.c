@@ -37,6 +37,7 @@ static char sccsid[] = "@(#)isinf.c	5.1 (Berkeley) 3/18/91";
 
 #include <sys/types.h>
 
+int
 isnan(d)
 	double d;
 {
@@ -50,6 +51,7 @@ isnan(d)
 	return(p->exp == 2047 && (p->manh || p->manl));
 }
 
+int
 isinf(d)
 	double d;
 {

@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)insch.c	8.1 (Berkeley) 6/4/93";
+//static char sccsid[] = "@(#)insch.c	8.1 (Berkeley) 6/4/93";
 #endif	/* not lint */
 
 #include <curses.h>
@@ -60,7 +60,7 @@ winsch(register WINDOW *win, char ch)
 	__touchline(win, win->cury, win->curx, win->maxx - 1, 0);
 	if (win->cury == LINES - 1 && 
 	    (win->lines[LINES - 1]->line[COLS - 1].ch != ' ' ||
-	    win->lines[LINES -1]->line[COLS - 1].attr != 0))
+        win->lines[LINES -1]->line[COLS - 1].attr != 0)) {
 		if (win->flags & __SCROLLOK) {
 			wrefresh(win);
 			scroll(win);
@@ -68,5 +68,6 @@ winsch(register WINDOW *win, char ch)
 
 		} else
 			return (ERR);
+    }
 	return (OK);
 }

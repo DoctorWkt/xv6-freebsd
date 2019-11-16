@@ -41,7 +41,7 @@ char copyright[] =
 #endif /* not lint */
 
 #ifndef lint
-static char sccsid[] = "@(#)cat.c	5.15 (Berkeley) 5/23/91";
+//static char sccsid[] = "@(#)cat.c	5.15 (Berkeley) 5/23/91";
 #endif /* not lint */
 
 #include <sys/param.h>
@@ -232,7 +232,7 @@ raw_cat(rfd)
 	register int nr, nw, off, wfd;
 	static int bsize;
 	static char *buf;
-	struct stat sbuf;
+	//struct stat sbuf;
 
 	wfd = fileno(stdout);
 	if (!buf) {

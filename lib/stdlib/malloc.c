@@ -367,7 +367,7 @@ realloc(cp, nbytes)
  * header starts at ``freep''.  If srchlen is -1 search the whole list.
  * Return bucket number, or -1 if not found.
  */
-static
+static int
 findbucket(freep, srchlen)
 	union overhead *freep;
 	int srchlen;

@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)cur_hash.c	8.1 (Berkeley) 6/4/93";
+//static char sccsid[] = "@(#)cur_hash.c	8.1 (Berkeley) 6/4/93";
 #endif	/* not lint */
 
 #include <sys/types.h>
@@ -52,7 +52,7 @@ __hash(s, len)
 	i = 0;
         while (i < len) {
 		h = (h << 4) + (s[i] & 0xff);
-                if (g = h & 0xf0000000) {
+                if ((g = h & 0xf0000000)) {
                         h = h ^ (g >> 24);
                         h = h ^ g;
                 }

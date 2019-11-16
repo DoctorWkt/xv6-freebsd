@@ -65,7 +65,7 @@ static int	__ypcurrentlen, __ypmode=0;
 struct group *
 getgrent()
 {
-	if (!_gr_fp && !start_gr() || !grscan(0, 0, NULL))
+    if ((!_gr_fp && !start_gr()) || !grscan(0, 0, NULL))
 		return(NULL);
 	return(&_gr_group);
 }

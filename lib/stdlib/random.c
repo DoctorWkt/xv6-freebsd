@@ -192,12 +192,12 @@ void
 srandom(x)
 	u_int x;
 {
-	register int i, j;
+  register int i; //, j;
 
 	if (rand_type == TYPE_0)
 		state[0] = x;
 	else {
-		j = 1;
+        // j = 1;
 		state[0] = x;
 		for (i = 1; i < rand_deg; i++)
 			state[i] = 1103515245 * state[i - 1] + 12345;

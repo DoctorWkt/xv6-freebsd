@@ -321,7 +321,7 @@ getpwuid(uid)
 {
 	DBT key;
 	char bf[sizeof(_pw_keynum) + 1];
-	int keyuid, rval, len;
+	int keyuid, rval; //, len;
 
 	if (!_pw_db && !__initdb())
 		return((struct passwd *)NULL);
@@ -533,7 +533,7 @@ __hashpw(key)
 		return(0);
 
 	t = line;
-#define	EXPAND(e)	e = t; while (*t++ = *p++);
+#define	EXPAND(e)	e = t; while ((*t++ = *p++));
 	EXPAND(_pw_passwd.pw_name);
 #ifndef PW_COMPACT
 	EXPAND(_pw_passwd.pw_passwd);

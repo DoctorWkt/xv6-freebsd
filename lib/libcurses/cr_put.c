@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)cr_put.c	8.2 (Berkeley) 1/9/94";
+//static char sccsid[] = "@(#)cr_put.c	8.2 (Berkeley) 1/9/94";
 #endif	/* not lint */
 
 #include <curses.h>
@@ -99,11 +99,12 @@ fgoto(in_refresh)
 		outcol %= COLS;
 		if (AM == 0) {
 			while (l > 0) {
-				if (__pfast)
+                if (__pfast) {
 					if (CR)
 						tputs(CR, 1, __cputchar);
 					else
 						putchar('\r');
+                }
 				if (NL)
 					tputs(NL, 1, __cputchar);
 				else

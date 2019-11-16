@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)tscroll.c	8.1 (Berkeley) 6/4/93";
+//static char sccsid[] = "@(#)tscroll.c	8.1 (Berkeley) 6/4/93";
 #endif /* not lint */
 
 #include <curses.h>
@@ -81,7 +81,7 @@ toohard:
 
 	cp = (char *) cap;
 	dp = result;
-	while (c = *cp++) {
+	while ((c = *cp++)) {
 		if (c != '%') {
 			*dp++ = c;
 			continue;

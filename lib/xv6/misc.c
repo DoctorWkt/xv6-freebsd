@@ -5,7 +5,7 @@ void sync(void) { return; }
 
 unsigned int alarm(unsigned int seconds) { return(0); }
 
-void logwtmp(void) { return; }
+void logwtmp(char* a, char* b, char* c) { return; }
 
 void updwtmp(void) { return; }
 

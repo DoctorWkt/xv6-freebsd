@@ -65,7 +65,7 @@ initgroups(uname, agroup)
 		groups[ngroups++] = agroup;
 	}
 	setgrent();
-	while (grp = getgrent()) {
+	while ((grp = getgrent())) {
 		if (grp->gr_gid == agroup)
 			continue;
 		for (i = 0; grp->gr_mem[i]; i++)

@@ -43,6 +43,7 @@ static char sccsid[] = "@(#)ttyname.c	5.10 (Berkeley) 5/6/91";
 #include <db.h>
 #include <unistd.h>
 #include <paths.h>
+#include <string.h>
 
 static char buf[sizeof(_PATH_DEV) + MAXNAMLEN] = _PATH_DEV;
 static char * __oldttyname(int fd, struct stat *sb);
@@ -67,7 +68,7 @@ ttyname(fd)
 	if (fstat(fd, &sb) || !S_ISCHR(sb.st_mode))
 		return(NULL);
 
-	if (db = dbopen(_PATH_DEVDB, O_RDONLY, 0, DB_HASH, NULL)) {
+	if ((db = dbopen(_PATH_DEVDB, O_RDONLY, 0, DB_HASH, NULL))) {
 		bkey.type = S_IFCHR;
 		bkey.dev = sb.st_rdev;
 		key.data = &bkey;
@@ -94,7 +95,7 @@ __oldttyname(fd, sb)
 	if ((dp = opendir(_PATH_DEV)) == NULL)
 		return(NULL);
 
-	for (rval = NULL; dirp = readdir(dp);) {
+	for (rval = NULL; (dirp = readdir(dp));) {
 		if (dirp->d_fileno != sb->st_ino)
 			continue;
 		bcopy(dirp->d_name, buf + sizeof(_PATH_DEV) - 1,

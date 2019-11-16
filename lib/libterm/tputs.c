@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)tputs.c	5.3 (Berkeley) 6/1/90";
+//static char sccsid[] = "@(#)tputs.c	5.3 (Berkeley) 6/1/90";
 #endif /* not lint */
 
 #include <sgtty.h>
@@ -57,6 +57,7 @@ char	PC;
  * The number of affected lines is affcnt, and the routine
  * used to output one character is outc.
  */
+int
 tputs(cp, affcnt, outc)
 	register char *cp;
 	int affcnt;
@@ -67,7 +68,7 @@ tputs(cp, affcnt, outc)
 	int speed;
 
 	if (cp == 0)
-		return;
+		return 0;
 
 	/*
 	 * Convert the number representing the delay.
@@ -107,9 +108,9 @@ tputs(cp, affcnt, outc)
 	 * not comprehensible, then don't try to delay.
 	 */
 	if (i == 0)
-		return;
+		return 0;
 	if (ospeed <= 0)
-		return;
+		return 0;
 	if (ospeed >= (sizeof tmspc10 / sizeof tmspc10[0]))
 		speed = (sizeof tmspc10 / sizeof tmspc10[0]) - 1;
 	else

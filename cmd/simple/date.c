@@ -38,7 +38,7 @@ char copyright[] =
 #endif /* not lint */
 
 #ifndef lint
-static char sccsid[] = "@(#)date.c	5.5 (Berkeley) 3/18/91";
+//static char sccsid[] = "@(#)date.c	5.5 (Berkeley) 3/18/91";
 #endif /* not lint */
 
 #include <sys/param.h>
@@ -54,6 +54,108 @@ static char sccsid[] = "@(#)date.c	5.5 (Berkeley) 3/18/91";
 time_t tval;
 int retval, nflag;
 
+int
+usage()
+{
+	(void)fprintf(stderr,
+	    "usage: date [-nu] [-d dst] [-r seconds] [-t west] [+format]\n");
+	(void)fprintf(stderr, "            [yy[mm[dd[hh]]]]mm[.ss]]\n");
+	exit(1);
+    return 0;
+}
+
+int
+badformat()
+{
+	(void)fprintf(stderr, "date: illegal time format.\n");
+	usage();
+    return 0;
+}
+
+extern void logwtmp(char*, char*, char*);
+
+#define	ATOI2(ar)	((ar)[0] - '0') * 10 + ((ar)[1] - '0'); (ar) += 2;
+int
+setthetime(p)
+	register char *p;
+{
+	register struct tm *lt;
+	struct timeval tv;
+	int dot;
+	char *t;
+
+	for (t = p, dot = 0; *t; ++t)
+		if (!isdigit(*t) && (*t != '.' || dot++))
+			badformat();
+
+	lt = localtime(&tval);
+
+	if ((t = index(p, '.'))) {		/* .ss */
+		*t++ = '\0';
+		lt->tm_sec = ATOI2(t);
+		if (lt->tm_sec > 61)
+			badformat();
+	} else
+		lt->tm_sec = 0;
+
+	for (t = p; *t; ++t)
+		if (!isdigit(*t))
+			badformat();
+
+	switch (strlen(p)) {
+	case 10:				/* yy */
+		lt->tm_year = ATOI2(p);
+		if (lt->tm_year < 69)		/* hack for 2000 ;-} */
+			lt->tm_year += 100;
+		/* FALLTHROUGH */
+	case 8:					/* mm */
+		lt->tm_mon = ATOI2(p);
+		if (lt->tm_mon > 12)
+			badformat();
+		--lt->tm_mon;			/* time struct is 0 - 11 */
+		/* FALLTHROUGH */
+	case 6:					/* dd */
+		lt->tm_mday = ATOI2(p);
+		if (lt->tm_mday > 31)
+			badformat();
+		/* FALLTHROUGH */
+	case 4:					/* hh */
+		lt->tm_hour = ATOI2(p);
+		if (lt->tm_hour > 23)
+			badformat();
+		/* FALLTHROUGH */
+	case 2:					/* mm */
+		lt->tm_min = ATOI2(p);
+		if (lt->tm_min > 59)
+			badformat();
+		break;
+	default:
+		badformat();
+	}
+
+	/* convert broken-down time to GMT clock time */
+	if ((tval = mktime(lt)) == -1)
+		badformat();
+
+	if (!(p = getlogin()))			/* single-user or no tty */
+		p = "root";
+	syslog(LOG_AUTH | LOG_NOTICE, "date set by %s", p);
+
+	/* set the time */
+	if (nflag) {
+		logwtmp("|", "date", "");
+		tv.tv_sec = tval;
+		tv.tv_usec = 0;
+		if (settimeofday(&tv, (struct timezone *)NULL)) {
+			perror("date: settimeofday");
+			exit(1);
+		}
+		logwtmp("{", "date", "");
+	}
+    return 0;
+}
+
+int
 main(argc, argv)
 	int argc;
 	char **argv;
@@ -128,97 +230,4 @@ main(argc, argv)
 	(void)strftime(buf, sizeof(buf), format, localtime(&tval));
 	(void)printf("%s\n", buf);
 	exit(retval);
-}
-
-#define	ATOI2(ar)	((ar)[0] - '0') * 10 + ((ar)[1] - '0'); (ar) += 2;
-setthetime(p)
-	register char *p;
-{
-	register struct tm *lt;
-	struct timeval tv;
-	int dot;
-	char *t;
-
-	for (t = p, dot = 0; *t; ++t)
-		if (!isdigit(*t) && (*t != '.' || dot++))
-			badformat();
-
-	lt = localtime(&tval);
-
-	if (t = index(p, '.')) {		/* .ss */
-		*t++ = '\0';
-		lt->tm_sec = ATOI2(t);
-		if (lt->tm_sec > 61)
-			badformat();
-	} else
-		lt->tm_sec = 0;
-
-	for (t = p; *t; ++t)
-		if (!isdigit(*t))
-			badformat();
-
-	switch (strlen(p)) {
-	case 10:				/* yy */
-		lt->tm_year = ATOI2(p);
-		if (lt->tm_year < 69)		/* hack for 2000 ;-} */
-			lt->tm_year += 100;
-		/* FALLTHROUGH */
-	case 8:					/* mm */
-		lt->tm_mon = ATOI2(p);
-		if (lt->tm_mon > 12)
-			badformat();
-		--lt->tm_mon;			/* time struct is 0 - 11 */
-		/* FALLTHROUGH */
-	case 6:					/* dd */
-		lt->tm_mday = ATOI2(p);
-		if (lt->tm_mday > 31)
-			badformat();
-		/* FALLTHROUGH */
-	case 4:					/* hh */
-		lt->tm_hour = ATOI2(p);
-		if (lt->tm_hour > 23)
-			badformat();
-		/* FALLTHROUGH */
-	case 2:					/* mm */
-		lt->tm_min = ATOI2(p);
-		if (lt->tm_min > 59)
-			badformat();
-		break;
-	default:
-		badformat();
-	}
-
-	/* convert broken-down time to GMT clock time */
-	if ((tval = mktime(lt)) == -1)
-		badformat();
-
-	if (!(p = getlogin()))			/* single-user or no tty */
-		p = "root";
-	syslog(LOG_AUTH | LOG_NOTICE, "date set by %s", p);
-
-	/* set the time */
-	if (nflag) {
-		logwtmp("|", "date", "");
-		tv.tv_sec = tval;
-		tv.tv_usec = 0;
-		if (settimeofday(&tv, (struct timezone *)NULL)) {
-			perror("date: settimeofday");
-			exit(1);
-		}
-		logwtmp("{", "date", "");
-	}
-}
-
-badformat()
-{
-	(void)fprintf(stderr, "date: illegal time format.\n");
-	usage();
-}
-
-usage()
-{
-	(void)fprintf(stderr,
-	    "usage: date [-nu] [-d dst] [-r seconds] [-t west] [+format]\n");
-	(void)fprintf(stderr, "            [yy[mm[dd[hh]]]]mm[.ss]]\n");
-	exit(1);
 }

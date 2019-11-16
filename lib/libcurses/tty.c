@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)tty.c	8.2 (Berkeley) 1/2/94";
+//static char sccsid[] = "@(#)tty.c	8.2 (Berkeley) 1/2/94";
 #endif /* not lint */
 
 #include <sys/ioctl.h>

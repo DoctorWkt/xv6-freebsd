@@ -122,6 +122,7 @@ static void	 qprintf __P((Char *));
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
+int
 glob(pattern, flags, errfunc, pglob)
 	const char *pattern;
 	int flags, (*errfunc) __P((char *, int));
@@ -234,7 +235,7 @@ glob(pattern, flags, errfunc, pglob)
 		if (!(flags & GLOB_QUOTE)) {
 			Char *dp = compilebuf;
 			const u_char *sp = compilepat;
-			while (*dp++ = *sp++);
+			while ((*dp++ = *sp++));
 		}
 		else {
 			/*
@@ -265,7 +266,7 @@ compare(p, q)
 	return(strcmp(*(char **)p, *(char **)q));
 }
 
-static
+static int
 glob1(pattern, pglob)
 	Char *pattern;
 	glob_t *pglob;
@@ -283,7 +284,7 @@ glob1(pattern, pglob)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static
+static int
 glob2(pathbuf, pathend, pattern, pglob)
 	Char *pathbuf, *pathend, *pattern;
 	glob_t *pglob;
@@ -334,7 +335,7 @@ glob2(pathbuf, pathend, pattern, pglob)
 	/* NOTREACHED */
 }
 
-static
+static int
 glob3(pathbuf, pathend, pattern, restpattern, pglob)
 	Char *pathbuf, *pathend, *pattern, *restpattern;
 	glob_t *pglob;
@@ -342,7 +343,7 @@ glob3(pathbuf, pathend, pattern, restpattern, pglob)
 	register struct dirent *dp;
 	struct dirent *(*readdirfunc)();
 	DIR *dirp;
-	int len, err;
+	int err; // len
 	char buf[MAXPATHLEN];
 
 	*pathend = EOS;
@@ -374,7 +375,7 @@ glob3(pathbuf, pathend, pattern, restpattern, pglob)
 		if (dp->d_name[0] == DOT && *pattern != DOT)
 			continue;
 		for (sc = (u_char *) dp->d_name, dc = pathend; 
-		     *dc++ = *sc++;);
+		     (*dc++ = *sc++););
 		if (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
 			continue;
@@ -444,7 +445,7 @@ globextend(path, pglob)
  * pattern matching function for filenames.  Each occurrence of the *
  * pattern causes a recursion level.
  */
-static
+static int
 match(name, pat, patend)
 	register Char *name, *pat, *patend;
 {
@@ -470,7 +471,7 @@ match(name, pat, patend)
 			ok = 0;
 			if ((k = *name++) == EOS)
 				return(0);
-			if (negate_range = ((*pat & M_MASK) == M_NOT))
+			if ((negate_range = ((*pat & M_MASK) == M_NOT)))
 				++pat;
 			while (((c = *pat++) & M_MASK) != M_END)
 				if ((*pat & M_MASK) == M_RNG) {
@@ -514,7 +515,7 @@ g_opendir(str, pglob)
 	glob_t *pglob;
 {
 	char buf[MAXPATHLEN];
-	char *dirname;
+	//char *dirname;
 
 	if (!*str)
 		strcpy(buf, ".");
@@ -572,7 +573,7 @@ g_Ctoc(str, buf)
 {
 	register char *dc;
 
-	for (dc = buf; *dc++ = *str++;);
+	for (dc = buf; (*dc++ = *str++););
 }
 
 #ifdef DEBUG
