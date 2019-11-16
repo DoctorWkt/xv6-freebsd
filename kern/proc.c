@@ -209,6 +209,7 @@ exit(int exitvalue)
 
   // Jump into the scheduler, never to return.
   proc->state = ZOMBIE;
+  proc->sz = 0;
   sched();
   panic("zombie exit");
 }
@@ -272,10 +273,13 @@ void
 scheduler(void)
 {
   struct proc *p;
+  int idle; // For checking if processor is idle.
 
   for(;;){
     // Enable interrupts on this processor.
     sti();
+
+    idle = 1; // Assume idle unless we schedule a process.
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -286,6 +290,7 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      idle = 0;  // not idle this timeslice
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -297,11 +302,15 @@ scheduler(void)
       proc = 0;
     }
     release(&ptable.lock);
-
+    // If idle, wait for next interrupt.
+    if (idle) {
+      sti();
+      hlt();
+    }
   }
 }
 
-// Enter scheduler.  Must hold only ptable.lock
+// Enter scheduler. Must hold only ptable.lock
 // and have changed proc->state.
 void
 sched(void)
