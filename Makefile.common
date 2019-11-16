@@ -49,7 +49,11 @@ LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
 GDB = $(TOOLPREFIX)gdb
-CFLAGS = -fno-builtin -Wall -m32 -nostdinc -I$(INCLDIR)
+
+OPT ?= -O0
+
+CFLAGS =$(OPT)
+CFLAGS+= -fno-builtin -Wall -m32 -nostdinc -I$(INCLDIR)
 CFLAGS+=-msoft-float
 # Turn off PIE which is no default on Ubuntu
 CFLAGS += -fno-pie
