@@ -132,11 +132,49 @@ static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
 #define C(x)  ((x)-'@')  // Control-x
 
 void
-do_shutdown()
+do_shutdown(const int status_code)
 {
-  cprintf("\nShutting down ...\n");
-  outw( 0x604, 0x0 | 0x2000);  // signal QEMU to shutdown
-  return;  // not reached
+  cprintf("\nShutting down with status code %d ...\n", status_code);
+
+  unsigned char sig[] = "QEMU";
+  
+  struct {
+    ushort limit;
+    unsigned long long address;
+  } null_idtr;
+
+  null_idtr.limit = 0;
+  null_idtr.address = 0;
+
+  asm volatile("cli"); // Disable interrupts
+
+  // Verify presence of QEMU by testing fw_cfg device signature
+  outw(0x00, 0x0510); // FW_CFG_SIGNATURE
+  for (unsigned int i = 0; i < sizeof(sig) - 1; i++) {
+    sig[i] = inb(0x0511);
+  }
+
+  if (memcmp(sig, "QEMU", sizeof(sig)) == 0) {
+    if (status_code == 0) { // Terminate QEMU with zero exit code.
+      // https://www.pagetable.com/?p=140 : Triple fault and reset.
+      asm volatile("lidt %0; int3" ::"m"(null_idtr));
+    } else {
+      // qemu-system-.. -device isa-debug-exit,iobase=0xf4,iosize=0x04
+      outb(0xf4, status_code); // Terminate QEMU with non-zero exit code.
+    }
+
+    //outw(0x604, 0x0 | 0x2000); // Signal QEMU to shutdown
+  }
+
+  // Keyboard reset
+  while ((inb(0x64) & 2) != 0)
+    ;
+  outb(0x64, 0xd1);
+  while ((inb(0x64) & 2) != 0)
+    ;
+  outb(0x60, 0xfe);
+
+  return; // Not reached
 }
 
 static void
@@ -258,8 +296,9 @@ else {		// Not canonical input
    }
   }
   release(&cons.lock);
-  if(shutdown)
-    do_shutdown();
+  if(shutdown) {
+    do_shutdown(0);
+  }
   if(doprocdump) {
     procdump();  // now call procdump() wo. cons.lock held
   }

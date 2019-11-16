@@ -91,10 +91,16 @@ sys_uptime(void)
   return xticks;
 }
 
-// shutdown QEMU
+// shutdown PC or QEMU.
 int
 sys_halt(void)
 {
-  do_shutdown();  // never returns
+  int exitvalue=0;
+
+  argint(0, &exitvalue);
+  if(exitvalue < 0)
+    return EINVAL;
+
+  do_shutdown(exitvalue); // never returns
   return 0;
 }
