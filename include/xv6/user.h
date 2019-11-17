@@ -1,3 +1,7 @@
+#pragma once
+
+#include <xv6/types.h>
+
 struct stat;
 struct rtcdate;
 
