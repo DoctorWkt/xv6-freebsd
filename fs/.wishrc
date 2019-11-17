@@ -1,3 +1,0 @@
-alias l '/bin/ls $*'
-alias ls '/bin/ls -l $*'
-alias h history

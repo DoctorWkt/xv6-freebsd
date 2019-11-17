@@ -9,9 +9,10 @@
 #include <xv6/x86.h>
 #include <xv6/traps.h>
 #include <xv6/spinlock.h>
-#include <xv6/fs.h>
+#include <xv6/vfs.h>
 #include <xv6/buf.h>
-#include <xv6/file.h>
+#include <xv6/device.h>
+#include <xv6/s5.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
@@ -23,8 +24,10 @@
 
 #define IDE_CMD_READ  0x20
 #define IDE_CMD_WRITE 0x30
-#define IDE_CMD_RDMUL 0xC4
-#define IDE_CMD_WRMUL 0xC5
+
+#define IDE_CMD_READ_MUL  0xC4
+#define IDE_CMD_WRITE_MUL 0xC5
+#define IDE_CMD_SET_MUL   0xC6
 
 // idequeue points to the buf now being read/written to the disk.
 // idequeue->qnext points to the next buf to be processed.
@@ -33,21 +36,75 @@
 static struct spinlock idelock;
 static struct buf *idequeue;
 
-static int havedisk1;
+static int havediskroot;
 static void idestart(struct buf*);
-static int ideread(struct inode *ip, char *dst, uint off, int n);
-static int idewrite(struct inode *ip, char *src, uint off, int n);
-static int nullread(struct inode *ip, char *dst, uint off, int n);
-static int nullwrite(struct inode *ip, char *src, uint off, int n);
+static int ide_open(int minor);
+static int ide_close(int minor);
+
+struct bdev_ops ideops = {
+  .open = &ide_open,
+  .close = &ide_close
+};
+
+// define the ide device struct
+struct bdev idedev = {
+  .major = IDEMAJOR,
+  .ops = &ideops
+};
+
+// IDE devices operations
+
+/**
+ * This operation verifies if the current disk n is attatched.
+ **/
+int
+ide_open(int minor)
+{
+  int i;
+
+  // cprintf("ide_open %d\n", minor);
+
+  // Disk 0 is always attatched because the kernel is located there
+  if (minor == 0)
+    return 0;
+
+  // It is the already attatched device
+  if (minor == ROOTDEV)
+    return havediskroot;
+  
+  if (minor >= 2) {
+    // check if the disk is attatched
+    outb(0x176, 0xe0 | (minor & 1<<4));
+    for (i=0; i<1000; i++) {
+      if (inb(0x177) != 0) {
+        return 0;
+      }
+    }
+  } else {
+    outb(0x1f6, 0xe0 | (minor & 1<<4));
+    for (i=0; i<1000; i++) {
+      if (inb(0x1f7) != 0) {
+        return 0;
+      }
+    }
+  }
+
+  return -1;
+}
+
+int
+ide_close(int minor)
+{
+  return 0;
+}
 
 // Wait for IDE disk to become ready.
 static int
-idewait(int checkerr)
+idewait(int checkerr, int baseport)
 {
   int r;
 
-  while(((r = inb(0x1f7)) & (IDE_BSY|IDE_DRDY)) != IDE_DRDY) 
-    ;
+  while(((r = inb(baseport + 7)) & (IDE_BSY|IDE_DRDY)) != IDE_DRDY) ;
   if(checkerr && (r & (IDE_DF|IDE_ERR)) != 0)
     return -1;
   return 0;
@@ -61,78 +118,101 @@ ideinit(void)
   initlock(&idelock, "ide");
   picenable(IRQ_IDE);
   ioapicenable(IRQ_IDE, ncpu - 1);
-  idewait(0);
+  picenable(IRQ_IDE + 1);
+  ioapicenable(IRQ_IDE + 1, ncpu - 1);
+
+  if (registerbdev(idedev) != 0 )
+    panic("Register IDE device driver");
+
+  idewait(0, 0x1f0);
   
   // Check if disk 1 is present
   outb(0x1f6, 0xe0 | (1<<4));
   for(i=0; i<1000; i++){
     if(inb(0x1f7) != 0){
-      havedisk1 = 1;
+      havediskroot = 1;
       break;
     }
   }
   
   // Switch back to disk 0.
   outb(0x1f6, 0xe0 | (0<<4));
-
-  devsw[DISK].read =  ideread;
-  devsw[DISK].write = idewrite;
-  devsw[DISK].ioctl = 0;
-
-  // Should be in a separate file
-  devsw[DEVNULL].read =  nullread;
-  devsw[DEVNULL].write = nullwrite;
-  devsw[DEVNULL].ioctl = 0;
 }
 
 // Start the request for b.  Caller must hold idelock.
 static void
 idestart(struct buf *b)
 {
+  // cprintf("idestart() b->dev %d\n", b->dev);
+  
   if(b == 0)
     panic("idestart");
-  if(b->blockno >= FSSIZE)
-    panic("incorrect blockno");
-  int sector_per_block =  BSIZE/SECTOR_SIZE;
-  int sector = b->blockno * sector_per_block;
-  uchar read_cmd=  (sector_per_block == 1) ? IDE_CMD_READ :  IDE_CMD_RDMUL;
-  uchar write_cmd= (sector_per_block == 1) ? IDE_CMD_WRITE : IDE_CMD_WRMUL;
+  /* if(b->blockno >= FSSIZE) */
+  /*   panic("incorrect blockno"); */
 
-  if (sector_per_block > 7) panic("idestart");
-  
-  idewait(0);
-  outb(0x3f6, 0);  // generate interrupt
-  outb(0x1f2, sector_per_block);  // number of sectors
-  outb(0x1f3, sector & 0xff);
-  outb(0x1f4, (sector >> 8) & 0xff);
-  outb(0x1f5, (sector >> 16) & 0xff);
-  outb(0x1f6, 0xe0 | ((b->dev&1)<<4) | ((sector>>24)&0x0f));
-  if(b->flags & B_DIRTY){
-    outb(0x1f7, write_cmd);
-    outsl(0x1f0, b->data, BSIZE/4);
+  // Verify if the device is from Primary or Secodary BUS
+  int baseport;
+  if (b->dev <= 1) {
+    baseport = 0x1f0;
   } else {
-    outb(0x1f7, read_cmd);
+    baseport = 0x170;
+  }
+
+  int sector_per_block = b->bsize/SECTOR_SIZE;
+  int sector = b->blockno * sector_per_block;
+
+  if (sector_per_block > 16) panic("idestart");
+
+  idewait(0, baseport);
+
+  if (b->dev <= 1) {
+    outb(0x3f6, 0);  // generate interrupt to primary bus
+  } else {
+    outb(0x376, 0);  // generate interrupt to secondary bus
+  }
+
+  outb(baseport + 2, sector_per_block);  // number of sectors
+  outb(baseport + 7, IDE_CMD_SET_MUL);
+  idewait(0, baseport);
+
+  outb(baseport + 3, sector & 0xff);
+  outb(baseport + 4, (sector >> 8) & 0xff);
+  outb(baseport + 5, (sector >> 16) & 0xff);
+  outb(baseport + 6, 0xe0 | ((b->dev&1)<<4) | ((sector>>24)&0x0f));
+
+  if(b->flags & B_DIRTY){
+    outb(baseport + 7, IDE_CMD_WRITE_MUL);
+    outsl(baseport, b->data, b->bsize/4);
+  } else {
+    outb(baseport + 7, IDE_CMD_READ_MUL);
   }
 }
 
 // Interrupt handler.
 void
-ideintr(void)
+ideintr(int secflag)
 {
+  int port;
+
+  if (!secflag) {
+    port = 0x1f0;
+  } else {
+    port = 0x170;
+  }
+
   struct buf *b;
 
   // First queued buffer is the active request.
   acquire(&idelock);
   if((b = idequeue) == 0){
     release(&idelock);
-    // cprintf("spurious IDE interrupt\n");
     return;
   }
   idequeue = b->qnext;
 
   // Read data if needed.
-  if(!(b->flags & B_DIRTY) && idewait(1) >= 0)
-    insl(0x1f0, b->data, BSIZE/4);
+  if(!(b->flags & B_DIRTY) && idewait(1, port) >= 0)
+    insl(port, b->data, b->bsize/4);
   
   // Wake process waiting for this buf.
   b->flags |= B_VALID;
@@ -153,13 +233,15 @@ ideintr(void)
 void
 iderw(struct buf *b)
 {
+  // cprintf("iderw() b->dev %d b->blockno %d\n", b->dev, b->blockno);
+  
   struct buf **pp;
 
   if(!(b->flags & B_BUSY))
     panic("iderw: buf not busy");
   if((b->flags & (B_VALID|B_DIRTY)) == B_VALID)
     panic("iderw: nothing to do");
-  if(b->dev != 0 && !havedisk1)
+  if(b->dev != 0 && !havediskroot)
     panic("iderw: ide disk 1 not present");
 
   acquire(&idelock);  //DOC:acquire-lock
@@ -182,57 +264,10 @@ iderw(struct buf *b)
   release(&idelock);
 }
 
-// Read raw disk blocks
-static int
-ideread(struct inode *ip, char *dst, uint off, int n)
-{
-  uint tot, m;
-  struct buf *bp;
-
-  if(off > (uint)FSSIZE*BSIZE)
-    return -1;
-  if(off + n > (uint)FSSIZE*BSIZE)
-    n = (uint)FSSIZE*BSIZE - off;
-
-  for(tot=0; tot<n; tot+=m, off+=m, dst+=m){
-    bp = bread(ip->minor, off/BSIZE);
-    m = min(n - tot, BSIZE - off%BSIZE);
-    memmove(dst, bp->data + off%BSIZE, m);
-    brelse(bp);
-  }
-  return n;
-}
-
-// Write raw disk blocks
-static int
-idewrite(struct inode *ip, char *src, uint off, int n)
-{
-  uint tot, m;
-  struct buf *bp;
-
-  if(off > (uint)FSSIZE*BSIZE)
-    return -1;
-  if(off + n > (uint)FSSIZE*BSIZE)
-    return -1;
-
-  for(tot=0; tot<n; tot+=m, off+=m, src+=m){
-    bp = bread(ip->minor, off/BSIZE);
-    m = min(n - tot, BSIZE - off%BSIZE);
-    memmove(bp->data + off%BSIZE, src, m);
-    bp->flags |= B_BUSY;
-    bwrite(bp);		// Force block to be written to disk
-    brelse(bp);
-  }
-
-  if(n > 0 && off > (uint)FSSIZE*BSIZE){
-    ip->size = (uint)FSSIZE*BSIZE;
-  }
-  return n;
-}
-
+/*
 // Perform /dev/null and /dev/zero read operations
 static int
-nullread(struct inode *ip, char *dst, uint off, int n)
+nullread(struct inode *ip, char *dst, int n)
 {
   // Minor 0 is null, no reading
   if (ip->minor==0) return(0);
@@ -243,7 +278,8 @@ nullread(struct inode *ip, char *dst, uint off, int n)
 }
 
 static int
-nullwrite(struct inode *ip, char *src, uint off, int n)
+nullwrite(struct inode *ip, char *src, int n)
 {
   return(n);
 }
+*/

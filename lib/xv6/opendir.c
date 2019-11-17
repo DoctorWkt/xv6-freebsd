@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #define dirent xv6dirent
 #include <xv6/types.h>
-#include <xv6/fs.h>
+#include <xv6/vfs.h>
 #undef dirent
 
 int closedir(DIR *dirp)

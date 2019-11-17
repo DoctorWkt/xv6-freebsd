@@ -1,7 +1,13 @@
+MAKEFLAGS += --no-print-directory
+
 TOP_SRCDIR = .
 include $(TOP_SRCDIR)/Makefile.common
 
+.PHONY: all
 all: xv6.img
+
+# delete target if error building it
+.DELETE_ON_ERROR:
 
 xv6.img: boot/bootblock kern/kernel fs.img
 	dd if=/dev/zero of=xv6.img count=10000
@@ -21,29 +27,31 @@ tools/mkfs:
 
 fs/cat:
 	mkdir -p fs/bin
+	mkdir -p fs/sbin
 	mkdir -p fs/etc
-	mkdir -p fs/dev
 	$(MAKE) -C lib all
-	$(MAKE) -C cmd all
+	$(MAKE) -C usr.bin all
+	$(MAKE) -C usr.sbin all
 
 .PHONY: kern/kernel
 kern/kernel:
 	$(MAKE) -C kern kernel
 
-#fs.img: tools/mkfs README cmd/_cat
+#fs.img: tools/mkfs README usr.bin/_cat
 #	tools/mkfs fs.img README _*
 
 fs.img: tools/mkfs README fs/cat
 	cp README fs
 	mv fs/bin/init fs/etc
 	tools/mkfs fs.img fs
+	tools/mkfs -noroot fs2.img fs
 
 -include *.d
 
 clean: 
 	$(MAKE) -C boot clean
 	$(MAKE) -C lib clean
-	$(MAKE) -C cmd clean
+	$(MAKE) -C usr.bin clean
 	$(MAKE) -C kern clean
 	$(MAKE) -C tools clean
 	$(MAKE) -C doc clean
@@ -73,6 +81,7 @@ CPUS := 2
 endif
 QEMUOPTS = -drive file=fs.img,index=1,media=disk,format=raw \
 	   -drive file=xv6.img,index=0,media=disk,format=raw \
+	   -hdc ext2.img \
 	   -smp $(CPUS) -m 512M \
 	   -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 \
 	   -net none \
@@ -104,6 +113,9 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 cscope:
 	find -type f -name "*.[chsS]" -print > cscope.files
 	cscope -q -k
+
+.PHONY: clean distclean run depend qemu qemu-nox qemu-gdb qemu-nox-gdb gdb
+.PHONY: bochs cscope
 
 # CUT HERE
 # prepare dist for students
@@ -147,4 +159,4 @@ tar:
 	cp dist/* dist/.gdbinit.tmpl /tmp/xv6
 	(cd /tmp; tar cf - xv6) | gzip >xv6-rev9.tar.gz  # the next one will be 9 (6/27/15)
 
-.PHONY: dist-test dist
+.PHONY: dist-test dist tar

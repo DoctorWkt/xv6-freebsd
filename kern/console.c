@@ -7,7 +7,7 @@
 #include <xv6/param.h>
 #include <xv6/traps.h>
 #include <xv6/spinlock.h>
-#include <xv6/fs.h>
+#include <xv6/vfs.h>
 #include <xv6/file.h>
 #include <xv6/memlayout.h>
 #include <xv6/mmu.h>
@@ -305,7 +305,7 @@ else {		// Not canonical input
 }
 
 int
-consoleread(struct inode *ip, char *dst, uint off, int n)
+consoleread(struct inode *ip, char *dst, int n)
 {
   uint target;
   int c;
@@ -314,14 +314,14 @@ consoleread(struct inode *ip, char *dst, uint off, int n)
   // Not console, not serial
   if (minor < 0 || minor > 1) return(0);
 
-  iunlock(ip);
+  ip->iops->iunlock(ip);
   target = n;
   acquire(&cons.lock);
   while(n > 0){
     while(input[minor].r == input[minor].w){
       if(proc->killed){
         release(&cons.lock);
-        ilock(ip);
+        ip->iops->ilock(ip);
         return -1;
       }
       sleep(&input[minor].r, &cons.lock);
@@ -341,22 +341,22 @@ consoleread(struct inode *ip, char *dst, uint off, int n)
       break;
   }
   release(&cons.lock);
-  ilock(ip);
+  ip->iops->ilock(ip);
 
   return target - n;
 }
 
 int
-consolewrite(struct inode *ip, char *buf, uint off, int n)
+consolewrite(struct inode *ip, char *buf, int n)
 {
   int i;
 
-  iunlock(ip);
+  ip->iops->iunlock(ip);
   acquire(&cons.lock);
   for(i = 0; i < n; i++)
     consputc(buf[i] & 0xff, ip->minor);
   release(&cons.lock);
-  ilock(ip);
+  ip->iops->ilock(ip);
 
   return n;
 }

@@ -3,7 +3,6 @@
 #include <xv6/syscall.h>
 #include <xv6/traps.h>
 
-
 # exec(init, argv)
 .globl start
 start:

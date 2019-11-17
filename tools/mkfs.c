@@ -8,12 +8,13 @@
 #include <dirent.h>
 #include <assert.h>
 
-#define dirent xv6dirent
-#define stat   xv6stat
-#include "../include/xv6/types.h"
-#include "../include/xv6/fs.h"
-#include "../include/xv6/stat.h"
-#include "../include/xv6/param.h"
+#define dirent xv6dirent // avoid clash with host struct dirent
+#define stat   xv6stat   // avoid clash with host struct stat
+#include "xv6/types.h"
+#include "xv6/vfs.h"
+#include "xv6/s5.h"
+#include "xv6/stat.h"
+#include "xv6/param.h"
 #undef dirent
 #undef stat
 
@@ -22,6 +23,7 @@
 #endif
 
 #define NINODES 200
+#define HDMAJOR 0
 
 // Disk layout:
 // [ boot block | sb block | log | inode blocks | free bit map | data blocks ]
@@ -33,11 +35,10 @@ int nmeta;    // Number of meta blocks (boot, sb, nlog, inode, bitmap)
 int nblocks;  // Number of data blocks
 
 int fsfd;
-struct superblock sb;
+struct s5_superblock sb;
 char zeroes[BSIZE];
 uint freeinode = 1;
 uint freeblock;
-
 
 void balloc(int);
 void wsect(uint, void*);
@@ -76,25 +77,37 @@ xint(uint x)
 int
 main(int argc, char *argv[])
 {
-  int i;
-  uint rootino, off;
+  int i, isrootfs = 1, argoff = 0;
+  uint rootino, off, devino, hdino;
+  struct xv6dirent de;
   char buf[BSIZE];
   struct dinode din;
 
+  printf("BSIZE: %d\n", BSIZE);
+  printf("sizeof(struct dinode)) %ld\n", sizeof(struct dinode));
+  printf("MAXFILE: %ld\n", MAXFILE);
+  printf("FSSIZE: %d\n", FSSIZE);
+
+  
   static_assert(sizeof(int) == 4, "Integers must be 4 bytes!");
 
-  if(argc != 3){
-    fprintf(stderr, "Usage: mkfs fs.img basedir\n");
+  if(argc < 2){
+    fprintf(stderr, "Usage: mkfs [-noroot] fs.img basedir\n");
     exit(1);
   }
 
   assert((BSIZE % sizeof(struct dinode)) == 0);
   assert((BSIZE % sizeof(struct xv6dirent)) == 0);
 
+  if (strcmp(argv[1], "-noroot") == 0) {
+    isrootfs = 0;
+    argoff = 1;
+  }
+
   // Open the filesystem image file
-  fsfd = open(argv[1], O_RDWR|O_CREAT|O_TRUNC, 0666);
-  if(fsfd < 0){
-    perror(argv[1]);
+  fsfd = open(argv[1 + argoff], O_RDWR|O_CREAT|O_TRUNC, 0666);
+  if (fsfd < 0) {
+    perror(argv[1 + argoff]);
     exit(1);
   }
 
@@ -126,7 +139,7 @@ main(int argc, char *argv[])
   // Copy the superblock struct into a zero'ed buf
   // and write it out as block 1
   memset(buf, 0, sizeof(buf));
-  memmove(buf, &sb, sizeof(sb));
+  memmove(buf, &sb, sizeof(sb) - sizeof(sb.flags));
   wsect(1, buf);
 
   // Grab an i-node for the root directory
@@ -138,8 +151,47 @@ main(int argc, char *argv[])
   dappend(rootino, ".", rootino);
   dappend(rootino, "..", rootino);
 
+  if (isrootfs) {
+    // Create the dev folder
+    devino = ialloc(T_DIR, 0);
+    dappend(rootino, "dev", devino);
+    dappend(devino, ".", devino);
+    dappend(devino, "..", devino);
+
+    // Create the device files to access hd
+    hdino = ialloc(T_DEV, 0);
+    bzero(&de, sizeof(de));
+    de.inum = xshort(hdino);
+    strcpy(de.name, "hda");
+    iappend(devino, &de, sizeof(de));
+    rinode(hdino, &din);
+    din.major = HDMAJOR;
+    din.minor = 0;
+    winode(hdino, &din);
+
+    hdino = ialloc(T_DEV, 0);
+    bzero(&de, sizeof(de));
+    de.inum = xshort(hdino);
+    strcpy(de.name, "hdb");
+    iappend(devino, &de, sizeof(de));
+    rinode(hdino, &din);
+    din.major = HDMAJOR;
+    din.minor = 1;
+    winode(hdino, &din);
+
+    hdino = ialloc(T_DEV, 0);
+    bzero(&de, sizeof(de));
+    de.inum = xshort(hdino);
+    strcpy(de.name, "hdc");
+    iappend(devino, &de, sizeof(de));
+    rinode(hdino, &din);
+    din.major = HDMAJOR;
+    din.minor = 2;
+    winode(hdino, &din);
+  }
+
   // Add the contents of the command-line directory to the root dir
-  add_directory(rootino, argv[2]);
+  add_directory(rootino, argv[2 + argoff]);
 
   // Fix the size of the root inode dir
   rinode(rootino, &din);
@@ -223,7 +275,7 @@ ialloc(ushort type, int mtime)
   din.type = xshort(type);
   din.nlink = xshort(1);
   din.size = xint(0);
-  din.mtime = mtime;
+  //XXX din.mtime = mtime;
   winode(inum, &din);
   return inum;
 }
@@ -260,9 +312,10 @@ iappend(uint inum, void *xp, int n)
 
   rinode(inum, &din);
   off = xint(din.size);
-  // printf("append inum %d at off %d sz %d\n", inum, off, n);
+  //printf("append inum %d at off %d sz %d\n", inum, off, n);
   while(n > 0){
     fbn = off / BSIZE;
+    //printf(" fbn %d\n", fbn);
     assert(fbn < MAXFILE);
     if(fbn < NDIRECT){
       if(xint(din.addrs[fbn]) == 0){
@@ -318,6 +371,8 @@ void fappend(int dirino, char *filename, struct stat *sb)
 
     // Allocate an i-node for the file
     inum = ialloc(T_FILE, sb->st_mtime);
+
+    // printf(" fappend: %s\n", filename);
 
     // Add the file's name to the root directory
     dappend(dirino, filename, inum);

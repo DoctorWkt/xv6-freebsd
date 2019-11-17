@@ -1,3 +1,8 @@
+#pragma once
+
+#include <xv6/vfs.h>
+#include <stddef.h>
+
 struct buf;
 struct context;
 struct file;
@@ -8,7 +13,9 @@ struct rtcdate;
 struct spinlock;
 struct stat;
 struct superblock;
-
+struct bdev_ops;
+struct bdev;
+struct filesystem_type;
 // bio.c
 void            binit(void);
 struct buf*     bread(uint, uint);
@@ -39,8 +46,7 @@ int             fileread(struct file*, char*, int n);
 int             filestat(struct file*, struct stat*);
 int             filewrite(struct file*, char*, int n);
 
-// fs.c
-void            readsb(int dev, struct superblock *sb);
+// vfs.c
 int             dirlink(struct inode*, char*, uint);
 struct inode*   dirlookup(struct inode*, char*, uint*);
 struct inode*   ialloc(uint, short);
@@ -48,7 +54,6 @@ struct inode*   idup(struct inode*);
 void            iinit(int dev);
 void            ilock(struct inode*);
 void            iput(struct inode*);
-void 		itrunc(struct inode*);
 void            iunlock(struct inode*);
 void            iunlockput(struct inode*);
 void            iupdate(struct inode*);
@@ -61,14 +66,14 @@ int             writei(struct inode*, char*, uint, uint);
 
 // ide.c
 void            ideinit(void);
-void            ideintr(void);
+void            ideintr(int scflag);
 void            iderw(struct buf*);
 
 // ioapic.c
 void            ioapicenable(int irq, int cpu);
 extern uchar    ioapicid;
 void            ioapicinit(void);
-int		sys_time(void);
+int             sys_time(void);
 
 // kalloc.c
 char*           kalloc(void);
@@ -144,9 +149,13 @@ int             memcmp(const void*, const void*, uint);
 void*           memmove(void*, const void*, uint);
 void*           memset(void*, int, uint);
 char*           safestrcpy(char*, const char*, int);
-int             strlen(const char*);
+size_t          strlen(const char*);
 int             strncmp(const char*, const char*, uint);
-char*           strncpy(char*, const char*, int);
+char*           strncpy(char*, const char*, size_t);
+void            itoa(int, char*);
+void            strconcat(char*, const char*, const char*);
+int             strcmp(const char*, const char*);
+void *          memscan(void *addr, int c, int size);
 
 // syscall.c
 int             argint(int, int*);
@@ -186,6 +195,18 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+
+// device.c
+void            bdevtableinit(void);
+int             registerbdev(struct bdev);
+int             unregisterbdev(struct bdev);
+int             bdev_open(struct inode *);
+
+// s5.c
+int             inits5fs(void);
+
+// ext2.c
+int             initext2fs(void);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

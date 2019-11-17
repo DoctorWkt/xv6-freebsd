@@ -5,7 +5,7 @@
 #include <xv6/param.h>
 #include <xv6/traps.h>
 #include <xv6/spinlock.h>
-#include <xv6/fs.h>
+#include <xv6/vfs.h>
 #include <xv6/file.h>
 #include <xv6/mmu.h>
 #include <xv6/proc.h>

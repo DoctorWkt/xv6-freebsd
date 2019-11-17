@@ -49,7 +49,7 @@ static char sccsid[] = "@(#)fwrite.c	5.5 (Berkeley) 2/24/91";
 int fwrite(buf, size, count, fp)
 	const void *buf;
 	size_t size, count;
-	FILE *fp;
+	void *fp; //XXX file
 {
 	size_t n;
 	struct __suio uio;

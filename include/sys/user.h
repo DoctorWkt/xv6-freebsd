@@ -45,7 +45,7 @@
 #endif
 #include <sys/resourcevar.h>
 #include <sys/signalvar.h>
-#include <vm/vm.h>		/* XXX */
+//#include <vm/vm.h>		/* XXX */
 #include <sys/kinfo_proc.h>
 
 

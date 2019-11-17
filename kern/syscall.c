@@ -104,6 +104,7 @@ extern int sys_time(void);
 extern int sys_fchdir(void);
 extern int sys_halt(void);
 extern int sys_random(void);
+extern int sys_mount(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -133,6 +134,7 @@ static int (*syscalls[])(void) = {
 [SYS_fchdir]  sys_fchdir,
 [SYS_halt]    sys_halt,
 [SYS_random]  sys_random,
+[SYS_mount]   sys_mount,
 };
 
 void

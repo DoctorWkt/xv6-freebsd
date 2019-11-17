@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int halt(int);
 int random(int, int);
+int mount(char *dev, char *path, char *fstype);
 
 // ulib.c
 int stat(char*, struct stat*);
