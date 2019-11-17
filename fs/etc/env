@@ -1,0 +1,8 @@
+# xv6 processes have no concept of environment variables, so getenv()
+# will read from this file. Apart from the comment lines that start
+# with a # symbol, each line has the form NAME=value where there are
+# no spaces on either side of the = sign.
+TERMCAP=/etc/termcap
+TERM=xterms
+PATH=/bin:/usr/bin
+HOME=/
