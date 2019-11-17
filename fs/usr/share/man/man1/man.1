@@ -1,0 +1,25 @@
+.Dd July 31, 2016
+.Dt MAN 1
+.Os
+.Sh NAME
+.Nm man
+.Nd print man pages.
+.Sh SYNOPSIS
+.Nm man
+[section] title
+.Sh DESCRIPTION
+Search for and print the man page for the title. If an optional numeric
+section number is given, only search that section for the title.
+.Pp
+If no man page for the title is found,
+.Nm man
+prints "No man page". Otherwise,
+.Nm nroff
+is invoked to format the man page, and this output is sent to
+.Nm less 
+for display.
+.Sh HISTORY
+A
+.Nm ls
+command appeared in
+.At v1 .
