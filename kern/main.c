@@ -6,6 +6,7 @@
 #include <xv6/mmu.h>
 #include <xv6/proc.h>
 #include <xv6/x86.h>
+#include <xv6/pcspkr.h>
 
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
@@ -15,9 +16,9 @@ extern char end[]; // first address after kernel loaded from ELF file
 static void
 initfss(void) {
   // Init the supported filesystems
-  if (inits5fs() != 0) // init s5 fs
-    panic("S5 not registered");
-  if (initext2fs() != 0) // init s5 fs
+  if (inits5fs() != 0) // init s5
+    panic("s5 not registered");
+  if (initext2fs() != 0) // init ext2
     panic("ext2 not registered");
 }
 
@@ -71,7 +72,7 @@ mpenter(void)
 static void
 mpmain(void)
 {
-  cprintf("cpu%d: starting\n", cpu->id);
+  cprintf("cpu%d ", cpu->id);
   idtinit();       // load idt register
   xchg(&cpu->started, 1); // tell startothers() we're up
   scheduler();     // start running processes
