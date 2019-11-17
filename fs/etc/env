@@ -4,5 +4,5 @@
 # no spaces on either side of the = sign.
 TERMCAP=/etc/termcap
 TERM=xterms
-PATH=/bin:/usr/bin
+PATH=/sbin:/bin:/usr/bin
 HOME=/

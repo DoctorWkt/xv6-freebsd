@@ -1,7 +1,7 @@
 //
 // File-system system calls.
 // Mostly argument checking, since we don't trust
-// user code, and calls into file.c and fs.c.
+// user code, and calls into file.c and vfs.c.
 //
 
 #include <xv6/types.h>
@@ -14,6 +14,7 @@
 #include <xv6/file.h>
 #include <xv6/fcntl.h>
 #include <xv6/syscall.h>
+#include <xv6/pcspkr.h>
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -290,14 +291,14 @@ sys_mount(void)
 
   ip->iops->ilock(ip);
   devi->iops->ilock(devi);
-  // we only can mount points over directories nodes                                                                                                                                                                                                                                                                           
+  // we only can mount points over directories nodes
   if (ip->type != T_DIR && ip->ref > 1) {
     ip->iops->iunlock(ip);
     devi->iops->iunlock(devi);
     return -1;
   }
 
-  // The device inode should be T_DEV                                                                                                                                                                                                                                                                                          
+  // The device inode should be T_DEV
   if (devi->type != T_DEV) {
     ip->iops->iunlock(ip);
     devi->iops->iunlock(devi);
@@ -625,4 +626,16 @@ int sys_random(void)
     return -1;
 
   return next_random(start, end);
+}
+
+int sys_beep(void)
+{
+  int frq;
+  
+  if (argint(0, &frq) < 0)
+    return -1;
+
+  beep(frq);
+
+  return 0;
 }

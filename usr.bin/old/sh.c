@@ -78,6 +78,11 @@ runcmd(struct cmd *cmd)
       exit();
     exec(ecmd->argv[0], ecmd->argv);
 
+    // The basic exec failed. Try exec'ing /sbin/argv[0]
+    strcpy(binbuf, "/sbin/");
+    strcpy(&binbuf[6], ecmd->argv[0]);
+    exec(binbuf, ecmd->argv);
+
     // The basic exec failed. Try exec'ing /bin/argv[0]
     strcpy(binbuf, "/bin/");
     strcpy(&binbuf[5], ecmd->argv[0]);

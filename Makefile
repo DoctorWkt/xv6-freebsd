@@ -79,12 +79,13 @@ QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 ifndef CPUS
 CPUS := 2
 endif
-QEMUOPTS = -drive file=fs.img,index=1,media=disk,format=raw \
-	   -drive file=xv6.img,index=0,media=disk,format=raw \
-	   -hdc ext2.img \
+QEMUOPTS = -drive file=xv6.img,index=0,media=disk,format=raw \
+           -drive file=fs.img,index=1,media=disk,format=raw \
+	   -drive file=ext2.img,index=2,media=disk,format=raw \
 	   -smp $(CPUS) -m 512M \
 	   -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 \
 	   -net none \
+	   -soundhw pcspk \
 	   $(QEMUEXTRA)
 
 qemu: fs.img xv6.img

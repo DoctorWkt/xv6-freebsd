@@ -7,10 +7,10 @@ all: ../../lib/libc.a ../../lib/ulib.a ../../fs/bin $(UPROGS)
 
 install: all
 	strip $(UPROGS)
-	cp $(UPROGS) ../../fs/bin
+	cp $(UPROGS) ../../fs/sbin
 
 ../../fs/bin:
-	mkdir -p ../../fs/bin
+	mkdir -p ../../fs/sbin
 
 ../../lib/libc.a:
 	$(MAKE) -C ../../lib libc.a

@@ -36,6 +36,7 @@ OBJS = \
 	find_bits.o\
 	ext2.o\
 	device.o\
+	pcspkr.o\
 
 all: kernel
 
