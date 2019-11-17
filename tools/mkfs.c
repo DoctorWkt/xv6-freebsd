@@ -83,11 +83,10 @@ main(int argc, char *argv[])
   char buf[BSIZE];
   struct dinode din;
 
-  printf("BSIZE: %d\n", BSIZE);
-  printf("sizeof(struct dinode)) %ld\n", sizeof(struct dinode));
-  printf("MAXFILE: %ld\n", MAXFILE);
-  printf("FSSIZE: %d\n", FSSIZE);
-
+  //printf("BSIZE: %d\n", BSIZE);
+  //printf("sizeof(struct dinode)) %ld\n", sizeof(struct dinode));
+  //printf("MAXFILE: %ld\n", MAXFILE);
+  //printf("FSSIZE: %d\n", FSSIZE);
   
   static_assert(sizeof(int) == 4, "Integers must be 4 bytes!");
 
@@ -287,13 +286,13 @@ balloc(int used)
   uchar buf[BSIZE];
   int i;
 
-  printf("balloc: first %d blocks have been allocated\n", used);
+  //printf("balloc: first %d blocks have been allocated\n", used);
   assert(used < BSIZE*8);
   bzero(buf, BSIZE);
   for(i = 0; i < used; i++){
     buf[i/8] = buf[i/8] | (0x1 << (i%8));
   }
-  printf("balloc: write bitmap block at sector %d\n", sb.bmapstart);
+  //printf("balloc: write bitmap block at sector %d\n", sb.bmapstart);
   wsect(sb.bmapstart, buf);
 }
 
