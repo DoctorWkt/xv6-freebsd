@@ -37,6 +37,7 @@ OBJS = \
 	ext2.o\
 	device.o\
 	pcspkr.o\
+	sb16.o\
 
 all: kernel
 

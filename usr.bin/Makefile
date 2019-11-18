@@ -8,7 +8,7 @@ all: ../lib/ulib.a ../lib/libc.a
 	$(MAKE) -C md5    all install
 #	$(MAKE) -C sed    all install
 	$(MAKE) -C less   all install
-	$(MAKE) -C make   all install
+#	$(MAKE) -C make   all install
 	$(MAKE) -C sh     all install
 #	$(MAKE) -C nroff  all install
 

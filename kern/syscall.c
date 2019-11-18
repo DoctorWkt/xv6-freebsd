@@ -106,6 +106,7 @@ extern int sys_halt(void);
 extern int sys_random(void);
 extern int sys_mount(void);
 extern int sys_beep(void);
+extern int sys_procs(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -137,6 +138,7 @@ static int (*syscalls[])(void) = {
 [SYS_random]  sys_random,
 [SYS_mount]   sys_mount,
 [SYS_beep]    sys_beep,
+[SYS_procs]   sys_procs,
 };
 
 void

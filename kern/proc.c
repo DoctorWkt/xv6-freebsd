@@ -476,3 +476,8 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+// For SYS_procs
+struct proc * getptable_proc(void){
+  return ptable.proc;
+}

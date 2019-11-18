@@ -3,7 +3,13 @@
 #include <xv6/user.h>
 
 int
-main(void) {
-  halt(0);
+main(int argc, char** argv) {
+  int status = 0;
+  
+  if (argc == 2) {
+    status = atoi(argv[1]);
+  }
+  
+  halt(status);
   exit();
 }

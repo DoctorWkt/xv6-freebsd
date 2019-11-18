@@ -371,7 +371,7 @@ void fappend(int dirino, char *filename, struct stat *sb)
     // Allocate an i-node for the file
     inum = ialloc(T_FILE, sb->st_mtime);
 
-    // printf(" fappend: %s\n", filename);
+    printf(" fappend: %s\n", filename);
 
     // Add the file's name to the root directory
     dappend(dirino, filename, inum);

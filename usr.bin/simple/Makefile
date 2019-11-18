@@ -6,7 +6,7 @@ UPROGS= cat ls date sleep rmdir rm mv ln hostname cal \
 	false true du head join printenv rev split \
 	strings tee uniq wc echo xargs egrep grep \
 	fgrep ed man tail tar hd pwd halt rng clear \
-	c4 beep
+	c4 beep ps
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 

@@ -1,11 +1,12 @@
 #include <stdio.h>
-#include <sys/types.h>
-//#include <xv6/user.h>
+#include <stdlib.h>
 
 int
-main(int argc, char *argv[])
+main(int argc, char** argv)
 {
+  printf("before rng..\n");
   for (int i = 0; i < 10; i++)
-    fprintf(stdout, "rng: %d\n", random(1, 10));
-  exit();
+    printf("rng: %d\n", random());
+  
+  exit(0);
 }

@@ -30,6 +30,7 @@ int uptime(void);
 int halt(int);
 int random(int, int);
 int mount(char *dev, char *path, char *fstype);
+int procs(int, void *);
 
 // ulib.c
 int stat(char*, struct stat*);

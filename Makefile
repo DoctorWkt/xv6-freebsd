@@ -86,6 +86,7 @@ QEMUOPTS = -drive file=xv6.img,index=0,media=disk,format=raw \
 	   -no-reboot -device isa-debug-exit,iobase=0xf4,iosize=0x04 \
 	   -net none \
 	   -soundhw pcspk \
+	   -soundhw sb16 \
 	   $(QEMUEXTRA)
 
 qemu: fs.img xv6.img

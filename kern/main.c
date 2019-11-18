@@ -8,6 +8,8 @@
 #include <xv6/x86.h>
 #include <xv6/pcspkr.h>
 
+int drv_init_hw(void); // XXX sb16.c
+
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
 extern pde_t *kpgdir;
@@ -38,6 +40,7 @@ main(void)
   ioapicinit();    // another interrupt controller
   consoleinit();   // I/O devices & their interrupts
   uartinit();      // serial port
+  drv_init_hw();
   pinit();         // process table
   tvinit();        // trap vectors
   binit();         // buffer cache
