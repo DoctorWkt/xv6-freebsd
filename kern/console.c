@@ -379,7 +379,7 @@ consoleioctl(struct inode *ip, int req)
 }
 
 void
-consoleinit(void)
+dev_console_init(void)
 {
   initlock(&cons.lock, "console");
 

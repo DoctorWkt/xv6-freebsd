@@ -28,7 +28,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int halt(int);
-int random(int, int);
+int rng(int, int);
 int mount(char *dev, char *path, char *fstype);
 int procs(int, void *);
 

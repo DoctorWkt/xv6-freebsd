@@ -38,9 +38,9 @@ main(void)
   // cprintf("cpu %d: starting xv6.. ", cpu->id);
   picinit();       // interrupt controller
   ioapicinit();    // another interrupt controller
-  consoleinit();   // I/O devices & their interrupts
+  devinit();       // I/O devices & their interrupts
   uartinit();      // serial port
-  drv_init_hw();
+  //drv_init_hw();
   pinit();         // process table
   tvinit();        // trap vectors
   binit();         // buffer cache

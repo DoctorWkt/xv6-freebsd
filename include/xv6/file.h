@@ -24,9 +24,11 @@ struct devsw {
 
 extern struct devsw devsw[];
 
-#define CONSOLE 1	// /dev/console, /dev/serial
-#define DISK    2	// /dev/disk0,   /dev/disk1
-#define DEVNULL 3	// /dev/null,    /dev/zero
+#define CONSOLE  1	// /dev/console, /dev/serial
+#define DISK     2	// /dev/disk0,   /dev/disk1
+#define DEV_NULL 3	// /dev/null
+#define DEV_ZERO 4	// /dev/zero
+#define DEV_RANDOM 5    // /dev/random
 
 // lseek defines
 #define SEEK_SET        0

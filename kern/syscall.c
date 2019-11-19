@@ -103,7 +103,7 @@ extern int sys_ioctl(void);
 extern int sys_time(void);
 extern int sys_fchdir(void);
 extern int sys_halt(void);
-extern int sys_random(void);
+extern int sys_rng(void);
 extern int sys_mount(void);
 extern int sys_beep(void);
 extern int sys_procs(void);
@@ -135,7 +135,7 @@ static int (*syscalls[])(void) = {
 [SYS_time]    sys_time,
 [SYS_fchdir]  sys_fchdir,
 [SYS_halt]    sys_halt,
-[SYS_random]  sys_random,
+[SYS_rng]     sys_rng,
 [SYS_mount]   sys_mount,
 [SYS_beep]    sys_beep,
 [SYS_procs]   sys_procs,

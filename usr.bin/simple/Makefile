@@ -1,12 +1,14 @@
 TOP_SRCDIR = ../..
 include $(TOP_SRCDIR)/Makefile.common
 
+CFLAGS+=-Wno-implicit-int -Wno-implicit-function-declaration -Wno-return-type
+
 UPROGS= cat ls date sleep rmdir rm mv ln hostname cal \
 	basename cmp comm cut dirname expand bdes yes \
 	false true du head join printenv rev split \
 	strings tee uniq wc echo xargs egrep grep \
 	fgrep ed man tail tar hd pwd halt rng clear \
-	c4 beep ps
+	c4 beep ps morse ttt
 
 all: ../../lib/libc.a ../../fs/bin $(UPROGS)
 

@@ -25,7 +25,7 @@
 #define SYS_time   24
 #define SYS_fchdir 25
 #define SYS_halt   26
-#define SYS_random 27
+#define SYS_rng    27
 #define SYS_mount  28
 #define SYS_beep   29
 #define SYS_procs  30

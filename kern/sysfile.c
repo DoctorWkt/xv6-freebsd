@@ -615,10 +615,10 @@ int next_random(int start, int end)
 {
   static uint X;
   rdrand(&X);
-  return X % (end - start) + start;
+  return (int)(X % (end - start) + start);
 }
 
-int sys_random(void)
+int sys_rng(void)
 {
   int start, end;
   

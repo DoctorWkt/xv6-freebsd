@@ -54,7 +54,7 @@ OPT ?= -O0
 
 CFLAGS =$(OPT)
 CFLAGS+= -fno-builtin -Wall -m32 -nostdinc -I$(INCLDIR)
-CFLAGS+=-msoft-float
+#CFLAGS+=-msoft-float
 # Turn off PIE which is no default on Ubuntu
 CFLAGS += -fno-pie
 #CFLAGS+=-Werror

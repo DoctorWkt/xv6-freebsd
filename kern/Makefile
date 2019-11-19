@@ -38,6 +38,10 @@ OBJS = \
 	device.o\
 	pcspkr.o\
 	sb16.o\
+    devices.o\
+    null.o\
+    zero.o\
+    random.o
 
 all: kernel
 

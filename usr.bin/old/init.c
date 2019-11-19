@@ -52,8 +52,12 @@ main(void)
     mknod("/dev/null", 3, 0);
   }
   if(open("/dev/zero", O_RDWR) < 0){
-    mknod("/dev/zero", 3, 1);
+    mknod("/dev/zero", 4, 0);
   }
+  if(open("/dev/random", O_RDWR) < 0){
+    mknod("/dev/random", 5, 0);
+  }
+
   switch(fork()){
     case 0:  spawnshell("/dev/console");
     default: spawnshell("/dev/serial");
