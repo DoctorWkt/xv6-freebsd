@@ -29,6 +29,7 @@
 #define SYS_mount  28
 #define SYS_beep   29
 #define SYS_procs  30
+#define SYS_umount 31
 
 // Error results
 #define EPERM		 -1		/* Operation not permitted */

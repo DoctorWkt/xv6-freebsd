@@ -35,6 +35,7 @@ main(void)
   mpinit();        // collect info about this machine
   lapicinit();
   seginit();       // set up segments
+  cprintf("The system is comping up. Please wait.");
   // cprintf("cpu %d: starting xv6.. ", cpu->id);
   picinit();       // interrupt controller
   ioapicinit();    // another interrupt controller

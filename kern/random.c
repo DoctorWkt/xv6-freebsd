@@ -5,8 +5,9 @@
 int dev_random_read(struct inode *ip, char *dst, int n)
 {
   int i = 0;
-  for (; i<n; ++i)
+  for (; i<n; ++i) {
     dst[i] = 42;
+  }
   return n;
 }
 

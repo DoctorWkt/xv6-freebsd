@@ -31,6 +31,7 @@ int halt(int);
 int rng(int, int);
 int mount(char *dev, char *path, char *fstype);
 int procs(int, void *);
+int umount(char *path);
 
 // ulib.c
 int stat(char*, struct stat*);

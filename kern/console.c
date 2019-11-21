@@ -383,6 +383,8 @@ dev_console_init(void)
 {
   initlock(&cons.lock, "console");
 
+  //vt = tmt_open(25, 80, callback, NULL, NULL);
+
   devsw[CONSOLE].write = consolewrite;
   devsw[CONSOLE].read = consoleread;
   devsw[CONSOLE].ioctl = consoleioctl;

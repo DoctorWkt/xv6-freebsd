@@ -340,6 +340,24 @@ sys_mount(void)
   return 0;
 }
 
+int sys_umount(void)
+{
+  char* path;
+  struct inode *ip;
+  
+  if (argstr(0, &path) < 0) {
+    return -1;
+  }
+
+  if ((ip = namei(path)) == 0) {
+    return -1;
+  }
+
+  // XXX
+    
+  return 0;
+}
+
 int
 sys_open(void)
 {
@@ -592,31 +610,7 @@ sys_ioctl(void)
   return devsw[f->ip->major].ioctl(f->ip, request);
 }
 
-int rdrand(uint *v)
-{
-  uint rand_val;
-  int done = 0, i = 0;
-#define RD_RAND_RETRY_LOOPS 10
-  while (done == 0 && i < RD_RAND_RETRY_LOOPS) {
-    // From intel's RDRAND code
-    asm("rdrand %%eax;\
-         mov $1,%%edx;               \
-         cmovae %%eax,%%edx;         \
-         mov %%edx,%1;                                       \
-         mov %%eax,%0;":"=r"(rand_val),"=r"(done)::"%eax","%edx");
-//    *v = rand_val;
-    *v = 42;
-    i++;
-  }
-  return i;
-}
-
-int next_random(int start, int end)
-{
-  static uint X;
-  rdrand(&X);
-  return (int)(X % (end - start) + start);
-}
+static unsigned long seed;
 
 int sys_rng(void)
 {
@@ -625,7 +619,9 @@ int sys_rng(void)
   if (argint(0, &start) < 0 || argint(1, &end) < 0)
     return -1;
 
-  return next_random(start, end);
+  // from the musl project
+  seed = 6364136223846793005ULL*seed + 1;
+  return (seed>>13) % (end - start) + start;
 }
 
 int sys_beep(void)
