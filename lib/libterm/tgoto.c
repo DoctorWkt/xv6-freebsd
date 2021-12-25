@@ -33,7 +33,7 @@
 #include <string.h>
 
 #ifndef lint
-static char sccsid[] = "@(#)tgoto.c	5.4 (Berkeley) 6/1/90";
+//static char sccsid[] = "@(#)tgoto.c	5.4 (Berkeley) 6/1/90";
 #endif /* not lint */
 
 #define	CTRL(c)	((c) & 037)
@@ -88,7 +88,7 @@ toohard:
 		return ("OOPS");
 	}
 	added[0] = 0;
-	while (c = *cp++) {
+	while ((c = *cp++)) {
 		if (c != '%') {
 			*dp++ = c;
 			continue;
@@ -139,7 +139,7 @@ setwhich:
 			/* fall into... */
 
 		case '.':
-casedot:
+//casedot:
 			/*
 			 * This code is worth scratching your head at for a
 			 * while.  The idea is that various weird things can

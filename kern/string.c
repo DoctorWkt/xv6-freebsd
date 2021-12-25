@@ -103,3 +103,62 @@ strlen(const char *s)
   return n;
 }
 
+int
+strcmp(const char *p, const char *q)
+{
+  int gtrlen = strlen(p);
+  int qlen = strlen(q);
+
+  if (qlen > gtrlen) gtrlen = qlen;
+
+  return strncmp(p, q, gtrlen);
+}
+
+void
+itoa(int xx, char *buf)
+{
+  char tbuf[16];
+  static char digits[] = "0123456789abcdef";
+  int i, j;
+  int x = xx;
+
+  i = 0;
+  do{
+    tbuf[i++] = digits[x % 10];
+  }while((x /= 10) != 0);
+
+  i--;
+  for (j = 0; i >= 0; i--, j++)
+    buf[j] = tbuf[i];
+}
+
+void
+strconcat(char* r, const char* a, const char* b)
+{
+  int asize = strlen(a), bsize = strlen(b);
+  int i, j;
+
+  strncpy(r, a, asize);
+
+  for (i = asize, j = 0; j < bsize; j++) {
+   r[i] = b[j];
+  }
+
+  r[asize + bsize] = 0;
+}
+
+void *
+memscan(void *addr, int c, int size)
+{
+  if (!size)
+    return addr;
+  asm volatile("repnz; scasb\n\t"
+      "jnz 1f\n\t"
+      "dec %%edi\n"
+      "1:"
+      : "=D" (addr), "=c" (size)
+      : "0" (addr), "1" (size), "a" (c)
+      : "memory");
+  return addr;
+}
+

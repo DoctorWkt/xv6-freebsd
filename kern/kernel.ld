@@ -53,13 +53,10 @@ SECTIONS
 	.data : {
 		*(.data)
 	}
-
-	PROVIDE(edata = .);
-
+        PROVIDE(edata = .);
 	.bss : {
 		*(.bss)
 	}
-
 	PROVIDE(end = .);
 
 	/DISCARD/ : {

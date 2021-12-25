@@ -41,7 +41,7 @@
 #include <sys/time.h>
 #include <sys/ucred.h>
 #include <sys/proc.h>
-#include <vm/vm.h>
+//#include <vm/vm.h>
 #endif
 
 /* 
@@ -54,7 +54,7 @@ struct kinfo_proc {
 		struct	session *e_sess;	/* session pointer */
 		struct	pcred e_pcred;		/* process credentials */
 		struct	ucred e_ucred;		/* current credentials */
-		struct	vmspace e_vm;		/* address space */
+      //XXX struct	vmspace e_vm;		/* address space */
 		pid_t	e_ppid;			/* parent process id */
 		pid_t	e_pgid;			/* process group id */
 		short	e_jobc;			/* job control counter */

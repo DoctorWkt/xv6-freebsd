@@ -102,6 +102,12 @@ extern int sys_lseek(void);
 extern int sys_ioctl(void);
 extern int sys_time(void);
 extern int sys_fchdir(void);
+extern int sys_halt(void);
+extern int sys_rng(void);
+extern int sys_mount(void);
+extern int sys_beep(void);
+extern int sys_procs(void);
+extern int sys_umount(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -129,6 +135,12 @@ static int (*syscalls[])(void) = {
 [SYS_ioctl]   sys_ioctl,
 [SYS_time]    sys_time,
 [SYS_fchdir]  sys_fchdir,
+[SYS_halt]    sys_halt,
+[SYS_rng]     sys_rng,
+[SYS_mount]   sys_mount,
+[SYS_beep]    sys_beep,
+[SYS_procs]   sys_procs,
+[SYS_umount]  sys_umount,
 };
 
 void

@@ -24,7 +24,8 @@
 #include <xv6/defs.h>
 #include <xv6/param.h>
 #include <xv6/spinlock.h>
-#include <xv6/fs.h>
+#include <xv6/vfs.h>
+#include <xv6/file.h>
 #include <xv6/buf.h>
 
 struct {
@@ -88,6 +89,7 @@ bget(uint dev, uint blockno)
       b->dev = dev;
       b->blockno = blockno;
       b->flags = B_BUSY;
+      b->bsize = sb[dev].blocksize;
       release(&bcache.lock);
       return b;
     }

@@ -2,8 +2,9 @@
 #include <xv6/defs.h>
 #include <xv6/param.h>
 #include <xv6/spinlock.h>
-#include <xv6/fs.h>
+#include <xv6/vfs.h>
 #include <xv6/buf.h>
+#include <xv6/s5.h>
 
 // Simple logging that allows concurrent FS system calls.
 //
@@ -31,9 +32,12 @@
 // Contents of the header block, used for both the on-disk header block
 // and to keep track in memory of logged block# before commit.
 struct logheader {
-  int n;   
+  int n;
   int block[LOGSIZE];
 };
+
+#define NLOG 3   // Max number of active logs
+#define LOGENABLED 1
 
 struct log {
   struct spinlock lock;
@@ -42,9 +46,10 @@ struct log {
   int outstanding; // how many FS sys calls are executing.
   int committing;  // in commit(), please wait.
   int dev;
+  int flag;
   struct logheader lh;
 };
-struct log log;
+struct log log[NLOG];
 
 static void recover_from_log(void);
 static void commit();
@@ -55,41 +60,54 @@ initlog(int dev)
   if (sizeof(struct logheader) >= BSIZE)
     panic("initlog: too big logheader");
 
+  char devnum[3];
+  itoa(dev, devnum);
+  char logname[16];
+
+  strconcat(logname, "log ", devnum);
+
   struct superblock sb;
-  initlock(&log.lock, "log");
-  readsb(dev, &sb);
-  log.start = sb.logstart;
-  log.size = sb.nlog;
-  log.dev = dev;
+  initlock(&log[dev].lock, logname);
+
+  s5_readsb(dev, &sb);
+  struct s5_superblock *s5sb = sb.fs_info;
+
+  log[dev].start = s5sb->logstart;
+  log[dev].size = s5sb->nlog;
+  log[dev].dev = dev;
+  log[dev].flag |= LOGENABLED;
   recover_from_log();
 }
 
 // Copy committed blocks from log to their home location
-static void 
-install_trans(void)
+static void
+install_trans(int dev)
 {
   int tail;
+  if (!log[dev].flag & LOGENABLED) return;
 
-  for (tail = 0; tail < log.lh.n; tail++) {
-    struct buf *lbuf = bread(log.dev, log.start+tail+1); // read log block
-    struct buf *dbuf = bread(log.dev, log.lh.block[tail]); // read dst
+  for (tail = 0; tail < log[dev].lh.n; tail++) {
+    struct buf *lbuf = bread(log[dev].dev, log[dev].start+tail+1); // read log block
+    struct buf *dbuf = bread(log[dev].dev, log[dev].lh.block[tail]); // read dst
     memmove(dbuf->data, lbuf->data, BSIZE);  // copy block to dst
     bwrite(dbuf);  // write dst to disk
-    brelse(lbuf); 
+    brelse(lbuf);
     brelse(dbuf);
   }
 }
 
 // Read the log header from disk into the in-memory log header
 static void
-read_head(void)
+read_head(int dev)
 {
-  struct buf *buf = bread(log.dev, log.start);
+  if (!log[dev].flag & LOGENABLED) return;
+
+  struct buf *buf = bread(log[dev].dev, log[dev].start);
   struct logheader *lh = (struct logheader *) (buf->data);
   int i;
-  log.lh.n = lh->n;
-  for (i = 0; i < log.lh.n; i++) {
-    log.lh.block[i] = lh->block[i];
+  log[dev].lh.n = lh->n;
+  for (i = 0; i < log[dev].lh.n; i++) {
+    log[dev].lh.block[i] = lh->block[i];
   }
   brelse(buf);
 }
@@ -98,14 +116,16 @@ read_head(void)
 // This is the true point at which the
 // current transaction commits.
 static void
-write_head(void)
+write_head(int dev)
 {
-  struct buf *buf = bread(log.dev, log.start);
+  if (!log[dev].flag & LOGENABLED) return;
+
+  struct buf *buf = bread(log[dev].dev, log[dev].start);
   struct logheader *hb = (struct logheader *) (buf->data);
   int i;
-  hb->n = log.lh.n;
-  for (i = 0; i < log.lh.n; i++) {
-    hb->block[i] = log.lh.block[i];
+  hb->n = log[dev].lh.n;
+  for (i = 0; i < log[dev].lh.n; i++) {
+    hb->block[i] = log[dev].lh.block[i];
   }
   bwrite(buf);
   brelse(buf);
@@ -114,27 +134,39 @@ write_head(void)
 static void
 recover_from_log(void)
 {
-  read_head();      
-  install_trans(); // if committed, copy from log to disk
-  log.lh.n = 0;
-  write_head(); // clear the log
+  int i;
+
+  for (i = 0; i < NLOG; i++) {
+    if (!log[i].flag & LOGENABLED) continue;
+
+    read_head(i);
+    install_trans(i); // if committed, copy from log to disk
+    log[i].lh.n = 0;
+    write_head(i); // clear the log
+  }
 }
 
 // called at the start of each FS system call.
 void
 begin_op(void)
 {
-  acquire(&log.lock);
-  while(1){
-    if(log.committing){
-      sleep(&log, &log.lock);
-    } else if(log.lh.n + (log.outstanding+1)*MAXOPBLOCKS > LOGSIZE){
-      // this op might exhaust log space; wait for commit.
-      sleep(&log, &log.lock);
-    } else {
-      log.outstanding += 1;
-      release(&log.lock);
-      break;
+  int i;
+
+  for (i = 0; i < NLOG; i++) {
+    if (!log[i].flag & LOGENABLED) continue;
+
+    acquire(&log[i].lock);
+    while(1){
+      if(log[i].committing){
+        sleep(&log[i], &log[i].lock);
+      } else if(log[i].lh.n + (log[i].outstanding+1)*MAXOPBLOCKS > LOGSIZE){
+        // this op might exhaust log space; wait for commit.
+        sleep(&log[i], &log[i].lock);
+      } else {
+        log[i].outstanding += 1;
+        release(&log[i].lock);
+        break;
+      }
     }
   }
 }
@@ -144,57 +176,65 @@ begin_op(void)
 void
 end_op(void)
 {
-  int do_commit = 0;
+  int i;
 
-  acquire(&log.lock);
-  log.outstanding -= 1;
-  if(log.committing)
-    panic("log.committing");
-  if(log.outstanding == 0){
-    do_commit = 1;
-    log.committing = 1;
-  } else {
-    // begin_op() may be waiting for log space.
-    wakeup(&log);
-  }
-  release(&log.lock);
+  for (i = 0; i < NLOG; i++) {
+    if (!log[i].flag & LOGENABLED) continue;
 
-  if(do_commit){
-    // call commit w/o holding locks, since not allowed
-    // to sleep with locks.
-    commit();
-    acquire(&log.lock);
-    log.committing = 0;
-    wakeup(&log);
-    release(&log.lock);
+    int do_commit = 0;
+
+    acquire(&log[i].lock);
+    log[i].outstanding -= 1;
+    if(log[i].committing)
+      panic("log.committing");
+    if(log[i].outstanding == 0){
+      do_commit = 1;
+      log[i].committing = 1;
+    } else {
+      // begin_op() may be waiting for log space.
+      wakeup(&log[i]);
+    }
+    release(&log[i].lock);
+
+    if(do_commit){
+      // call commit w/o holding locks, since not allowed
+      // to sleep with locks.
+      commit(i);
+      acquire(&log[i].lock);
+      log[i].committing = 0;
+      wakeup(&log[i]);
+      release(&log[i].lock);
+    }
   }
 }
 
 // Copy modified blocks from cache to log.
-static void 
-write_log(void)
+static void
+write_log(int dev)
 {
   int tail;
 
-  for (tail = 0; tail < log.lh.n; tail++) {
-    struct buf *to = bread(log.dev, log.start+tail+1); // log block
-    struct buf *from = bread(log.dev, log.lh.block[tail]); // cache block
+  if (!log[dev].flag & LOGENABLED) return;
+
+  for (tail = 0; tail < log[dev].lh.n; tail++) {
+    struct buf *to = bread(log[dev].dev, log[dev].start+tail+1); // log block
+    struct buf *from = bread(log[dev].dev, log[dev].lh.block[tail]); // cache block
     memmove(to->data, from->data, BSIZE);
     bwrite(to);  // write the log
-    brelse(from); 
+    brelse(from);
     brelse(to);
   }
 }
 
 static void
-commit()
+commit(int dev)
 {
-  if (log.lh.n > 0) {
-    write_log();     // Write modified blocks from cache to log
-    write_head();    // Write header to disk -- the real commit
-    install_trans(); // Now install writes to home locations
-    log.lh.n = 0; 
-    write_head();    // Erase the transaction from the log
+  if (log[dev].lh.n > 0) {
+    write_log(dev);     // Write modified blocks from cache to log
+    write_head(dev);    // Write header to disk -- the real commit
+    install_trans(dev); // Now install writes to home locations
+    log[dev].lh.n = 0;
+    write_head(dev);    // Erase the transaction from the log
   }
 }
 
@@ -212,20 +252,22 @@ log_write(struct buf *b)
 {
   int i;
 
-  if (log.lh.n >= LOGSIZE || log.lh.n >= log.size - 1)
+  if (!log[b->dev].flag & LOGENABLED) return;
+
+  if (log[b->dev].lh.n >= LOGSIZE || log[b->dev].lh.n >= log[b->dev].size - 1)
     panic("too big a transaction");
-  if (log.outstanding < 1)
+  if (log[b->dev].outstanding < 1)
     panic("log_write outside of trans");
 
-  acquire(&log.lock);
-  for (i = 0; i < log.lh.n; i++) {
-    if (log.lh.block[i] == b->blockno)   // log absorbtion
+  acquire(&log[b->dev].lock);
+  for (i = 0; i < log[b->dev].lh.n; i++) {
+    if (log[b->dev].lh.block[i] == b->blockno)   // log absorbtion
       break;
   }
-  log.lh.block[i] = b->blockno;
-  if (i == log.lh.n)
-    log.lh.n++;
+  log[b->dev].lh.block[i] = b->blockno;
+  if (i == log[b->dev].lh.n)
+    log[b->dev].lh.n++;
   b->flags |= B_DIRTY; // prevent eviction
-  release(&log.lock);
+  release(&log[b->dev].lock);
 }
 

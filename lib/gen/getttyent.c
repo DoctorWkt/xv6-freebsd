@@ -54,7 +54,7 @@ getttynam(tty)
 	register struct ttyent *t;
 
 	setttyent();
-	while (t = getttyent())
+	while ((t = getttyent()))
 		if (!strcmp(tty, t->ty_name))
 			break;
 	endttyent();
@@ -123,7 +123,7 @@ getttyent()
 	tty.ty_comment = p;
 	if (*p == 0)
 		tty.ty_comment = 0;
-	if (p = index(p, '\n'))
+	if ((p = index(p, '\n')))
 		*p = '\0';
 	return (&tty);
 }
@@ -183,7 +183,7 @@ setttyent()
 	if (tf) {
 		(void)rewind(tf);
 		return (1);
-	} else if (tf = fopen(_PATH_TTYS, "r"))
+	} else if ((tf = fopen(_PATH_TTYS, "r")))
 		return (1);
 	return (0);
 }

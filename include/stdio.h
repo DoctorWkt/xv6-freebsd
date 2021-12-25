@@ -211,7 +211,7 @@ int	 fscanf __P((FILE *, const char *, ...));
 int	 fseek __P((FILE *, long, int));
 int	 fsetpos __P((FILE *, const fpos_t *));
 long	 ftell __P((const FILE *));
-int	 fwrite __P((const void *, size_t, size_t, FILE *));
+int	 fwrite __P((const void *, size_t, size_t, void *));
 int	 getc __P((FILE *));
 int	 getchar __P((void));
 char	*gets __P((char *));

@@ -51,7 +51,7 @@ vis(dst, c, flag, nextc)
 	int c, nextc;
 	register int flag;
 {
-	if ((u_int)c <= UCHAR_MAX && isgraph(c) ||
+    if (((u_int)c <= UCHAR_MAX && isgraph(c)) ||
 	   ((flag & VIS_SP) == 0 && c == ' ') ||
 	   ((flag & VIS_TAB) == 0 && c == '\t') ||
 	   ((flag & VIS_NL) == 0 && c == '\n') ||
@@ -158,7 +158,7 @@ strvis(dst, src, flag)
 	register char c;
 	char *start;
 
-	for (start = dst; c = *src;)
+	for (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
 	return (dst - start);

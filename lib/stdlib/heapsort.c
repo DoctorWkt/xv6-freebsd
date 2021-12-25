@@ -87,6 +87,7 @@ static char sccsid[] = "@(#)heapsort.c	5.1 (Berkeley) 6/4/91";
  * a data set that will trigger the worst case is nonexistent.  Heapsort's
  * only advantage over quicksort is that it requires no additional memory.
  */
+int
 heapsort(bot, nmemb, size, compar)
 	register void *bot;
 	register size_t nmemb, size;

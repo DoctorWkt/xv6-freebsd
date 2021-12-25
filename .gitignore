@@ -1,4 +1,5 @@
 *~
+*.swp
 *.o
 *.a
 *.d
@@ -18,3 +19,4 @@ RCS
 include/minix
 include/net
 cmd/test
+cscope.*

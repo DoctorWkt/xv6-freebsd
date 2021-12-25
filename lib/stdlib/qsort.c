@@ -101,13 +101,14 @@ qsort(bot, nmemb, size, compar)
  * comparisons than the insertion sort.
  */
 #define	SORT(bot, n) { \
-	if (n > 1) \
+	if (n > 1) { \
 		if (n == 2) { \
 			t1 = bot + size; \
 			if (compar(t1, bot) < 0) \
 				SWAP(t1, bot); \
 		} else \
 			insertion_sort(bot, n, size, compar); \
+    } \
 }
 
 static void

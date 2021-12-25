@@ -80,7 +80,7 @@ userinit(void)
 {
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
-  
+
   p = allocproc();
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
@@ -209,6 +209,7 @@ exit(int exitvalue)
 
   // Jump into the scheduler, never to return.
   proc->state = ZOMBIE;
+  proc->sz = 0;
   sched();
   panic("zombie exit");
 }
@@ -272,10 +273,13 @@ void
 scheduler(void)
 {
   struct proc *p;
+  int idle; // For checking if processor is idle.
 
   for(;;){
     // Enable interrupts on this processor.
     sti();
+
+    idle = 1; // Assume idle unless we schedule a process.
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -286,6 +290,7 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      idle = 0;  // not idle this timeslice
       proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -297,11 +302,15 @@ scheduler(void)
       proc = 0;
     }
     release(&ptable.lock);
-
+    // If idle, wait for next interrupt.
+    if (idle) {
+      sti();
+      hlt();
+    }
   }
 }
 
-// Enter scheduler.  Must hold only ptable.lock
+// Enter scheduler. Must hold only ptable.lock
 // and have changed proc->state.
 void
 sched(void)
@@ -360,9 +369,6 @@ sleep(void *chan, struct spinlock *lk)
   if(proc == 0)
     panic("sleep");
 
-  if(lk == 0)
-    panic("sleep without lk");
-
   // Must acquire ptable.lock in order to
   // change p->state and then call sched.
   // Once we hold ptable.lock, we can be
@@ -371,7 +377,7 @@ sleep(void *chan, struct spinlock *lk)
   // so it's okay to release lk.
   if(lk != &ptable.lock){  //DOC: sleeplock0
     acquire(&ptable.lock);  //DOC: sleeplock1
-    release(lk);
+    if (lk) release(lk);
   }
 
   // Go to sleep.
@@ -385,7 +391,7 @@ sleep(void *chan, struct spinlock *lk)
   // Reacquire original lock.
   if(lk != &ptable.lock){  //DOC: sleeplock2
     release(&ptable.lock);
-    acquire(lk);
+    if (lk) acquire(lk);
   }
 }
 
@@ -469,4 +475,9 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+// For SYS_procs
+struct proc * getptable_proc(void){
+  return ptable.proc;
 }

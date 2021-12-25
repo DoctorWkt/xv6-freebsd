@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)termcap.c	5.5 (Berkeley) 6/1/90";
+//static char sccsid[] = "@(#)termcap.c	5.5 (Berkeley) 6/1/90";
 #endif /* not lint */
 
 #define	BUFSIZ		1024
@@ -42,6 +42,7 @@ static char sccsid[] = "@(#)termcap.c	5.5 (Berkeley) 6/1/90";
 
 #include <ctype.h>
 #include <stdio.h>
+#include <termcap.h>
 #include "pathnames.h"
 
 /*
@@ -71,13 +72,14 @@ char	*getenv();
 /*
  * Get an entry for terminal name in buffer bp from the termcap file.
  */
+int
 tgetent(bp, name)
 	char *bp, *name;
 {
 	register char *p;
 	register char *cp;
 	register int c;
-	char *term, *home, *termpath;
+	char *home, *termpath; // *term
 	char **fname = pathvec;
 
 	pvec = pathvec;
@@ -95,10 +97,10 @@ tgetent(bp, name)
 	 * becomes "$HOME/.termcap /etc/termcap" if no TERMPATH exists.
 	 */
 	if (!cp || *cp != '/') {	/* no TERMCAP or it holds an entry */
-		if (termpath = getenv("TERMPATH"))
+        if ((termpath = getenv("TERMPATH")))
 			strncpy(pathbuf, termpath, PBUFSIZ);
 		else {
-			if (home = getenv("HOME")) {	/* set up default */
+            if ((home = getenv("HOME"))) {	/* set up default */
 				p += strlen(home);	/* path, looking in */
 				strcpy(pathbuf, home);	/* $HOME first */
 				*p++ = '/';
@@ -146,6 +148,7 @@ tgetent(bp, name)
  * variable pvec.  Terminal entries may not be broken across files.  Parse is
  * very rudimentary; we just notice escaped newlines.
  */
+int
 tfindent(bp, name)
 	char *bp, *name;
 {
@@ -210,6 +213,7 @@ nextfile:
  * entries to say "like an HP2621 but doesn't turn on the labels".
  * Note that this works because of the left to right scan.
  */
+int
 tnchktc()
 {
 	register char *p, *q;
@@ -260,6 +264,7 @@ tnchktc()
  * against each such name.  The normal : terminator after the last
  * name (before the first field) stops us.
  */
+int
 tnamatch(np)
 	char *np;
 {
@@ -306,8 +311,9 @@ tskip(bp)
  * a # character.  If the option is not found we return -1.
  * Note that we handle octal numbers beginning with 0.
  */
+int
 tgetnum(id)
-	char *id;
+	const char *id;
 {
 	register int i, base;
 	register char *bp = tbuf;
@@ -339,8 +345,9 @@ tgetnum(id)
  * of the buffer.  Return 1 if we find the option, or 0 if it is
  * not given.
  */
+int
 tgetflag(id)
-	char *id;
+	const char *id;
 {
 	register char *bp = tbuf;
 

@@ -7,7 +7,7 @@
 #include <xv6/param.h>
 #include <xv6/traps.h>
 #include <xv6/spinlock.h>
-#include <xv6/fs.h>
+#include <xv6/vfs.h>
 #include <xv6/file.h>
 #include <xv6/memlayout.h>
 #include <xv6/mmu.h>
@@ -131,6 +131,52 @@ static ushort *crt = (ushort*)P2V(0xb8000);  // CGA memory
 
 #define C(x)  ((x)-'@')  // Control-x
 
+void
+do_shutdown(const int status_code)
+{
+  cprintf("\nShutting down with status code %d ...\n", status_code);
+
+  unsigned char sig[] = "XXXX";
+  
+  struct {
+    ushort limit;
+    unsigned long long address;
+  } null_idtr;
+
+  null_idtr.limit = 0;
+  null_idtr.address = 0;
+
+  asm volatile("cli"); // Disable interrupts
+
+  // Verify presence of QEMU by testing fw_cfg device signature
+  outw(0x0510, 0x00); // FW_CFG_SIGNATURE
+  for (unsigned int i = 0; i < sizeof(sig) - 1; i++) {
+    sig[i] = inb(0x0511);
+  }
+
+  if (memcmp(sig, "QEMU", sizeof(sig)) == 0) {
+    if (status_code == 0) { // Terminate QEMU with zero exit code.
+      // https://www.pagetable.com/?p=140 : Triple fault and reset.
+      asm volatile("lidt %0; int3" ::"m"(null_idtr));
+    } else {
+      // qemu-system-.. -device isa-debug-exit,iobase=0xf4,iosize=0x04
+      outb(0xf4, status_code); // Terminate QEMU with non-zero exit code.
+    }
+
+    //outw(0x604, 0x0 | 0x2000); // Signal QEMU to shutdown
+  }
+
+  // Keyboard reset
+  while ((inb(0x64) & 2) != 0)
+    ;
+  outb(0x64, 0xd1);
+  while ((inb(0x64) & 2) != 0)
+    ;
+  outb(0x60, 0xfe);
+
+  return; // Not reached
+}
+
 static void
 cgaputc(int c)
 {
@@ -202,6 +248,7 @@ void
 consoleintr(int (*getc)(void), int minor)
 {
   int c, doprocdump = 0;
+  int shutdown = 0;
 
   acquire(&cons.lock);
   while((c = getc()) >= 0){
@@ -209,6 +256,9 @@ consoleintr(int (*getc)(void), int minor)
     switch(c){
     case C('P'):  // Process listing.
       doprocdump = 1;   // procdump() locks cons.lock indirectly; invoke later
+      break;
+    case C('D'):
+      shutdown = 1;
       break;
     case C('U'):  // Kill line.
       while(input[minor].e != input[minor].w &&
@@ -246,13 +296,16 @@ else {		// Not canonical input
    }
   }
   release(&cons.lock);
+  if(shutdown) {
+    do_shutdown(0);
+  }
   if(doprocdump) {
     procdump();  // now call procdump() wo. cons.lock held
   }
 }
 
 int
-consoleread(struct inode *ip, char *dst, uint off, int n)
+consoleread(struct inode *ip, char *dst, int n)
 {
   uint target;
   int c;
@@ -261,14 +314,14 @@ consoleread(struct inode *ip, char *dst, uint off, int n)
   // Not console, not serial
   if (minor < 0 || minor > 1) return(0);
 
-  iunlock(ip);
+  ip->iops->iunlock(ip);
   target = n;
   acquire(&cons.lock);
   while(n > 0){
     while(input[minor].r == input[minor].w){
       if(proc->killed){
         release(&cons.lock);
-        ilock(ip);
+        ip->iops->ilock(ip);
         return -1;
       }
       sleep(&input[minor].r, &cons.lock);
@@ -288,22 +341,22 @@ consoleread(struct inode *ip, char *dst, uint off, int n)
       break;
   }
   release(&cons.lock);
-  ilock(ip);
+  ip->iops->ilock(ip);
 
   return target - n;
 }
 
 int
-consolewrite(struct inode *ip, char *buf, uint off, int n)
+consolewrite(struct inode *ip, char *buf, int n)
 {
   int i;
 
-  iunlock(ip);
+  ip->iops->iunlock(ip);
   acquire(&cons.lock);
   for(i = 0; i < n; i++)
     consputc(buf[i] & 0xff, ip->minor);
   release(&cons.lock);
-  ilock(ip);
+  ip->iops->ilock(ip);
 
   return n;
 }
@@ -326,9 +379,11 @@ consoleioctl(struct inode *ip, int req)
 }
 
 void
-consoleinit(void)
+dev_console_init(void)
 {
   initlock(&cons.lock, "console");
+
+  //vt = tmt_open(25, 80, callback, NULL, NULL);
 
   devsw[CONSOLE].write = consolewrite;
   devsw[CONSOLE].read = consoleread;

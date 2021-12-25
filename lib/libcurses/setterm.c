@@ -32,7 +32,7 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)setterm.c	8.3 (Berkeley) 1/2/94";
+//static char sccsid[] = "@(#)setterm.c	8.3 (Berkeley) 1/2/94";
 #endif /* not lint */
 
 #include <termios.h>
@@ -182,7 +182,7 @@ setterm(type)
 	if (!NS && SC && RC && CS && (sr || SR))
 		__usecs = 1;
 
-	if ((!AL && !al || !DL && !dl) && !__usecs)
+	if (((!AL && !al) || ((!DL && !dl) && !__usecs)))
 		__noqch = 1;
 
 	return (unknown ? ERR : OK);

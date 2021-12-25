@@ -1,3 +1,7 @@
+#pragma once
+
+#include <xv6/types.h>
+
 struct stat;
 struct rtcdate;
 
@@ -23,6 +27,11 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int halt(int);
+int rng(int, int);
+int mount(char *dev, char *path, char *fstype);
+int procs(int, void *);
+int umount(char *path);
 
 // ulib.c
 int stat(char*, struct stat*);

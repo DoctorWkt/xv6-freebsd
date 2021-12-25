@@ -7,7 +7,6 @@ OBJS = \
 	console.o\
 	exec.o\
 	file.o\
-	fs.o\
 	ide.o\
 	ioapic.o\
 	kalloc.o\
@@ -31,6 +30,18 @@ OBJS = \
 	uart.o\
 	vectors.o\
 	vm.o\
+	vfs.o\
+	vfsmount.o\
+	s5.o\
+	find_bits.o\
+	ext2.o\
+	device.o\
+	pcspkr.o\
+	sb16.o\
+    devices.o\
+    null.o\
+    zero.o\
+    random.o
 
 all: kernel
 

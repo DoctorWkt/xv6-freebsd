@@ -70,16 +70,13 @@ sys_sleep(void)
   
   if(argint(0, &n) < 0)
     return EINVAL;
-  acquire(&tickslock);
   ticks0 = ticks;
   while(ticks - ticks0 < n){
     if(proc->killed){
-      release(&tickslock);
       return EINVAL;
     }
-    sleep(&ticks, &tickslock);
+    sleep(&ticks, (struct spinlock *)0);
   }
-  release(&tickslock);
   return 0;
 }
 
@@ -89,9 +86,54 @@ int
 sys_uptime(void)
 {
   uint xticks;
-  
-  acquire(&tickslock);
-  xticks = ticks;
-  release(&tickslock);
+
+  xticks = ticks; // atomic read
   return xticks;
+}
+
+// shutdown PC or QEMU.
+int
+sys_halt(void)
+{
+  int exitvalue=0;
+
+  argint(0, &exitvalue);
+  if(exitvalue < 0)
+    return EINVAL;
+
+  do_shutdown(exitvalue); // never returns
+  return 0;
+}
+
+//Processes || Copy elements from the kernel ptable to the user space
+extern struct proc * getptable_proc(void);
+
+int sys_procs(void) {
+  int size;
+  char *buf;
+  char *s;
+  struct proc *p = '\0';
+  
+  if (argint(0, &size) <0){
+    return -1;
+  }
+  if (argptr(1, &buf,size) <0){
+    return -1;
+  }
+
+  s = buf;
+  p = getptable_proc();
+  
+  while(buf + size > s && p->state != UNUSED){
+    *(int *)s = p->state;
+    s+=4;
+    *(int *)s = p -> pid;
+    s+=4;
+    *(int *)s = p->parent->pid;
+    s+=4;
+    memmove(s,p->name,16);
+    s+=16;
+    p++;
+  }
+  return 0;
 }

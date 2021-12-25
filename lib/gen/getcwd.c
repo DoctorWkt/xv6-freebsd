@@ -45,8 +45,8 @@ static char sccsid[] = "@(#)getcwd.c	5.11 (Berkeley) 2/24/91";
 #include <unistd.h>
 
 #define	ISDOT(dp) \
-	(dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || \
-	    dp->d_name[1] == '.' && dp->d_name[2] == '\0'))
+  (((dp->d_name[0] == '.' && (dp->d_name[1] == '\0')) ||    \
+    (dp->d_name[1] == '.' && (dp->d_name[2] == '\0'))))
 
 char *
 getcwd(pt, size)

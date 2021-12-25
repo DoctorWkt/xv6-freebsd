@@ -186,6 +186,7 @@ cgetent(buf, db_array, name)
  *	  names interpolated, a name can't be found, or depth exceeds
  *	  MAX_RECURSION.
  */
+int cgetmatch(char *buf, char *name);
 static int
 getent(cap, len, db_array, fd, name, depth, nfield)
 	char **cap, **db_array, *name, *nfield;
@@ -193,7 +194,7 @@ getent(cap, len, db_array, fd, name, depth, nfield)
 	int fd, depth;
 {
 	DB *capdbp;
-	DBT key, data;
+	//DBT key, data;
 	register char *r_end, *rp, **db_p;
 	int myfd, eof, foundit, retval, clen;
 	char *record, *cbuf;
@@ -543,8 +544,8 @@ cdbget(capdbp, bp, name)
 	char **bp, *name;
 {
 	DBT key, data;
-	char *buf;
-	int st;
+	//char *buf;
+	//int st;
 
 	key.data = name;
 	key.size = strlen(name);
@@ -614,7 +615,8 @@ cgetmatch(buf, name)
 
 
 
-
+int cgetclose(void);
+int cgetnext(register char **bp, char **db_array);
 
 int
 cgetfirst(buf, db_array)
@@ -652,7 +654,7 @@ cgetnext(bp, db_array)
 	char **db_array;
 {
 	size_t len;
-	int status, i, done;
+	int status, done; // i
 	char *cp, *line, *rp, *np, buf[BSIZE], nbuf[BSIZE];
 	u_int dummy;
 
@@ -709,7 +711,7 @@ cgetnext(bp, db_array)
 		/* 
 		 * Line points to a name line.
 		 */
-		i = 0;
+		//i = 0;
 		done = 0;
 		np = nbuf;
 		for (;;) {

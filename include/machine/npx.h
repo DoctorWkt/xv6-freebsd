@@ -138,4 +138,4 @@ struct	emcsts {
 #define	__INITIAL_NPXCW__	__BDE_NPXCW__
 #endif
 
-#endif	___NPX87___
+#endif // ___NPX87___

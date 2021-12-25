@@ -1,15 +1,28 @@
 #include <xv6/types.h>
 #include <xv6/defs.h>
+#include <xv6/vfsmount.h>
 #include <xv6/param.h>
 #include <xv6/memlayout.h>
 #include <xv6/mmu.h>
 #include <xv6/proc.h>
 #include <xv6/x86.h>
+#include <xv6/pcspkr.h>
+
+int drv_init_hw(void); // XXX sb16.c
 
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
 extern pde_t *kpgdir;
 extern char end[]; // first address after kernel loaded from ELF file
+
+static void
+initfss(void) {
+  // Init the supported filesystems
+  if (inits5fs() != 0) // init s5
+    panic("s5 not registered");
+  if (initext2fs() != 0) // init ext2
+    panic("ext2 not registered");
+}
 
 // Bootstrap processor starts running C code here.
 // Allocate a real stack and switch to it, first
@@ -22,16 +35,24 @@ main(void)
   mpinit();        // collect info about this machine
   lapicinit();
   seginit();       // set up segments
-  cprintf("\ncpu%d: starting xv6\n\n", cpu->id);
+  cprintf("The system is comping up. Please wait.");
+  // cprintf("cpu %d: starting xv6.. ", cpu->id);
   picinit();       // interrupt controller
   ioapicinit();    // another interrupt controller
-  consoleinit();   // I/O devices & their interrupts
+  devinit();       // I/O devices & their interrupts
   uartinit();      // serial port
+  //drv_init_hw();
   pinit();         // process table
   tvinit();        // trap vectors
   binit();         // buffer cache
   fileinit();      // file table
+  initvfssw();     // vfs table init
+  initvfsmlist();  // Init the vfs list
+  mountinit();     // mount table
+  bdevtableinit(); // block device table
   ideinit();       // disk
+  initfss();
+  installrootfs();
   if(!ismp)
     timerinit();   // uniprocessor timer
   startothers();   // start other processors
@@ -55,7 +76,7 @@ mpenter(void)
 static void
 mpmain(void)
 {
-  cprintf("cpu%d: starting\n", cpu->id);
+  cprintf("cpu%d ", cpu->id);
   idtinit();       // load idt register
   xchg(&cpu->started, 1); // tell startothers() we're up
   scheduler();     // start running processes

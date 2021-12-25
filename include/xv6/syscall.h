@@ -24,6 +24,12 @@
 #define SYS_ioctl  23
 #define SYS_time   24
 #define SYS_fchdir 25
+#define SYS_halt   26
+#define SYS_rng    27
+#define SYS_mount  28
+#define SYS_beep   29
+#define SYS_procs  30
+#define SYS_umount 31
 
 // Error results
 #define EPERM		 -1		/* Operation not permitted */

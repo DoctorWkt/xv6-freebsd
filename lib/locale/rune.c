@@ -48,6 +48,7 @@ static char sccsid[] = "@(#)rune.c	8.1 (Berkeley) 6/4/93";
 #include <stdio.h>
 #include <stdlib.h>
 #include <machine/endian.h>
+#include <string.h>
 
 extern int		_none_init __P((_RuneLocale *));
 extern int		_UTF2_init __P((_RuneLocale *));
@@ -110,7 +111,7 @@ _Read_RuneMagi(fp)
 	FILE *fp;
 {
 	char *data;
-	void *np;
+	// void *np;
 	void *lastp;
 	_RuneLocale *rl;
 	_RuneEntry *rr;

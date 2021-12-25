@@ -1,5 +1,20 @@
 // Routines to let C code use special x86 instructions.
 
+#include <xv6/types.h>
+
+// hlt() added by Noah Zentzis, Fall 2016.
+static inline void
+hlt()
+{
+  asm volatile("hlt");
+}
+
+static inline void
+atom_inc(volatile int *num)
+{
+  asm volatile( "lock incl %0" : "=m" (*num));
+}
+
 static inline uchar
 inb(ushort port)
 {

@@ -62,8 +62,8 @@ timezone(zone, dst)
 	register char	*beg,
 			*end;
 
-	if (beg = getenv("TZNAME")) {		/* set in environment */
-		if (end = index(beg, ',')) {	/* "PST,PDT" */
+	if ((beg = getenv("TZNAME"))) {		/* set in environment */
+        if ((end = index(beg, ','))) {	/* "PST,PDT" */
 			if (dst)
 				return(++end);
 			*end = '\0';
